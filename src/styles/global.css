@@ -5,13 +5,14 @@
 		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
-	color-scheme: light dark;
+	color: #171717;
+	background: #ffffff;
 }
 
 html {
 	min-width: 320px;
 	background: #ffffff;
-	color: #111111;
+	scroll-behavior: smooth;
 }
 
 body {
@@ -20,7 +21,13 @@ body {
 	margin: 0;
 }
 
-button,
 a {
-	font: inherit;
+	color: inherit;
+	text-decoration-thickness: from-font;
+	text-underline-offset: 0.2em;
+}
+
+a:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 4px;
 }

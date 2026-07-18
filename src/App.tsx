@@ -1,8 +1,23 @@
+import { Container } from "./components/Container";
+import { portfolio } from "./data/portfolio";
+import { ExperienceSection } from "./sections/ExperienceSection";
+import { HeaderSection } from "./sections/HeaderSection";
+import { LanguagesSection } from "./sections/LanguagesSection";
+import { ProfileSection } from "./sections/ProfileSection";
+import { SkillsSection } from "./sections/SkillsSection";
+
 function App() {
 	return (
-		<main>
-			<h1>Max Remy</h1>
-		</main>
+		<Container>
+			<HeaderSection portfolio={portfolio} />
+
+			<main className="space-y-7 pb-12">
+				<ProfileSection profile={portfolio.profile} />
+				<SkillsSection skillGroups={portfolio.skillGroups} />
+				<LanguagesSection languages={portfolio.languages} />
+				<ExperienceSection experiences={portfolio.experiences} />
+			</main>
+		</Container>
 	);
 }
 
