@@ -7,7 +7,87 @@
             name="description"
             content="Self-taught developer with 10 years of freelance experience, specialized in backend, web, mobile, cloud, and distributed applications."
         />
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+        <script data-theme-bootstrap>
+            (() => {
+                const storageKey = "theme-preference";
+                const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+                function isThemePreference(preference) {
+                    return preference === "light" || preference === "dark" || preference === "system";
+                }
+
+                function readStoredPreference() {
+                    try {
+                        const preference = window.localStorage.getItem(storageKey);
+                        return isThemePreference(preference) ? preference : "system";
+                    } catch {
+                        return "system";
+                    }
+                }
+
+                function updateThemeColor(isDark) {
+                    document.querySelectorAll('meta[name="theme-color"]').forEach((themeColor) => {
+                        themeColor.removeAttribute("media");
+                        themeColor.setAttribute("content", isDark ? "#000000" : "#ffffff");
+                    });
+                }
+
+                function updateThemeControl(preference) {
+                    document.querySelectorAll("[data-theme-preference]").forEach((button) => {
+                        const isActive = button.dataset.themePreference === preference;
+                        button.setAttribute("aria-pressed", String(isActive));
+                        button.classList.toggle("theme-option-active", isActive);
+                    });
+                }
+
+                function applyPreference(preference) {
+                    if (preference === "system") {
+                        document.documentElement.removeAttribute("data-theme");
+                        updateThemeColor(systemTheme.matches);
+                    } else {
+                        document.documentElement.dataset.theme = preference;
+                        updateThemeColor(preference === "dark");
+                    }
+
+                    updateThemeControl(preference);
+                }
+
+                function savePreference(preference) {
+                    try {
+                        window.localStorage.setItem(storageKey, preference);
+                    } catch {
+                        // NOTHING
+                    }
+                }
+
+                applyPreference(readStoredPreference());
+                document.addEventListener("DOMContentLoaded", () => {
+                    updateThemeControl(readStoredPreference());
+                });
+                document.addEventListener("click", (event) => {
+                    if (!(event.target instanceof Element)) {
+                        return;
+                    }
+
+                    const button = event.target.closest("button[data-theme-preference]");
+                    const preference = button?.dataset.themePreference;
+
+                    if (!isThemePreference(preference)) {
+                        return;
+                    }
+
+                    savePreference(preference);
+                    applyPreference(preference);
+                });
+                systemTheme.addEventListener("change", () => {
+                    if (readStoredPreference() === "system") {
+                        applyPreference("system");
+                    }
+                });
+            })();
+        </script>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="canonical" href="https://maxremy.dev/" />
         <meta property="og:type" content="profile" />

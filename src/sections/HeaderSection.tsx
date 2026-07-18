@@ -1,3 +1,4 @@
+import { ThemeControl } from "../components/ThemeControl";
 import type { Portfolio } from "../types/portfolio";
 
 type HeaderSectionProps = {
@@ -14,9 +15,15 @@ export function HeaderSection({ portfolio }: HeaderSectionProps) {
 
 	return (
 		<header className="pb-9 pt-10 text-left">
-			<h1 className="text-3xl font-semibold tracking-tight">{portfolio.name}</h1>
-			<p className="mt-2 font-medium">{portfolio.role}</p>
-			<p>{portfolio.location}</p>
+			<div className="flex items-start justify-between gap-4">
+				<div>
+					<h1 className="text-3xl font-semibold tracking-tight">{portfolio.name}</h1>
+					<p className="mt-2 font-medium">{portfolio.role}</p>
+					<p>{portfolio.location}</p>
+				</div>
+
+				<ThemeControl />
+			</div>
 
 			{portfolio.links.length > 0 ? (
 				<nav className="mt-4" aria-label="Contact links">

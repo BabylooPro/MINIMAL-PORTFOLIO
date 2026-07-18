@@ -37,7 +37,7 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 					return (
 						<li key={experience.id}>
 							<article>
-								<header className="grid gap-x-6 gap-y-1 sm:grid-cols-[minmax(0,1fr)_auto] border-neutral-400 border-t mt-2">
+								<header className="mt-2 grid gap-x-6 gap-y-1 border-t border-(--border-color) sm:grid-cols-[minmax(0,1fr)_auto]">
 									<div>
 										<h3 className="font-semibold">{experience.role}</h3>
 										<p className="italic">{experience.company}</p>

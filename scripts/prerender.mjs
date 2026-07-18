@@ -69,9 +69,27 @@ function validateStaticOutput(indexHtml, files) {
 	}
 
 	const scriptTags = indexHtml.match(/<script\b[^>]*>/gi) ?? [];
+	const themeBootstrapScriptTags = scriptTags.filter((scriptTag) =>
+		/\bdata-theme-bootstrap\b/i.test(scriptTag),
+	);
 
-	if (scriptTags.some((scriptTag) => !/\btype=["']application\/ld\+json["']/i.test(scriptTag))) {
-		throw new Error("Only JSON-LD script tags are allowed in the production HTML.");
+	if (
+		scriptTags.some(
+			(scriptTag) =>
+				!/\btype=["']application\/ld\+json["']/i.test(scriptTag) &&
+				!/\bdata-theme-bootstrap\b/i.test(scriptTag),
+		)
+	) {
+		throw new Error(
+			"Only JSON-LD and theme bootstrap script tags are allowed in production HTML.",
+		);
+	}
+
+	if (
+		themeBootstrapScriptTags.length > 1 ||
+		themeBootstrapScriptTags.some((scriptTag) => /\bsrc=/i.test(scriptTag))
+	) {
+		throw new Error("The theme bootstrap must be a single inline script.");
 	}
 
 	if (!/<script\b(?=[^>]*\btype=["']application\/ld\+json["'])[^>]*>/i.test(indexHtml)) {
