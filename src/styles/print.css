@@ -1,0 +1,46 @@
+@media print {
+	@page {
+		size: A4;
+		margin: 14mm 16mm;
+	}
+
+	html {
+		background: #ffffff;
+		font-size: 10pt;
+	}
+
+	body {
+		min-width: 0;
+		background: #ffffff;
+		color: #000000;
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	a[href^="http"]::after {
+		content: none;
+	}
+
+	section,
+	article,
+	li {
+		break-inside: avoid;
+	}
+
+	section[aria-labelledby="experience-title"] {
+		break-inside: auto;
+	}
+
+	h1,
+	h2,
+	h3 {
+		break-after: avoid;
+	}
+
+	.no-print {
+		display: none;
+	}
+}
