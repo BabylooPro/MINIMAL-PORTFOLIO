@@ -1,7 +1,12 @@
-import { ThemeControl } from "../components/ThemeControl";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import type { Locale } from "../i18n/config";
 import type { Portfolio } from "../types/portfolio";
 
 type HeaderSectionProps = {
+	currentLocale: Locale;
+	languageSwitcherLabel: string;
+	emailLabel: string;
+	phoneLabel: string;
 	portfolio: Pick<Portfolio, "name" | "role" | "location" | "links">;
 };
 
@@ -9,7 +14,29 @@ function opensInNewTab(href: string) {
 	return href.startsWith("https://") || href.startsWith("http://");
 }
 
-export function HeaderSection({ portfolio }: HeaderSectionProps) {
+function getContactLinkLabel(
+	link: Portfolio["links"][number],
+	emailLabel: string,
+	phoneLabel: string,
+) {
+	if (link.href.startsWith("mailto:")) {
+		return `${emailLabel}: ${link.label}`;
+	}
+
+	if (link.href.startsWith("tel:")) {
+		return `${phoneLabel}: ${link.label}`;
+	}
+
+	return undefined;
+}
+
+export function HeaderSection({
+	currentLocale,
+	emailLabel,
+	languageSwitcherLabel,
+	phoneLabel,
+	portfolio,
+}: HeaderSectionProps) {
 	const contactLinks = portfolio.links.filter((link) => !opensInNewTab(link.href));
 	const profileLinks = portfolio.links.filter((link) => opensInNewTab(link.href));
 
@@ -22,17 +49,26 @@ export function HeaderSection({ portfolio }: HeaderSectionProps) {
 					<p>{portfolio.location}</p>
 				</div>
 
-				<ThemeControl />
+				<LanguageSwitcher currentLocale={currentLocale} label={languageSwitcherLabel} />
 			</div>
 
 			{portfolio.links.length > 0 ? (
-				<nav className="mt-4" aria-label="Contact links">
+				<div className="mt-4">
 					{contactLinks.length > 0 ? (
 						<p>
 							{contactLinks.map((link, index) => (
 								<span key={link.href}>
 									{index > 0 ? " - " : ""}
-									<a href={link.href}>{link.label}</a>
+									<a
+										aria-label={getContactLinkLabel(
+											link,
+											emailLabel,
+											phoneLabel,
+										)}
+										href={link.href}
+									>
+										{link.label}
+									</a>
 								</span>
 							))}
 						</p>
@@ -51,7 +87,7 @@ export function HeaderSection({ portfolio }: HeaderSectionProps) {
 							))}
 						</p>
 					) : null}
-				</nav>
+				</div>
 			) : null}
 		</header>
 	);

@@ -10,9 +10,12 @@ export type Experience = {
 	employmentType?: string;
 	location?: string;
 	startDate: string;
-	endDate?: string;
+	endDate: string | null;
+	datePrecision: DatePrecision;
 	description: string;
 };
+
+export type DatePrecision = "month" | "year";
 
 export type SkillGroup = {
 	id: string;
@@ -25,7 +28,7 @@ export type Portfolio = {
 	company: string;
 	role: string;
 	location: string;
-	profile: string;
+	summary: string;
 	availability?: string;
 	links: readonly ExternalLink[];
 	experiences: readonly Experience[];

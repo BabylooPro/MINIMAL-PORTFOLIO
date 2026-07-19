@@ -3,10 +3,6 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta
-            name="description"
-            content="Self-taught developer with 10 years of freelance experience, specialized in backend, web, mobile, cloud, and distributed applications."
-        />
         <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
         <script data-theme-bootstrap>
@@ -58,7 +54,7 @@
                     try {
                         window.localStorage.setItem(storageKey, preference);
                     } catch {
-                        // NOTHING
+                        // NOTHING TO PERSIST
                     }
                 }
 
@@ -88,18 +84,26 @@
                 });
             })();
         </script>
+        <script data-locale-redirect>
+            (() => {
+                if (window.location.pathname !== "/") {
+                    return;
+                }
+
+                const supportedLocales = ["en", "fr", "de"];
+                const browserLanguages = [...(navigator.languages ?? []), navigator.language];
+                const locale = browserLanguages
+                    .filter((language) => typeof language === "string")
+                    .map((language) => language.toLowerCase().split("-")[0])
+                    .find((language) => supportedLocales.includes(language));
+
+                window.location.replace(`/${locale ?? "en"}/`);
+            })();
+        </script>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="canonical" href="https://maxremy.dev/" />
-        <meta property="og:type" content="profile" />
-        <meta property="og:title" content="Max Remy - Developer" />
-        <meta property="og:description" content="Self-taught software engineer with 10 years of freelance experience." />
-        <meta property="og:url" content="https://maxremy.dev/" />
-        <meta property="og:site_name" content="Max Remy" />
-        <meta property="og:locale" content="en_US" />
-        <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="Max Remy - Developer" />
-        <meta name="twitter:description" content="Self-taught software engineer with 10 years of freelance experience." />
-        <title>Max Remy - Developer</title>
+        <title data-page-title>Max Remy - Developer</title>
+        <!--page-metadata-->
+        <!--alternate-links-->
         <!--structured-data-->
     </head>
     <body>

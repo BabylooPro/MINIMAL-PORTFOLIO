@@ -1,18 +1,24 @@
+import type { Messages } from "../i18n/messages/types";
+
 type ThemePreference = "light" | "dark" | "system";
 
-const themePreferences: { label: string; value: ThemePreference }[] = [
-	{ label: "System", value: "system" },
-	{ label: "Light", value: "light" },
-	{ label: "Dark", value: "dark" },
-];
+type ThemeControlProps = {
+	theme: Messages["theme"];
+};
 
 const defaultPreference: ThemePreference = "system";
 
-export function ThemeControl() {
+export function ThemeControl({ theme }: ThemeControlProps) {
+	const preferences: { label: string; value: ThemePreference }[] = [
+		{ label: theme.system, value: "system" },
+		{ label: theme.light, value: "light" },
+		{ label: theme.dark, value: "dark" },
+	];
+
 	return (
 		<fieldset className="theme-control no-print">
-			<legend className="sr-only">Color theme</legend>
-			{themePreferences.map(({ label, value }) => (
+			<legend className="sr-only">{theme.legend}</legend>
+			{preferences.map(({ label, value }) => (
 				<button
 					aria-pressed={defaultPreference === value}
 					className={

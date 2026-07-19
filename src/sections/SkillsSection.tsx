@@ -2,17 +2,18 @@ import { SectionHeading } from "../components/SectionHeading";
 import type { SkillGroup } from "../types/portfolio";
 
 type SkillsSectionProps = {
+	title: string;
 	skillGroups: readonly SkillGroup[];
 };
 
-export function SkillsSection({ skillGroups }: SkillsSectionProps) {
+export function SkillsSection({ skillGroups, title }: SkillsSectionProps) {
 	if (skillGroups.length === 0) {
 		return null;
 	}
 
 	return (
 		<section aria-labelledby="skills-title">
-			<SectionHeading id="skills-title">Skills</SectionHeading>
+			<SectionHeading id="skills-title">{title}</SectionHeading>
 			<ul className="mt-2 space-y-0.5">
 				{skillGroups.map((skillGroup) => (
 					<li key={skillGroup.id} className="leading-5">

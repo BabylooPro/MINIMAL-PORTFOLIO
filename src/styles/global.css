@@ -44,7 +44,6 @@
 }
 
 html {
-	min-width: 320px;
 	background: var(--background-color);
 	scroll-behavior: smooth;
 }
@@ -52,7 +51,6 @@ html {
 body {
 	background: var(--background-color);
 	color: var(--foreground-color);
-	min-width: 320px;
 	min-height: 100vh;
 	margin: 0;
 }

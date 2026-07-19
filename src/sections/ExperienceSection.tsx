@@ -1,38 +1,44 @@
 import { SectionHeading } from "../components/SectionHeading";
+import type { Locale } from "../i18n/config";
+import { formatPortfolioDate } from "../i18n/format";
 import type { Experience } from "../types/portfolio";
 
 type ExperienceSectionProps = {
+	locale: Locale;
+	title: string;
+	presentLabel: string;
 	experiences: readonly Experience[];
 };
-
-function formatDate(date: string) {
-	if (/^\d{4}$/.test(date)) {
-		return date;
-	}
-
-	return new Intl.DateTimeFormat("en-US", {
-		month: "short",
-		timeZone: "UTC",
-		year: "numeric",
-	}).format(new Date(`${date}-01T00:00:00Z`));
-}
 
 function formatWorkContext(experience: Experience) {
 	return [experience.employmentType, experience.location].filter(Boolean).join(" - ");
 }
 
-export function ExperienceSection({ experiences }: ExperienceSectionProps) {
+export function ExperienceSection({
+	experiences,
+	locale,
+	presentLabel,
+	title,
+}: ExperienceSectionProps) {
 	if (experiences.length === 0) {
 		return null;
 	}
 
 	return (
 		<section aria-labelledby="experience-title">
-			<SectionHeading id="experience-title">Experience</SectionHeading>
+			<SectionHeading id="experience-title">{title}</SectionHeading>
 
 			<ol className="mt-4 space-y-6">
 				{experiences.map((experience) => {
 					const workContext = formatWorkContext(experience);
+					const startDate = formatPortfolioDate(
+						locale,
+						experience.startDate,
+						experience.datePrecision,
+					);
+					const endDate = experience.endDate
+						? formatPortfolioDate(locale, experience.endDate, experience.datePrecision)
+						: presentLabel;
 
 					return (
 						<li key={experience.id}>
@@ -45,18 +51,14 @@ export function ExperienceSection({ experiences }: ExperienceSectionProps) {
 
 									<div className="sm:text-right">
 										<p className="font-semibold">
-											<time dateTime={experience.startDate}>
-												{formatDate(experience.startDate)}
-											</time>
+											<time dateTime={experience.startDate}>{startDate}</time>
 
-											<span aria-hidden="true"> - </span>
+											<span aria-hidden="true"> – </span>
 
 											{experience.endDate ? (
-												<time dateTime={experience.endDate}>
-													{formatDate(experience.endDate)}
-												</time>
+												<time dateTime={experience.endDate}>{endDate}</time>
 											) : (
-												"Present"
+												<span>{presentLabel}</span>
 											)}
 										</p>
 
