@@ -34,7 +34,6 @@
                     document.querySelectorAll("[data-theme-preference]").forEach((button) => {
                         const isActive = button.dataset.themePreference === preference;
                         button.setAttribute("aria-pressed", String(isActive));
-                        button.classList.toggle("theme-option-active", isActive);
                     });
                 }
 
