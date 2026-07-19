@@ -31,10 +31,14 @@
                 }
 
                 function updateThemeControl(preference) {
-                    document.querySelectorAll("[data-theme-preference]").forEach((button) => {
+                    const buttons = document.querySelectorAll("[data-theme-preference]");
+
+                    buttons.forEach((button) => {
                         const isActive = button.dataset.themePreference === preference;
                         button.setAttribute("aria-pressed", String(isActive));
                     });
+
+                    return buttons.length > 0;
                 }
 
                 function applyPreference(preference) {
@@ -57,9 +61,21 @@
                     }
                 }
 
+                const themeControlObserver = new MutationObserver(() => {
+                    if (updateThemeControl(readStoredPreference())) {
+                        themeControlObserver.disconnect();
+                    }
+                });
+
+                themeControlObserver.observe(document.documentElement, {
+                    childList: true,
+                    subtree: true,
+                });
                 applyPreference(readStoredPreference());
                 document.addEventListener("DOMContentLoaded", () => {
-                    updateThemeControl(readStoredPreference());
+                    if (updateThemeControl(readStoredPreference())) {
+                        themeControlObserver.disconnect();
+                    }
                 });
                 document.addEventListener("click", (event) => {
                     if (!(event.target instanceof Element)) {
