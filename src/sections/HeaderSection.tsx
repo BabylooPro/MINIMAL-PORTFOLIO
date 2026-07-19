@@ -44,7 +44,16 @@ export function HeaderSection({
 		<header className="pb-9 pt-10 text-left">
 			<div className="flex items-start justify-between gap-4">
 				<div>
-					<h1 className="text-3xl font-semibold tracking-tight">{portfolio.name}</h1>
+					<h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
+						<img
+							src="/myface.png"
+							alt="My Face"
+							aria-hidden="true"
+							className="size-10 rounded-md object-cover"
+						/>
+
+						{portfolio.name}
+					</h1>
 					<p className="mt-2 font-medium">{portfolio.role}</p>
 					<p>{portfolio.location}</p>
 				</div>
