@@ -22,6 +22,7 @@ export type SkillGroup = {
 
 export type Portfolio = {
 	name: string;
+	company: string;
 	role: string;
 	location: string;
 	profile: string;

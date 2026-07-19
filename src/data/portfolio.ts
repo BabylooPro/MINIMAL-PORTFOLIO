@@ -2,6 +2,7 @@ import type { Portfolio } from "../types/portfolio";
 
 export const portfolio = {
 	name: "Max Remy",
+	company: "Max Remy Dev",
 	role: "Software Engineer | Full-Stack Developer",
 	location: "Moudon, Vaud, Switzerland",
 	profile:

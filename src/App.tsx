@@ -1,6 +1,7 @@
 import { Container } from "./components/Container";
 import { portfolio } from "./data/portfolio";
 import { ExperienceSection } from "./sections/ExperienceSection";
+import { FooterSection } from "./sections/FooterSection";
 import { HeaderSection } from "./sections/HeaderSection";
 import { LanguagesSection } from "./sections/LanguagesSection";
 import { ProfileSection } from "./sections/ProfileSection";
@@ -17,6 +18,8 @@ function App() {
 				<LanguagesSection languages={portfolio.languages} />
 				<ExperienceSection experiences={portfolio.experiences} />
 			</main>
+
+			<FooterSection company={portfolio.company} />
 		</Container>
 	);
 }
