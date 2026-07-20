@@ -3,126 +3,21 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-        <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-        <script data-theme-bootstrap>
-            (() => {
-                const storageKey = "theme-preference";
-                const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+        <meta name="theme-color" content="#ffffff" data-theme-color />
+        <meta name="color-scheme" content="light dark" />
 
-                function isThemePreference(preference) {
-                    return preference === "light" || preference === "dark" || preference === "system";
-                }
-
-                function readStoredPreference() {
-                    try {
-                        const preference = window.localStorage.getItem(storageKey);
-                        return isThemePreference(preference) ? preference : "system";
-                    } catch {
-                        return "system";
-                    }
-                }
-
-                function updateThemeColor(isDark) {
-                    document.querySelectorAll('meta[name="theme-color"]').forEach((themeColor) => {
-                        themeColor.removeAttribute("media");
-                        themeColor.setAttribute("content", isDark ? "#000000" : "#ffffff");
-                    });
-                }
-
-                function updateThemeControl(preference) {
-                    const buttons = document.querySelectorAll("[data-theme-preference]");
-
-                    buttons.forEach((button) => {
-                        const isActive = button.dataset.themePreference === preference;
-                        button.setAttribute("aria-pressed", String(isActive));
-                    });
-
-                    return buttons.length > 0;
-                }
-
-                function applyPreference(preference) {
-                    if (preference === "system") {
-                        document.documentElement.removeAttribute("data-theme");
-                        updateThemeColor(systemTheme.matches);
-                    } else {
-                        document.documentElement.dataset.theme = preference;
-                        updateThemeColor(preference === "dark");
-                    }
-
-                    updateThemeControl(preference);
-                }
-
-                function savePreference(preference) {
-                    try {
-                        window.localStorage.setItem(storageKey, preference);
-                    } catch {
-                        // NOTHING TO PERSIST
-                    }
-                }
-
-                const themeControlObserver = new MutationObserver(() => {
-                    if (updateThemeControl(readStoredPreference())) {
-                        themeControlObserver.disconnect();
-                    }
-                });
-
-                themeControlObserver.observe(document.documentElement, {
-                    childList: true,
-                    subtree: true,
-                });
-                applyPreference(readStoredPreference());
-                document.addEventListener("DOMContentLoaded", () => {
-                    if (updateThemeControl(readStoredPreference())) {
-                        themeControlObserver.disconnect();
-                    }
-                });
-                document.addEventListener("click", (event) => {
-                    if (!(event.target instanceof Element)) {
-                        return;
-                    }
-
-                    const button = event.target.closest("button[data-theme-preference]");
-                    const preference = button?.dataset.themePreference;
-
-                    if (!isThemePreference(preference)) {
-                        return;
-                    }
-
-                    savePreference(preference);
-                    applyPreference(preference);
-                });
-                systemTheme.addEventListener("change", () => {
-                    if (readStoredPreference() === "system") {
-                        applyPreference("system");
-                    }
-                });
-            })();
-        </script>
-        <script data-locale-redirect>
-            (() => {
-                if (window.location.pathname !== "/") {
-                    return;
-                }
-
-                const supportedLocales = ["en", "fr", "de"];
-                const browserLanguages = [...(navigator.languages ?? []), navigator.language];
-                const locale = browserLanguages
-                    .filter((language) => typeof language === "string")
-                    .map((language) => language.toLowerCase().split("-")[0])
-                    .find((language) => supportedLocales.includes(language));
-
-                window.location.replace(`/${locale ?? "en"}/`);
-            })();
-        </script>
         <link rel="icon" href="/favicon.png" type="image/png" sizes="256x256" />
         <title data-page-title>Max Remy - Developer</title>
+
+        <!--theme-bootstrap-->
+        <!--locale-redirect-->
         <!--page-metadata-->
         <!--alternate-links-->
         <!--structured-data-->
     </head>
     <body>
         <div id="root"><!--app-html--></div>
-        <script type="module" src="/src/main.tsx"></script>
+        <script type="module" src="/src/main.tsx" data-react-entry></script>
+        <script type="module" src="/src/client/theme-controller.ts" data-theme-controller></script>
     </body>
 </html>

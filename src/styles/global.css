@@ -14,7 +14,7 @@
 	text-rendering: optimizeLegibility;
 	color: var(--foreground-color);
 	background: var(--background-color);
-	color-scheme: light;
+	color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {

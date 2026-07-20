@@ -1,4 +1,5 @@
 import { StrictMode } from "react";
+import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import { defaultLocale, getLocaleFromPathname } from "./i18n/config";
@@ -17,8 +18,12 @@ const dictionary = getDictionary(locale);
 document.documentElement.lang = locale;
 document.title = dictionary.messages.meta.title;
 
-createRoot(root).render(
-	<StrictMode>
-		<App dictionary={dictionary} locale={locale} />
-	</StrictMode>,
-);
+const appRoot = createRoot(root);
+
+flushSync(() => {
+	appRoot.render(
+		<StrictMode>
+			<App dictionary={dictionary} locale={locale} />
+		</StrictMode>,
+	);
+});
