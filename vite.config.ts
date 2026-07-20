@@ -11,12 +11,12 @@ const localeRedirectPath = fileURLToPath(
 	new URL("./src/client/locale-redirect.js", import.meta.url),
 );
 const indexHtmlPath = fileURLToPath(new URL("./index.html", import.meta.url));
-const themeControllerPath = fileURLToPath(
-	new URL("./src/client/theme-controller.ts", import.meta.url),
+const siteControllerPath = fileURLToPath(
+	new URL("./src/client/site-controller.ts", import.meta.url),
 );
-const themeControllerMarker = "<!--theme-controller-->";
-const themeControllerScriptPattern =
-	/<script\b(?=[^>]*\bdata-theme-controller\b)[\s\S]*?<\/script>/gi;
+const siteControllerMarker = "<!--site-controller-->";
+const siteControllerScriptPattern =
+	/<script\b(?=[^>]*\bdata-site-controller\b)[\s\S]*?<\/script>/gi;
 
 function escapeRegularExpression(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -69,38 +69,38 @@ const inlineScriptsPlugin = inlineHeadScripts([
 	},
 ]);
 
-function separateThemeController(): Plugin {
+function separateSiteController(): Plugin {
 	let isClientProductionBuild = false;
 
 	return {
-		name: "separate-theme-controller",
+		name: "separate-site-controller",
 		configResolved(config) {
 			isClientProductionBuild = config.command === "build" && !config.build.ssr;
 		},
 		transformIndexHtml: {
 			order: "pre",
 			handler(html) {
-				const controllerScripts = html.match(themeControllerScriptPattern) ?? [];
+				const controllerScripts = html.match(siteControllerScriptPattern) ?? [];
 
 				if (controllerScripts.length !== 1) {
-					throw new Error("The HTML must contain exactly one theme controller script.");
+					throw new Error("The HTML must contain exactly one site controller script.");
 				}
 
 				if (!isClientProductionBuild) {
 					return html;
 				}
 
-				return html.replace(themeControllerScriptPattern, themeControllerMarker);
+				return html.replace(siteControllerScriptPattern, siteControllerMarker);
 			},
 		},
 	};
 }
 
-function injectThemeController(): Plugin {
+function injectSiteController(): Plugin {
 	let isClientProductionBuild = false;
 
 	return {
-		name: "inject-theme-controller",
+		name: "inject-site-controller",
 		configResolved(config) {
 			isClientProductionBuild = config.command === "build" && !config.build.ssr;
 		},
@@ -113,22 +113,22 @@ function injectThemeController(): Plugin {
 
 				const controller = Object.values(context.bundle ?? {}).find(
 					(output) =>
-						output.type === "chunk" && output.facadeModuleId === themeControllerPath,
+						output.type === "chunk" && output.facadeModuleId === siteControllerPath,
 				);
 				const reactEntry = Object.values(context.bundle ?? {}).find(
 					(output) => output.type === "chunk" && output.facadeModuleId === indexHtmlPath,
 				);
 
 				if (controller?.type !== "chunk") {
-					throw new Error("The theme controller entry was not generated.");
+					throw new Error("The site controller entry was not generated.");
 				}
 
 				if (reactEntry?.type !== "chunk") {
 					throw new Error("The React development entry was not generated.");
 				}
 
-				if (!html.includes(themeControllerMarker)) {
-					throw new Error("The theme controller HTML marker was not found.");
+				if (!html.includes(siteControllerMarker)) {
+					throw new Error("The site controller HTML marker was not found.");
 				}
 
 				const reactEntryScriptPattern = new RegExp(
@@ -146,8 +146,8 @@ function injectThemeController(): Plugin {
 						scriptTag.replace(">", " data-react-entry>"),
 					)
 					.replace(
-						themeControllerMarker,
-						`<script type="module" src="/${controller.fileName}" data-theme-controller></script>`,
+						siteControllerMarker,
+						`<script type="module" src="/${controller.fileName}" data-site-controller></script>`,
 					);
 			},
 		},
@@ -160,14 +160,14 @@ export default defineConfig({
 		rollupOptions: {
 			input: {
 				index: indexHtmlPath,
-				"theme-controller": themeControllerPath,
+				"site-controller": siteControllerPath,
 			},
 		},
 	},
 	plugins: [
-		separateThemeController(),
+		separateSiteController(),
 		inlineScriptsPlugin,
-		injectThemeController(),
+		injectSiteController(),
 		react(),
 		tailwindcss(),
 	],

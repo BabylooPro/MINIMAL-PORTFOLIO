@@ -11,6 +11,7 @@ export const deMessages = {
 		profile: "Profil",
 		skills: "Kompetenzen",
 		languages: "Sprachen",
+		codingManual: "Coding Manual",
 		experience: "Berufserfahrung",
 	},
 	labels: {
@@ -18,6 +19,12 @@ export const deMessages = {
 		present: "Heute",
 		email: "E-Mail",
 		phone: "Telefon",
+	},
+	codingManual: {
+		previousVideo: "Vorheriges Video",
+		nextVideo: "Nächstes Video",
+		video: "Zeitraffer",
+		videoCounterTemplate: "Video {current} von {total}",
 	},
 	theme: {
 		legend: "Farbschema",

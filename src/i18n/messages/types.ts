@@ -8,6 +8,7 @@ export type Messages = {
 		profile: string;
 		skills: string;
 		languages: string;
+		codingManual: string;
 		experience: string;
 	};
 	labels: {
@@ -15,6 +16,12 @@ export type Messages = {
 		present: string;
 		email: string;
 		phone: string;
+	};
+	codingManual: {
+		previousVideo: string;
+		nextVideo: string;
+		video: string;
+		videoCounterTemplate: string;
 	};
 	theme: {
 		legend: string;

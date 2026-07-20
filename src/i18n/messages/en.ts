@@ -11,6 +11,7 @@ export const enMessages = {
 		profile: "Profile",
 		skills: "Skills",
 		languages: "Languages",
+		codingManual: "Coding Manual",
 		experience: "Experience",
 	},
 	labels: {
@@ -18,6 +19,12 @@ export const enMessages = {
 		present: "Present",
 		email: "Email",
 		phone: "Phone",
+	},
+	codingManual: {
+		previousVideo: "Previous video",
+		nextVideo: "Next video",
+		video: "Timelapse",
+		videoCounterTemplate: "Video {current} of {total}",
 	},
 	theme: {
 		legend: "Color theme",

@@ -3,6 +3,7 @@ import { Container } from "./components/Container";
 import type { Locale } from "./i18n/config";
 import type { Dictionary } from "./i18n/dictionaries";
 
+import { CodingManualSection } from "./sections/CodingManualSection";
 import { ExperienceSection } from "./sections/ExperienceSection";
 import { FooterSection } from "./sections/FooterSection";
 import { HeaderSection } from "./sections/HeaderSection";
@@ -30,6 +31,13 @@ function App({ locale, dictionary }: AppProps) {
 
 			<main className="space-y-7 pb-12">
 				<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
+				<CodingManualSection
+					nextVideoLabel={messages.codingManual.nextVideo}
+					previousVideoLabel={messages.codingManual.previousVideo}
+					title={messages.sections.codingManual}
+					videoCounterTemplate={messages.codingManual.videoCounterTemplate}
+					videoLabel={messages.codingManual.video}
+				/>
 				<SkillsSection
 					skillGroups={portfolio.skillGroups}
 					title={messages.sections.skills}

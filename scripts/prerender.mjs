@@ -16,7 +16,7 @@ const alternateLinksMarker = "<!--alternate-links-->";
 const pageMetadataMarker = "<!--page-metadata-->";
 const structuredDataMarker = "<!--structured-data-->";
 const pageTitlePattern = /<title data-page-title>.*?<\/title>/;
-const themeControllerEntry = "src/client/theme-controller.ts";
+const siteControllerEntry = "src/client/site-controller.ts";
 const siteName = "Max Remy";
 const routes = [
 	{ kind: "root" },
@@ -97,7 +97,7 @@ function isJsonLdScript(scriptElement) {
 
 function normalizePublicAssetPath(assetPath) {
 	if (!assetPath.startsWith("/") || assetPath.startsWith("//")) {
-		throw new Error(`The theme controller has an invalid public path: ${assetPath}`);
+		throw new Error(`The site controller has an invalid public path: ${assetPath}`);
 	}
 
 	return assetPath.slice(1);
@@ -108,26 +108,26 @@ function toDistPath(assetPath) {
 	const distPrefix = `${distDirectory}${path.sep}`;
 
 	if (!outputPath.startsWith(distPrefix)) {
-		throw new Error(`The theme controller asset is outside dist: ${assetPath}`);
+		throw new Error(`The site controller asset is outside dist: ${assetPath}`);
 	}
 
 	return outputPath;
 }
 
-function getThemeControllerScript(html) {
+function getSiteControllerScript(html) {
 	const controllerScripts = getScriptElements(html).filter((scriptElement) =>
-		hasAttribute(scriptElement, "data-theme-controller"),
+		hasAttribute(scriptElement, "data-site-controller"),
 	);
 
 	if (controllerScripts.length !== 1) {
-		throw new Error("The production HTML must contain exactly one theme controller script.");
+		throw new Error("The production HTML must contain exactly one site controller script.");
 	}
 
 	const [controllerScript] = controllerScripts;
 	const src = getAttribute(controllerScript, "src");
 
 	if (!isModuleScript(controllerScript) || !src) {
-		throw new Error("The theme controller must be a module script with a src attribute.");
+		throw new Error("The site controller must be a module script with a src attribute.");
 	}
 
 	return { src };
@@ -169,17 +169,17 @@ function getReactEntryScript(html) {
 	}
 }
 
-function readThemeControllerAssets(manifest, controllerSrc) {
-	const controller = manifest[themeControllerEntry];
+function readSiteControllerAssets(manifest, controllerSrc) {
+	const controller = manifest[siteControllerEntry];
 
 	if (!controller || typeof controller.file !== "string") {
-		throw new Error("The Vite manifest does not contain the theme controller entry.");
+		throw new Error("The Vite manifest does not contain the site controller entry.");
 	}
 
 	const controllerAssetPath = normalizePublicAssetPath(controllerSrc);
 
 	if (controller.file !== controllerAssetPath) {
-		throw new Error("The Vite manifest and the theme controller script disagree.");
+		throw new Error("The Vite manifest and the site controller script disagree.");
 	}
 
 	const assetPaths = new Set();
@@ -211,7 +211,7 @@ function readThemeControllerAssets(manifest, controllerSrc) {
 		}
 	}
 
-	visit(themeControllerEntry);
+	visit(siteControllerEntry);
 
 	return new Set([...assetPaths].map(toDistPath));
 }
@@ -255,7 +255,7 @@ function removeReactAndUnusedModules(html) {
 				return scriptElement;
 			}
 
-			if (hasAttribute(scriptElement, "data-theme-controller")) {
+			if (hasAttribute(scriptElement, "data-site-controller")) {
 				return scriptElement;
 			}
 
@@ -284,7 +284,7 @@ function removeLocaleRedirect(html) {
 	return html.replace(redirectScript, "");
 }
 
-function validatePageHtml(page, route, indexHtml, themeControllerSrc) {
+function validatePageHtml(page, route, indexHtml, siteControllerSrc) {
 	if (!indexHtml.includes("Max Remy")) {
 		throw new Error(`The ${route.kind} page does not contain "Max Remy".`);
 	}
@@ -308,14 +308,14 @@ function validatePageHtml(page, route, indexHtml, themeControllerSrc) {
 	const localeRedirectScripts = scriptElements.filter((scriptElement) =>
 		hasAttribute(scriptElement, "data-locale-redirect"),
 	);
-	const controller = getThemeControllerScript(indexHtml);
+	const controller = getSiteControllerScript(indexHtml);
 
 	if (
 		scriptElements.some(
 			(scriptElement) =>
 				!isJsonLdScript(scriptElement) &&
 				!hasAttribute(scriptElement, "data-theme-bootstrap") &&
-				!hasAttribute(scriptElement, "data-theme-controller") &&
+				!hasAttribute(scriptElement, "data-site-controller") &&
 				!(route.kind === "root" && hasAttribute(scriptElement, "data-locale-redirect")),
 		)
 	) {
@@ -352,8 +352,8 @@ function validatePageHtml(page, route, indexHtml, themeControllerSrc) {
 		throw new Error(`The ${route.kind} page must not contain browser language detection.`);
 	}
 
-	if (controller.src !== themeControllerSrc) {
-		throw new Error(`The ${route.kind} page has an incorrect theme controller source.`);
+	if (controller.src !== siteControllerSrc) {
+		throw new Error(`The ${route.kind} page has an incorrect site controller source.`);
 	}
 
 	if (!indexHtml.includes(`<html lang="${page.lang}">`)) {
@@ -447,12 +447,12 @@ async function validateStaticOutput(renderedPages, files, sitemap, allowedJavaSc
 		throw new Error("The production sitemap file was not generated.");
 	}
 
-	for (const { page, route, outputPath, html, themeControllerSrc } of renderedPages) {
+	for (const { page, route, outputPath, html, siteControllerSrc } of renderedPages) {
 		if (!files.includes(outputPath)) {
 			throw new Error(`The ${route.kind} output file was not generated.`);
 		}
 
-		validatePageHtml(page, route, html, themeControllerSrc);
+		validatePageHtml(page, route, html, siteControllerSrc);
 	}
 
 	if (
@@ -519,7 +519,7 @@ if (
 	throw new Error("The production HTML is missing a metadata marker.");
 }
 
-const themeController = getThemeControllerScript(templateHtml);
+const siteController = getSiteControllerScript(templateHtml);
 getReactEntryScript(templateHtml);
 getLocaleRedirectScript(templateHtml);
 
@@ -531,7 +531,7 @@ try {
 	throw new Error("The Vite manifest was not generated.");
 }
 
-const themeControllerAssets = readThemeControllerAssets(manifest, themeController.src);
+const siteControllerAssets = readSiteControllerAssets(manifest, siteController.src);
 const staticTemplateHtml = removeReactAndUnusedModules(templateHtml);
 
 const renderedPages = await Promise.all(
@@ -560,7 +560,7 @@ const renderedPages = await Promise.all(
 		await mkdir(path.dirname(outputPath), { recursive: true });
 		await writeFile(outputPath, html, "utf8");
 
-		return { page, route, outputPath, html, themeControllerSrc: themeController.src };
+		return { page, route, outputPath, html, siteControllerSrc: siteController.src };
 	}),
 );
 
@@ -580,9 +580,9 @@ await rm(manifestDirectory, {
 	recursive: true,
 	force: true,
 });
-await removeUnusedJavaScriptFiles(themeControllerAssets);
+await removeUnusedJavaScriptFiles(siteControllerAssets);
 
 const outputFiles = await listFiles(distDirectory);
-await validateStaticOutput(renderedPages, outputFiles, sitemap, themeControllerAssets);
+await validateStaticOutput(renderedPages, outputFiles, sitemap, siteControllerAssets);
 
 console.log("Static HTML generated successfully.");

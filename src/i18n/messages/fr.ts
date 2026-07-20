@@ -11,6 +11,7 @@ export const frMessages = {
 		profile: "Profil",
 		skills: "Compétences",
 		languages: "Langues",
+		codingManual: "Coding Manual",
 		experience: "Expérience",
 	},
 	labels: {
@@ -18,6 +19,12 @@ export const frMessages = {
 		present: "Aujourd’hui",
 		email: "E-mail",
 		phone: "Téléphone",
+	},
+	codingManual: {
+		previousVideo: "Vidéo précédente",
+		nextVideo: "Vidéo suivante",
+		video: "Timelapse",
+		videoCounterTemplate: "Vidéo {current} sur {total}",
 	},
 	theme: {
 		legend: "Thème de couleur",
