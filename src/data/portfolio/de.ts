@@ -54,7 +54,7 @@ export const portfolioDe = {
 	role: "Softwareentwickler | Full-Stack-Entwickler",
 	location: "Moudon, Waadt, Schweiz",
 	summary:
-		"Ein vielseitiger Softwareentwickler mit 10 Jahren Erfahrung als Freelancer.\nVollständig autodidaktisch, ohne formalen Abschluss.",
+		"Ein Schweizer Taschenmesser-Entwickler mit 10 Jahren Erfahrung als Freiberufler.\nVollständig autodidaktisch, ohne formalen Abschluss.",
 	languages: [
 		"Französisch - Muttersprache (C2)",
 		"Englisch - Mittelstufe (B1+)",

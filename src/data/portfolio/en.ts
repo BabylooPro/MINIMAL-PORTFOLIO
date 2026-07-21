@@ -54,7 +54,7 @@ export const portfolioEn = {
 	role: "Software Engineer | Full-Stack Developer",
 	location: "Moudon, Vaud, Switzerland",
 	summary:
-		"A versatile software developer with 10 years of freelance experience.\nEntirely self-taught, with no formal degree.",
+		"A Swiss Army knife developer with 10 years of freelance experience.\nEntirely self-taught, with no formal degree.",
 	languages: ["French - Native (C2)", "English - Intermediate (B1+)", "German - Beginner (A1)"],
 	experiences: createLocalizedExperiences(experienceContent),
 	skillGroups: createSkillGroups(skillGroupLabels),

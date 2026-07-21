@@ -55,7 +55,7 @@ export const portfolioFr = {
 	role: "Ingénieur logiciel | Développeur full-stack",
 	location: "Moudon, Vaud, Suisse",
 	summary:
-		"Un développeur logiciel polyvalent avec 10 ans d’expérience en freelance.\nEntièrement autodidacte, sans diplôme formel.",
+		"Un développeur couteau suisse avec 10 ans d’expérience en freelance.\nEntièrement autodidacte, sans diplôme formel.",
 	languages: [
 		"Français - langue maternelle (C2)",
 		"Anglais - niveau intermédiaire (B1+)",
