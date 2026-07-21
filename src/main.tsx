@@ -12,7 +12,8 @@ if (!root) {
 	throw new Error('Root element "#root" was not found.');
 }
 
-const locale = getLocaleFromPathname(window.location.pathname) ?? defaultLocale;
+const requestedLocale = getLocaleFromPathname(window.location.pathname);
+const locale = requestedLocale ?? defaultLocale;
 const dictionary = getDictionary(locale);
 
 document.documentElement.lang = locale;
@@ -23,7 +24,11 @@ const appRoot = createRoot(root);
 flushSync(() => {
 	appRoot.render(
 		<StrictMode>
-			<App dictionary={dictionary} locale={locale} />
+			<App
+				dictionary={dictionary}
+				locale={locale}
+				showSideProjects={requestedLocale !== null}
+			/>
 		</StrictMode>,
 	);
 });

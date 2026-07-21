@@ -9,14 +9,16 @@ import { FooterSection } from "./sections/FooterSection";
 import { HeaderSection } from "./sections/HeaderSection";
 import { LanguagesSection } from "./sections/LanguagesSection";
 import { ProfileSection } from "./sections/ProfileSection";
+import { SideProjectsSection } from "./sections/SideProjectsSection";
 import { SkillsSection } from "./sections/SkillsSection";
 
 type AppProps = {
 	locale: Locale;
 	dictionary: Dictionary;
+	showSideProjects: boolean;
 };
 
-function App({ locale, dictionary }: AppProps) {
+function App({ locale, dictionary, showSideProjects }: AppProps) {
 	const { messages, portfolio } = dictionary;
 
 	return (
@@ -31,6 +33,7 @@ function App({ locale, dictionary }: AppProps) {
 
 			<main className="space-y-7 pb-12">
 				<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
+
 				<CodingManualSection
 					nextVideoLabel={messages.codingManual.nextVideo}
 					previousVideoLabel={messages.codingManual.previousVideo}
@@ -38,14 +41,25 @@ function App({ locale, dictionary }: AppProps) {
 					videoCounterTemplate={messages.codingManual.videoCounterTemplate}
 					videoLabel={messages.codingManual.video}
 				/>
+
 				<SkillsSection
 					skillGroups={portfolio.skillGroups}
 					title={messages.sections.skills}
 				/>
+
 				<LanguagesSection
 					languages={portfolio.languages}
 					title={messages.sections.languages}
 				/>
+
+				{showSideProjects ? (
+					<SideProjectsSection
+						content={messages.sideProjects}
+						locale={locale}
+						title={messages.sections.sideProjects}
+					/>
+				) : null}
+
 				<ExperienceSection
 					experiences={portfolio.experiences}
 					locale={locale}

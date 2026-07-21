@@ -10,6 +10,7 @@ export type Messages = {
 		languages: string;
 		codingManual: string;
 		experience: string;
+		sideProjects: string;
 	};
 	labels: {
 		languageSwitcher: string;
@@ -22,6 +23,17 @@ export type Messages = {
 		nextVideo: string;
 		video: string;
 		videoCounterTemplate: string;
+	};
+	sideProjects: {
+		repositoryLabel: string;
+		liveDemoLabel: string;
+		createdLabel: string;
+		projects: {
+			[repositorySlug: string]: {
+				title: string;
+				description: string;
+			};
+		};
 	};
 	theme: {
 		legend: string;

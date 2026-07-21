@@ -1,0 +1,42 @@
+[
+	{
+		"slug": "babyloopro/contactform.csharp",
+		"name": "ContactForm.csharp",
+		"repositoryUrl": "https://github.com/BabylooPro/ContactForm.csharp",
+		"homepageUrl": null,
+		"githubDescription": "BACKEND CONTACT FORM API WITH DOTNET 8.0",
+		"primaryLanguage": "C#",
+		"createdAt": "2023-11-28T00:39:16Z",
+		"topics": ["aws-lambda", "dotnet-8", "email-service"]
+	},
+	{
+		"slug": "babyloopro/open-autotools",
+		"name": "Open-AutoTools",
+		"repositoryUrl": "https://github.com/BabylooPro/Open-AutoTools",
+		"homepageUrl": "https://pypi.org/project/Open-AutoTools/",
+		"githubDescription": "PYTHON CLI TOOLKIT FOR EVERYDAY DEVELOPER TASKS",
+		"primaryLanguage": "Python",
+		"createdAt": "2024-02-21T16:11:05Z",
+		"topics": ["cli", "multi-tools", "productivity"]
+	},
+	{
+		"slug": "maxremydev/dont-commit-just-save",
+		"name": "DONT-COMMIT-JUST-SAVE",
+		"repositoryUrl": "https://github.com/MaxRemyDev/DONT-COMMIT-JUST-SAVE",
+		"homepageUrl": "https://marketplace.visualstudio.com/items?itemName=MaxRemyDev.dont-commit-just-save",
+		"githubDescription": "VSCODE EXTENSION THAT BLOCKS GIT PUSHES WITH \"DONT COMMIT JUST SAVE\" COMMITS MESSAGE",
+		"primaryLanguage": "TypeScript",
+		"createdAt": "2024-12-22T22:04:49Z",
+		"topics": ["vscode-extension"]
+	},
+	{
+		"slug": "babyloopro/showgooglereviews.jsx",
+		"name": "ShowGoogleReviews.jsx",
+		"repositoryUrl": "https://github.com/BabylooPro/ShowGoogleReviews.jsx",
+		"homepageUrl": null,
+		"githubDescription": "SHOW GOOGLE REVIEW WITH REACTJS",
+		"primaryLanguage": "JavaScript",
+		"createdAt": "2023-10-03T20:31:33Z",
+		"topics": ["api", "google-maps-api", "reactjs"]
+	}
+]

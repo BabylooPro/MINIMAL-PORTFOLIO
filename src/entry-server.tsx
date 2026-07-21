@@ -35,7 +35,9 @@ export function renderPage(route: StaticRoute): RenderedPage {
 		const dictionary = getDictionary(defaultLocale);
 
 		return {
-			appHtml: renderToStaticMarkup(<App dictionary={dictionary} locale={defaultLocale} />),
+			appHtml: renderToStaticMarkup(
+				<App dictionary={dictionary} locale={defaultLocale} showSideProjects={false} />,
+			),
 			lang: "en",
 			pathname: "/",
 			title: dictionary.messages.meta.title,
@@ -51,7 +53,9 @@ export function renderPage(route: StaticRoute): RenderedPage {
 	const localeConfig = localeConfigs[route.locale];
 
 	return {
-		appHtml: renderToStaticMarkup(<App dictionary={dictionary} locale={route.locale} />),
+		appHtml: renderToStaticMarkup(
+			<App dictionary={dictionary} locale={route.locale} showSideProjects />,
+		),
 		lang: localeConfig.htmlLang,
 		pathname: localeConfig.pathname,
 		title: dictionary.messages.meta.title,

@@ -12,7 +12,8 @@ export const enMessages = {
 		skills: "Skills",
 		languages: "Languages",
 		codingManual: "Coding Manual",
-		experience: "Experience",
+		experience: "Professional Experience",
+		sideProjects: "Public Side Projects",
 	},
 	labels: {
 		languageSwitcher: "Language",
@@ -25,6 +26,32 @@ export const enMessages = {
 		nextVideo: "Next video",
 		video: "Timelapse",
 		videoCounterTemplate: "Video {current} of {total}",
+	},
+	sideProjects: {
+		repositoryLabel: "Repository",
+		liveDemoLabel: "Live demo",
+		createdLabel: "Created",
+		projects: {
+			"babyloopro/contactform.csharp": {
+				title: "ContactForm.csharp",
+				description:
+					"A .NET 8 backend API for secure contact-form submissions and email delivery.",
+			},
+			"babyloopro/open-autotools": {
+				title: "Open AutoTools",
+				description:
+					"A Python command-line toolkit for recurring everyday developer tasks.",
+			},
+			"maxremydev/dont-commit-just-save": {
+				title: "DONT COMMIT JUST SAVE",
+				description:
+					"A VS Code extension that blocks Git pushes after a DONT COMMIT JUST SAVE commit message.",
+			},
+			"babyloopro/showgooglereviews.jsx": {
+				title: "ShowGoogleReviews.jsx",
+				description: "A React component for displaying Google reviews in web interfaces.",
+			},
+		},
 	},
 	theme: {
 		legend: "Color theme",

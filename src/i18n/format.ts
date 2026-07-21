@@ -1,6 +1,6 @@
 import type { DatePrecision } from "../types/portfolio";
-import type { Locale } from "./config";
-import { localeConfigs } from "./config";
+import type { Locale } from "./config.ts";
+import { localeConfigs } from "./config.ts";
 
 function parsePortfolioDate(value: string): Date {
 	if (/^\d{4}$/.test(value)) {
@@ -37,6 +37,15 @@ export function formatPortfolioDate(
 	const formattedDate = formatter.format(parsePortfolioDate(value));
 
 	return locale === "fr" ? capitalizeFrenchDate(formattedDate) : formattedDate;
+}
+
+export function formatSideProjectDate(locale: Locale, value: string): string {
+	return new Intl.DateTimeFormat(locale, {
+		day: "numeric",
+		month: "short",
+		year: "numeric",
+		timeZone: "UTC",
+	}).format(new Date(value));
 }
 
 export function isValidPortfolioDate(value: string, precision: DatePrecision): boolean {

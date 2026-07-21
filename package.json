@@ -5,17 +5,19 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc -b && pnpm build:client && pnpm build:server && pnpm prerender",
+		"build": "pnpm refresh && tsc -b && pnpm build:client && pnpm build:server && pnpm prerender",
 		"build:client": "vite build",
 		"build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
 		"prerender": "node scripts/prerender.mjs",
+		"refresh": "node scripts/refresh.mjs",
+		"test": "node --experimental-strip-types --test",
 		"preview": "vite preview",
 		"typecheck": "tsc -b --pretty false",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"check": "biome check .",
 		"check:write": "biome check --write .",
-		"validate": "pnpm typecheck && pnpm check && pnpm build"
+		"validate": "pnpm typecheck && pnpm check && pnpm test && pnpm build"
 	},
 	"dependencies": {
 		"react": "^19.2.7",

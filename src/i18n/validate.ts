@@ -1,6 +1,8 @@
+import sideProjects from "../generated/side-projects.json";
 import type { Portfolio } from "../types/portfolio";
 import { dictionaries } from "./dictionaries";
 import { isValidPortfolioDate } from "./format";
+import { validateSideProjectTranslations } from "./side-projects-validation";
 
 type Scalar = string | number | boolean | null | undefined;
 
@@ -122,4 +124,14 @@ export function validateDictionaries(): void {
 		assertEqualDateData(englishPortfolio, dictionary.portfolio, locale);
 		assertEqualTechnologies(englishPortfolio, dictionary.portfolio, locale);
 	});
+
+	validateSideProjectTranslations(
+		sideProjects,
+		Object.fromEntries(
+			Object.entries(dictionaries).map(([locale, dictionary]) => [
+				locale,
+				dictionary.messages.sideProjects.projects,
+			]),
+		),
+	);
 }

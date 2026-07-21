@@ -17,17 +17,17 @@ How [maxremy.dev](https://maxremy.dev/) is built :
 - Client-side hydration: none
 - Theme bootstrap inline gzip: less than 1 kB (429 B gzip)
 - Locale redirect inline gzip: less than 0.5 kB (292 B gzip)
-- Site controller gzip : less than 2 kB (1,399 B gzip)
+- Site controller gzip: less than 2 kB (1,371 B gzip)
 - Total executable JavaScript gzip: less than 2.5 kB
-    - Root page: 2,120 B gzip
-    - Localized pages: 1,828 B gzip
-- CSS gzip: less than 5 kB (4,204 B gzip)
-- HTML gzip per page: less than 5 kB
-    - Root: 4,440 B gzip
-    - EN: 4,217 B gzip
-    - FR: 4,370 B gzip
-    - DE: 4,336 B gzip
-- Videos timelapse: 235 MB total (H.264 MP4)
+    - Root page: 2,092 B gzip
+    - Localized pages: 1,800 B gzip
+- CSS gzip: less than 5 kB (4,292 B gzip)
+- HTML gzip per page: less than 5.5 kB
+    - Root: 4,437 B gzip
+    - EN: 4,976 B gzip
+    - FR: 5,166 B gzip
+    - DE: 5,135 B gzip
+- Videos timelapse: 226 MB total (H.264 MP4)
     - images previews: 349 kB total, lazy-loaded
 - External fonts: 0
 - Third-party runtime requests: 0
