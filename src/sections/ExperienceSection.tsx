@@ -45,12 +45,14 @@ export function ExperienceSection({
 							<article>
 								<header className="mt-2 grid gap-x-6 gap-y-1 border-t border-(--border-color) sm:grid-cols-[minmax(0,1fr)_auto]">
 									<div>
-										<h3 className="font-semibold">{experience.role}</h3>
+										<h3 className="font-semibold text-(--foreground-color)">
+											{experience.role}
+										</h3>
 										<p className="italic">{experience.company}</p>
 									</div>
 
 									<div className="sm:text-right">
-										<p className="font-semibold">
+										<p className="font-semibold text-(--foreground-color)">
 											<time dateTime={experience.startDate}>{startDate}</time>
 
 											<span aria-hidden="true"> – </span>

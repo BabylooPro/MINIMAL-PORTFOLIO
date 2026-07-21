@@ -5,6 +5,7 @@
 	--background-color: #ffffff;
 	--active-hover-color: #262626;
 	--border-color: #a3a3a3;
+	--body-color: #000000;
 	--foreground-color: #000000;
 	--inactive-hover-color: #e6e6e6;
 	--muted-color: #737373;
@@ -22,6 +23,7 @@
 		--background-color: #000000;
 		--active-hover-color: #d9d9d9;
 		--border-color: #737373;
+		--body-color: #e2e2e2;
 		--foreground-color: #ffffff;
 		--inactive-hover-color: #1a1a1a;
 		--muted-color: #a3a3a3;
@@ -33,6 +35,7 @@
 	--background-color: #000000;
 	--active-hover-color: #d9d9d9;
 	--border-color: #737373;
+	--body-color: #e2e2e2;
 	--foreground-color: #ffffff;
 	--inactive-hover-color: #1a1a1a;
 	--muted-color: #a3a3a3;
@@ -50,7 +53,7 @@ html {
 
 body {
 	background: var(--background-color);
-	color: var(--foreground-color);
+	color: var(--body-color);
 	min-height: 100vh;
 	margin: 0;
 }

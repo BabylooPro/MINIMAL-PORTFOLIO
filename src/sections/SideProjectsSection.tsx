@@ -33,7 +33,7 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 					return (
 						<li key={project.slug} className="row-span-5 grid grid-rows-subgrid">
 							<article className="row-span-5 grid grid-rows-subgrid">
-								<h3 className="border-t border-(--border-color) pt-2 font-semibold">
+								<h3 className="border-t border-(--border-color) pt-2 font-semibold text-(--foreground-color)">
 									{localizedProject?.title ?? project.name}
 								</h3>
 
@@ -66,7 +66,7 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 									{content.createdLabel} {createdAt}
 								</p>
 
-								<p className="mt-3 pb-5 text-sm font-medium">
+								<p className="mt-3 pb-5 text-sm font-medium text-(--foreground-color)">
 									<a
 										className="hover:underline focus-visible:underline"
 										href={project.repositoryUrl}
