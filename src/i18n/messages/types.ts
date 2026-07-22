@@ -19,6 +19,9 @@ export type Messages = {
 		phone: string;
 	};
 	codingManual: {
+		description: string;
+		postscript: string;
+		tooltipLabel: string;
 		previousVideo: string;
 		nextVideo: string;
 		video: string;

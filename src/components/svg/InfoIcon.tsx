@@ -1,0 +1,9 @@
+export function InfoIcon() {
+	return (
+		<svg aria-hidden="true" className="size-4" fill="none" viewBox="0 0 24 24">
+			<circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.75" />
+			<circle cx="12" cy="7.5" r="1" fill="currentColor" />
+			<path d="M12 10.5v5" stroke="currentColor" strokeWidth="1.75" />
+		</svg>
+	);
+}

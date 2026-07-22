@@ -35,9 +35,13 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 				<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
 
 				<CodingManualSection
+					description={messages.codingManual.description}
+					links={portfolio.links}
 					nextVideoLabel={messages.codingManual.nextVideo}
+					postscript={messages.codingManual.postscript}
 					previousVideoLabel={messages.codingManual.previousVideo}
 					title={messages.sections.codingManual}
+					tooltipLabel={messages.codingManual.tooltipLabel}
 					videoCounterTemplate={messages.codingManual.videoCounterTemplate}
 					videoLabel={messages.codingManual.video}
 				/>

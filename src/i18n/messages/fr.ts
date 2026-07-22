@@ -11,7 +11,7 @@ export const frMessages = {
 		profile: "Profil",
 		skills: "Compétences",
 		languages: "Langues",
-		codingManual: "Coding Manual",
+		codingManual: "Démonstration de savoir-faire",
 		experience: "Expérience professionnelle",
 		sideProjects: "Projets personnels public",
 	},
@@ -22,6 +22,11 @@ export const frMessages = {
 		phone: "Téléphone",
 	},
 	codingManual: {
+		description:
+			"De véritables sessions de développement où j’écris le code moi-même, condensées en timelapses ultra-rapides. J’y utilise peu, voire pas, d’IA, juste pour retrouver les sensations de la bonne époque :)\n\nDes versions plus lentes sont disponibles sur ma chaîne YouTube.",
+		postscript:
+			"P.-S. : Hors vidéo, j’utilise bien les IA agentiques pour aller plus vite, mais jamais pour « vibe coder ». Je garde la main sur la réflexion, l’architecture, le code et les décisions techniques.",
+		tooltipLabel: "À propos de la démonstration de savoir-faire",
 		previousVideo: "Vidéo précédente",
 		nextVideo: "Vidéo suivante",
 		video: "Timelapse",

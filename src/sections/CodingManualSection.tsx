@@ -1,7 +1,15 @@
 import { SectionHeading } from "../components/SectionHeading";
+import { InfoIcon } from "../components/svg/InfoIcon";
+import { Tooltip } from "../components/Tooltip";
+import type { ExternalLink } from "../types/portfolio";
+import { renderTextWithPortfolioLinks } from "../utils/renderTextWithPortfolioLinks";
 
 type CodingManualSectionProps = {
 	title: string;
+	description: string;
+	links: readonly ExternalLink[];
+	postscript: string;
+	tooltipLabel: string;
 	previousVideoLabel: string;
 	nextVideoLabel: string;
 	videoLabel: string;
@@ -41,20 +49,49 @@ const videos = [
 	},
 ] as const;
 
-const previewButtonClassName = [
-	"absolute top-1/2 z-0 aspect-square w-[min(52vw,15rem)] -translate-y-1/2 overflow-hidden rounded-lg border border-(--border-color) bg-black p-0",
-	"cursor-pointer opacity-70 transition-opacity hover:opacity-100",
-	"focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
-].join(" ");
+type Video = (typeof videos)[number];
 
-const videoClassName = [
-	"block aspect-square w-full object-cover",
-	"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
-	"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",
-].join(" ");
+type VideoPreviewButtonProps = {
+	direction: "previous" | "next";
+	label: string;
+	positionClassName: "left-0" | "right-0";
+	video: Video;
+};
 
-const activeVideoCardClassName =
-	"absolute left-1/2 top-1/2 z-10 w-[min(72vw,22rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg border border-(--border-color) bg-black";
+function VideoPreviewButton({
+	direction,
+	label,
+	positionClassName,
+	video,
+}: VideoPreviewButtonProps) {
+	return (
+		<button
+			aria-label={label}
+			className={[
+				// PREVIEW CARD LAYOUT
+				"absolute top-1/2 z-0 aspect-square w-[min(52vw,15rem)] -translate-y-1/2 overflow-hidden",
+				// PREVIEW CARD SURFACE
+				"rounded-lg border border-(--border-color) bg-black p-0",
+				// POINTER AND KEYBOARD FEEDBACK
+				"cursor-pointer opacity-70 transition-opacity hover:opacity-100",
+				"focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
+				// POSITION PARAMS CHOOSE
+				positionClassName,
+			].join(" ")}
+			data-coding-manual-direction={direction}
+			type="button"
+		>
+			<img
+				alt=""
+				className="size-full object-cover grayscale"
+				data-coding-manual-preview={direction}
+				loading="lazy"
+				src={video.preview}
+				style={{ objectPosition: video.squareObjectPosition }}
+			/>
+		</button>
+	);
+}
 
 function formatVideoCounter(template: string, current: number, total: number): string {
 	return template.replace("{current}", String(current)).replace("{total}", String(total));
@@ -62,6 +99,10 @@ function formatVideoCounter(template: string, current: number, total: number): s
 
 export function CodingManualSection({
 	title,
+	description,
+	links,
+	postscript,
+	tooltipLabel,
 	previousVideoLabel,
 	nextVideoLabel,
 	videoLabel,
@@ -84,30 +125,44 @@ export function CodingManualSection({
 			data-video-label={videoLabel}
 			data-videos={JSON.stringify(videos)}
 		>
-			<SectionHeading id="coding-manual-title">{title}</SectionHeading>
+			<div className="relative z-30 flex items-center gap-1">
+				<SectionHeading id="coding-manual-title">{title}</SectionHeading>
+
+				<Tooltip id="coding-manual" label={tooltipLabel} trigger={<InfoIcon />}>
+					<p className="whitespace-pre-line">
+						{renderTextWithPortfolioLinks(description, links)}
+					</p>
+					<p className="mt-2 text-(--muted-color) italic">{postscript}</p>
+				</Tooltip>
+			</div>
 
 			<div className="mt-4">
 				<div className="relative mx-auto h-[min(72vw,22rem)] w-full max-w-2xl">
-					<button
-						aria-label={previousVideoLabel}
-						className={`${previewButtonClassName} left-0`}
-						data-coding-manual-direction="previous"
-						type="button"
-					>
-						<img
-							alt=""
-							className="size-full object-cover grayscale"
-							data-coding-manual-preview="previous"
-							loading="lazy"
-							src={previousVideo.preview}
-							style={{ objectPosition: previousVideo.squareObjectPosition }}
-						/>
-					</button>
+					<VideoPreviewButton
+						direction="previous"
+						label={previousVideoLabel}
+						positionClassName="left-0"
+						video={previousVideo}
+					/>
 
-					<div className={activeVideoCardClassName} data-coding-manual-active-card>
+					<div
+						className={[
+							// CENTERED ACTIVE CARD
+							"absolute left-1/2 top-1/2 z-10 w-[min(72vw,22rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden",
+							// CARD SURFACE
+							"rounded-lg border border-(--border-color) bg-black",
+						].join(" ")}
+						data-coding-manual-active-card
+					>
 						<video
 							aria-label={`${videoLabel} 1`}
-							className={videoClassName}
+							className={[
+								// DEFAULT INLINE PLAYER
+								"block aspect-square w-full object-cover",
+								// FULLSCREEN PLAYER
+								"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
+								"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",
+							].join(" ")}
 							controls
 							data-coding-manual-player
 							muted
@@ -120,21 +175,12 @@ export function CodingManualSection({
 						</video>
 					</div>
 
-					<button
-						aria-label={nextVideoLabel}
-						className={`${previewButtonClassName} right-0`}
-						data-coding-manual-direction="next"
-						type="button"
-					>
-						<img
-							alt=""
-							className="size-full object-cover grayscale"
-							data-coding-manual-preview="next"
-							loading="lazy"
-							src={nextVideo.preview}
-							style={{ objectPosition: nextVideo.squareObjectPosition }}
-						/>
-					</button>
+					<VideoPreviewButton
+						direction="next"
+						label={nextVideoLabel}
+						positionClassName="right-0"
+						video={nextVideo}
+					/>
 				</div>
 
 				<p
