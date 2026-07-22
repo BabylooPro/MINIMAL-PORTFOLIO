@@ -11,8 +11,8 @@ export function ProfileSection({ summary, title }: ProfileSectionProps) {
 	return (
 		<section aria-labelledby="profile-title">
 			<SectionHeading id="profile-title">{title}</SectionHeading>
-			{paragraphs.map((paragraph, index) => (
-				<p key={paragraph} className={index === 0 ? "mt-2 leading-6" : "mt-0 leading-6"}>
+			{paragraphs.map((paragraph) => (
+				<p key={paragraph} className="leading-6 first:mt-2">
 					{paragraph}
 				</p>
 			))}
