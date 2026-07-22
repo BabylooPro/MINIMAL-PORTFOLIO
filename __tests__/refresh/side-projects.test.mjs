@@ -347,16 +347,16 @@ test("rejects an invalid repository URL", async () => {
 	});
 });
 
-test("rejects an invalid homepage URL", async () => {
+test("rejects a non-HTTPS homepage URL", async () => {
 	await withFixture({}, async (projectDirectory) => {
 		await assert.rejects(
 			refresh(projectDirectory, async () =>
 				response([
-					repository("project-one", { homepage: "ftp://example.com" }),
+					repository("project-one", { homepage: "http://example.com" }),
 					repository("project-two"),
 				]),
 			),
-			/Homepage URL is invalid: ftp:\/\/example\.com/,
+			/Homepage URL is invalid: http:\/\/example\.com/,
 		);
 	});
 });

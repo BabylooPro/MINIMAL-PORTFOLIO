@@ -35,10 +35,10 @@ function slugForSelection(selection) {
 	return `${selection.githubUser.toLowerCase()}/${selection.name.toLowerCase()}`;
 }
 
-function isHttpUrl(value) {
+function isHttpsUrl(value) {
 	try {
 		const url = new URL(value);
-		return url.protocol === "https:" || url.protocol === "http:";
+		return url.protocol === "https:";
 	} catch {
 		return false;
 	}
@@ -152,7 +152,7 @@ function normalizeHomepageUrl(value) {
 		return null;
 	}
 
-	if (!isHttpUrl(value)) {
+	if (!isHttpsUrl(value)) {
 		throw createPermanentError(`Homepage URL is invalid: ${value}`);
 	}
 
@@ -204,7 +204,7 @@ function validateSnapshotProject(value, index) {
 		isNonEmptyString(value.name) &&
 		isGitHubRepositoryUrl(value.repositoryUrl) &&
 		(value.homepageUrl === null ||
-			(typeof value.homepageUrl === "string" && isHttpUrl(value.homepageUrl))) &&
+			(typeof value.homepageUrl === "string" && isHttpsUrl(value.homepageUrl))) &&
 		isNullableString(value.githubDescription) &&
 		isNullableString(value.primaryLanguage) &&
 		isNonEmptyString(value.createdAt) &&
