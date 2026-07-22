@@ -1,11 +1,14 @@
 import { type Locale, localeConfigs } from "../i18n/config";
 import type { Dictionary } from "../i18n/dictionaries";
+import { isExternalHttpLink } from "../utils/isExternalHttpLink";
 
 export function createStructuredData(
 	locale: Locale,
 	dictionary: Dictionary,
 	pageUrl = localeConfigs[locale].absoluteUrl,
 ): object {
+	const email = dictionary.portfolio.links.find((link) => link.href.startsWith("mailto:"));
+
 	return {
 		"@context": "https://schema.org",
 		"@type": "ProfilePage",
@@ -18,7 +21,7 @@ export function createStructuredData(
 			name: dictionary.portfolio.name,
 			jobTitle: dictionary.portfolio.role,
 			url: pageUrl,
-			email: "mailto:maxremy.dev@gmail.com",
+			...(email ? { email: email.href } : {}),
 			address: {
 				"@type": "PostalAddress",
 				addressLocality: "Moudon",
@@ -26,7 +29,7 @@ export function createStructuredData(
 				addressCountry: "CH",
 			},
 			sameAs: dictionary.portfolio.links
-				.filter((link) => link.href.startsWith("https://"))
+				.filter((link) => isExternalHttpLink(link.href))
 				.map((link) => link.href),
 		},
 	};
