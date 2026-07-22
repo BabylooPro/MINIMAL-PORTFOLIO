@@ -8,56 +8,28 @@ type TooltipProps = {
 };
 
 export function Tooltip({ children, id, label, trigger }: TooltipProps) {
-	const desktopTooltipId = `${id}-desktop-tooltip`;
-	const mobileTooltipId = `${id}-mobile-tooltip`;
-
 	return (
-		<>
-			<span
+		<div className="group relative flex">
+			<button
+				aria-describedby={id}
+				aria-label={label}
 				className={[
-					// LAYOUT & BREAKPOINT
-					"group relative hidden sm:flex",
+					// DESKTOP TRIGGER
+					"relative hidden sm:flex",
+					"rounded-full p-0.5 text-(--muted-color) hover:text-(--foreground-color)",
+					// KEYBOARD ACCESSIBILITY
+					"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
 					// HOVER BRIDGE TO THE PANEL
 					"after:absolute after:right-0 after:top-full after:z-20 after:h-2 after:w-[min(24rem,calc(100vw-2rem))] after:content-[''] sm:after:left-1/2 sm:after:right-auto sm:after:-translate-x-1/2",
 				].join(" ")}
+				type="button"
 			>
-				<button
-					aria-describedby={desktopTooltipId}
-					aria-label={label}
-					className={[
-						// TRIGGER APPEARANCE
-						"rounded-full p-0.5",
-						"text-(--muted-color) hover:text-(--foreground-color)",
-						// KEYBOARD ACCESSIBILITY
-						"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
-					].join(" ")}
-					type="button"
-				>
-					{trigger}
-				</button>
+				{trigger}
+			</button>
 
-				<div
-					className={[
-						// ANCHOR & SIZE
-						"absolute left-1/2 top-full z-20 mt-2 w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2",
-						// PANEL SURFACE
-						"rounded-md border border-(--border-color) bg-(--background-color) p-3 shadow-lg",
-						// CONTENT STYLE
-						"text-sm leading-5 text-(--body-color)",
-						// HIDDEN STATE & MOTION
-						"opacity-(--info-tooltip-opacity,0) [pointer-events:var(--info-tooltip-pointer-events,none)] transition-opacity motion-reduce:transition-none",
-						// REVEAL TRIGGERS
-						"group-focus-within:[--info-tooltip-opacity:1] group-focus-within:[--info-tooltip-pointer-events:auto] group-hover:[--info-tooltip-opacity:1] group-hover:[--info-tooltip-pointer-events:auto]",
-					].join(" ")}
-					id={desktopTooltipId}
-				>
-					{children}
-				</div>
-			</span>
-
-			<details className="group relative flex sm:hidden">
+			<details className="peer group relative flex sm:hidden">
 				<summary
-					aria-describedby={mobileTooltipId}
+					aria-describedby={id}
 					aria-label={label}
 					className={[
 						// NATIVE TRIGGER & APPEARANCE
@@ -70,23 +42,27 @@ export function Tooltip({ children, id, label, trigger }: TooltipProps) {
 				>
 					{trigger}
 				</summary>
-
-				<div
-					className={[
-						// VIEWPORT-CENTERED, SCROLLABLE PANEL
-						"fixed left-1/2 top-1/2 z-20 max-h-[calc(100dvh-2rem)] w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
-						// PANEL SURFACE & CONTENT STYLE
-						"rounded-md border border-(--border-color) bg-(--background-color) p-3 text-sm leading-5 text-(--body-color) shadow-lg",
-						// HIDDEN STATE & MOTION
-						"opacity-(--info-tooltip-opacity,0) [pointer-events:var(--info-tooltip-pointer-events,none)] transition-opacity motion-reduce:transition-none",
-						// REVEAL WHILE OPEN
-						"group-open:[--info-tooltip-opacity:1] group-open:[--info-tooltip-pointer-events:auto]",
-					].join(" ")}
-					id={mobileTooltipId}
-				>
-					{children}
-				</div>
 			</details>
-		</>
+
+			<div
+				className={[
+					// RESPONSIVE PANEL POSITION
+					"fixed left-1/2 top-1/2 z-20 max-h-[calc(100dvh-2rem)] w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
+					"sm:absolute sm:top-full sm:mt-2 sm:max-h-none sm:translate-y-0",
+					// PANEL SURFACE & CONTENT STYLE
+					"rounded-md border border-(--border-color) bg-(--background-color) p-3 text-sm leading-5 text-(--body-color) shadow-lg",
+					// HIDDEN STATE & MOTION
+					"opacity-(--info-tooltip-opacity,0) [pointer-events:var(--info-tooltip-pointer-events,none)] transition-opacity motion-reduce:transition-none",
+					// DESKTOP HOVER AND KEYBOARD INTERACTIONS
+					"group-focus-within:[--info-tooltip-opacity:1] group-focus-within:[--info-tooltip-pointer-events:auto]",
+					"group-hover:[--info-tooltip-opacity:1] group-hover:[--info-tooltip-pointer-events:auto]",
+					// MOBILE TAP INTERACTION
+					"peer-open:[--info-tooltip-opacity:1] peer-open:[--info-tooltip-pointer-events:auto]",
+				].join(" ")}
+				id={id}
+			>
+				{children}
+			</div>
+		</div>
 	);
 }
