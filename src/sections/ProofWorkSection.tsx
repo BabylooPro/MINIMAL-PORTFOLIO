@@ -6,6 +6,7 @@ import { renderTextWithPortfolioLinks } from "../utils/renderTextWithPortfolioLi
 
 type ProofWorkSectionProps = {
 	title: string;
+	summary: string;
 	description: string;
 	links: readonly ExternalLink[];
 	postscript: string;
@@ -69,7 +70,7 @@ function VideoPreviewButton({
 			aria-label={label}
 			className={[
 				// PREVIEW CARD LAYOUT
-				"absolute top-1/2 z-0 aspect-square w-[min(52vw,15rem)] -translate-y-1/2 overflow-hidden",
+				"absolute top-1/2 z-0 aspect-square w-[min(42vw,12rem)] -translate-y-1/2 overflow-hidden sm:w-[min(52vw,15rem)]",
 				// PREVIEW CARD SURFACE
 				"rounded-lg border border-(--border-color) bg-black p-0",
 				// POINTER AND KEYBOARD FEEDBACK
@@ -89,6 +90,16 @@ function VideoPreviewButton({
 				src={video.preview}
 				style={{ objectPosition: video.squareObjectPosition }}
 			/>
+
+			<span
+				aria-hidden="true"
+				className={[
+					"pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 text-3xl font-bold text-white drop-shadow",
+					direction === "previous" ? "left-2" : "right-2",
+				].join(" ")}
+			>
+				{direction === "previous" ? "‹" : "›"}
+			</span>
 		</button>
 	);
 }
@@ -99,6 +110,7 @@ function formatVideoCounter(template: string, current: number, total: number): s
 
 export function ProofWorkSection({
 	title,
+	summary,
 	description,
 	links,
 	postscript,
@@ -136,8 +148,10 @@ export function ProofWorkSection({
 				</Tooltip>
 			</div>
 
-			<div className="mt-4">
-				<div className="relative mx-auto h-[min(72vw,22rem)] w-full max-w-2xl">
+			<p className="mt-2 text-sm leading-5 text-(--muted-color) text-center">{summary}</p>
+
+			<div className="mt-3">
+				<div className="relative mx-auto h-[min(56vw,17rem)] w-full max-w-2xl sm:h-[min(72vw,22rem)]">
 					<VideoPreviewButton
 						direction="previous"
 						label={previousVideoLabel}
@@ -148,7 +162,7 @@ export function ProofWorkSection({
 					<div
 						className={[
 							// CENTERED ACTIVE CARD
-							"absolute left-1/2 top-1/2 z-10 w-[min(72vw,22rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden",
+							"absolute left-1/2 top-1/2 z-10 w-[min(56vw,17rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden sm:w-[min(72vw,22rem)]",
 							// CARD SURFACE
 							"rounded-lg border border-(--border-color) bg-black",
 						].join(" ")}

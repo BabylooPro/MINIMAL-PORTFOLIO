@@ -42,6 +42,7 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 					postscript={messages.proofWork.postscript}
 					previousVideoLabel={messages.proofWork.previousVideo}
 					title={messages.sections.proofWork}
+					summary={messages.proofWork.summary}
 					tooltipLabel={messages.proofWork.tooltipLabel}
 					videoCounterTemplate={messages.proofWork.videoCounterTemplate}
 					videoLabel={messages.proofWork.video}
