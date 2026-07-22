@@ -13,6 +13,25 @@ type SideProjectsSectionProps = {
 
 const generatedProjects: readonly GeneratedSideProject[] = sideProjects;
 
+type ProjectExternalLinkProps = {
+	href: string;
+	label: string;
+};
+
+function ProjectExternalLink({ href, label }: ProjectExternalLinkProps) {
+	return (
+		<a
+			className="hover:underline focus-visible:underline"
+			href={href}
+			rel="noopener noreferrer"
+			target="_blank"
+		>
+			{label}
+			<span aria-hidden="true"> ↗</span>
+		</a>
+	);
+}
+
 export function SideProjectsSection({ content, locale, title }: SideProjectsSectionProps) {
 	if (generatedProjects.length === 0) {
 		return null;
@@ -67,15 +86,10 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 								</p>
 
 								<p className="mt-3 pb-5 text-sm font-medium text-(--foreground-color)">
-									<a
-										className="hover:underline focus-visible:underline"
+									<ProjectExternalLink
 										href={project.repositoryUrl}
-										rel="noopener noreferrer"
-										target="_blank"
-									>
-										{content.repositoryLabel}
-										<span aria-hidden="true"> ↗</span>
-									</a>
+										label={content.repositoryLabel}
+									/>
 
 									{project.homepageUrl ? (
 										<>
@@ -85,15 +99,10 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 											>
 												{" · "}
 											</span>
-											<a
-												className="hover:underline focus-visible:underline"
+											<ProjectExternalLink
 												href={project.homepageUrl}
-												rel="noopener noreferrer"
-												target="_blank"
-											>
-												{content.liveDemoLabel}
-												<span aria-hidden="true"> ↗</span>
-											</a>
+												label={content.liveDemoLabel}
+											/>
 										</>
 									) : null}
 								</p>
