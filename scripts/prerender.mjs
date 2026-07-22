@@ -66,11 +66,11 @@ function escapeRegularExpression(value) {
 
 function getAttribute(element, attribute) {
 	const attributePattern = new RegExp(
-		`\\b${escapeRegularExpression(attribute)}=["']([^"']*)["']`,
+		`\\b${escapeRegularExpression(attribute)}=(["'])([\\s\\S]*?)\\1`,
 		"i",
 	);
 
-	return element.match(attributePattern)?.[1] ?? null;
+	return element.match(attributePattern)?.[2] ?? null;
 }
 
 function hasAttribute(element, attribute) {
@@ -84,6 +84,12 @@ function getScriptElements(html) {
 function getMetaElements(html, name) {
 	return (html.match(/<meta\b[^>]*>/gi) ?? []).filter(
 		(element) => getAttribute(element, "name") === name,
+	);
+}
+
+function getMetaHttpEquivElements(html, value) {
+	return (html.match(/<meta\b[^>]*>/gi) ?? []).filter(
+		(element) => getAttribute(element, "http-equiv")?.toLowerCase() === value.toLowerCase(),
 	);
 }
 
@@ -299,6 +305,48 @@ function validatePageHtml(page, route, indexHtml, siteControllerSrc) {
 
 	if (hasAttribute(indexHtml, "data-react-entry")) {
 		throw new Error(`The React development entry is still present on the ${route.kind} page.`);
+	}
+
+	const contentSecurityPolicies = getMetaHttpEquivElements(indexHtml, "Content-Security-Policy");
+
+	if (contentSecurityPolicies.length !== 1) {
+		throw new Error(
+			`The ${route.kind} page must contain one Content Security Policy meta tag.`,
+		);
+	}
+
+	const [contentSecurityPolicy] = contentSecurityPolicies;
+	const contentSecurityPolicyContent = getAttribute(contentSecurityPolicy, "content");
+	const requiredContentSecurityPolicyDirectives = [
+		"default-src 'self'",
+		"base-uri 'self'",
+		"object-src 'none'",
+		"frame-src 'none'",
+		"img-src 'self'",
+		"media-src 'self'",
+		"font-src 'self'",
+		"style-src 'self'",
+		"connect-src 'self'",
+		"form-action 'self'",
+	];
+
+	if (
+		!contentSecurityPolicyContent ||
+		!requiredContentSecurityPolicyDirectives.every((directive) =>
+			contentSecurityPolicyContent.includes(directive),
+		) ||
+		!/(?:^|;\s*)script-src 'self'(?: 'sha256-[A-Za-z0-9+/]{43}=')+(?:;|$)/i.test(
+			contentSecurityPolicyContent,
+		) ||
+		/unsafe-(?:inline|eval)/i.test(contentSecurityPolicyContent)
+	) {
+		throw new Error(`The ${route.kind} page has an invalid Content Security Policy.`);
+	}
+
+	const firstScriptIndex = indexHtml.search(/<script\b/i);
+
+	if (firstScriptIndex < 0 || indexHtml.indexOf(contentSecurityPolicy) > firstScriptIndex) {
+		throw new Error(`The ${route.kind} Content Security Policy must precede all scripts.`);
 	}
 
 	const scriptElements = getScriptElements(indexHtml);

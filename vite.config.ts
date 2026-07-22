@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
@@ -17,6 +18,7 @@ const siteControllerPath = fileURLToPath(
 const siteControllerMarker = "<!--site-controller-->";
 const siteControllerScriptPattern =
 	/<script\b(?=[^>]*\bdata-site-controller\b)[\s\S]*?<\/script>/gi;
+const contentSecurityPolicyMarker = "<!--content-security-policy-->";
 
 function escapeRegularExpression(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -28,21 +30,60 @@ type InlineScriptDefinition = {
 	path: string;
 };
 
+function createContentSecurityPolicy(inlineScriptSources: readonly string[]): string {
+	const scriptHashes = inlineScriptSources.map(
+		(source) => `'sha256-${createHash("sha256").update(source).digest("base64")}'`,
+	);
+
+	return [
+		"default-src 'self'",
+		"base-uri 'self'",
+		"object-src 'none'",
+		"frame-src 'none'",
+		"img-src 'self'",
+		"media-src 'self'",
+		"font-src 'self'",
+		"style-src 'self'",
+		`script-src 'self' ${scriptHashes.join(" ")}`,
+		"connect-src 'self'",
+		"form-action 'self'",
+	].join("; ");
+}
+
 function inlineHeadScripts(definitions: readonly InlineScriptDefinition[]): Plugin {
+	let isClientProductionBuild = false;
+
 	return {
 		name: "inline-head-scripts",
+		configResolved(config) {
+			isClientProductionBuild = config.command === "build" && !config.build.ssr;
+		},
 		transformIndexHtml(html) {
 			let transformedHtml = html;
-
-			for (const definition of definitions) {
-				if (!transformedHtml.includes(definition.marker)) {
-					throw new Error(`Missing HTML marker: ${definition.marker}`);
-				}
-
+			const scripts = definitions.map((definition) => {
 				const source = readFileSync(definition.path, "utf8").trim();
 
 				if (!source) {
 					throw new Error(`Inline script source is empty: ${definition.path}`);
+				}
+
+				return { definition, source };
+			});
+
+			if (!transformedHtml.includes(contentSecurityPolicyMarker)) {
+				throw new Error(`Missing HTML marker: ${contentSecurityPolicyMarker}`);
+			}
+
+			transformedHtml = transformedHtml.replace(
+				contentSecurityPolicyMarker,
+				isClientProductionBuild
+					? `<meta http-equiv="Content-Security-Policy" content="${createContentSecurityPolicy(scripts.map(({ source }) => source))}" />`
+					: "",
+			);
+
+			for (const { definition, source } of scripts) {
+				if (!transformedHtml.includes(definition.marker)) {
+					throw new Error(`Missing HTML marker: ${definition.marker}`);
 				}
 
 				transformedHtml = transformedHtml.replace(
