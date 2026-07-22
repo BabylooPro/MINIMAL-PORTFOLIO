@@ -1,9 +1,6 @@
 import type { ReactNode } from "react";
 import type { ExternalLink } from "../types/portfolio";
-
-function opensInNewTab(href: string) {
-	return href.startsWith("https://") || href.startsWith("http://");
-}
+import { isExternalHttpLink } from "./isExternalHttpLink";
 
 export function renderTextWithPortfolioLinks(
 	text: string,
@@ -37,8 +34,8 @@ export function renderTextWithPortfolioLinks(
 				className="font-medium text-(--foreground-color) underline underline-offset-2"
 				href={nextLink.link.href}
 				key={`${nextLink.link.href}-${key}`}
-				rel={opensInNewTab(nextLink.link.href) ? "noopener noreferrer" : undefined}
-				target={opensInNewTab(nextLink.link.href) ? "_blank" : undefined}
+				rel={isExternalHttpLink(nextLink.link.href) ? "noopener noreferrer" : undefined}
+				target={isExternalHttpLink(nextLink.link.href) ? "_blank" : undefined}
 			>
 				{nextLink.link.label}
 			</a>,

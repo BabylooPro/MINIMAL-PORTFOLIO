@@ -1,6 +1,7 @@
 import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import type { Locale } from "../i18n/config";
 import type { Portfolio } from "../types/portfolio";
+import { isExternalHttpLink } from "../utils/isExternalHttpLink";
 
 type HeaderSectionProps = {
 	currentLocale: Locale;
@@ -9,10 +10,6 @@ type HeaderSectionProps = {
 	phoneLabel: string;
 	portfolio: Pick<Portfolio, "name" | "role" | "location" | "links">;
 };
-
-function opensInNewTab(href: string) {
-	return href.startsWith("https://") || href.startsWith("http://");
-}
 
 function getContactLinkLabel(
 	link: Portfolio["links"][number],
@@ -37,8 +34,8 @@ export function HeaderSection({
 	phoneLabel,
 	portfolio,
 }: HeaderSectionProps) {
-	const contactLinks = portfolio.links.filter((link) => !opensInNewTab(link.href));
-	const profileLinks = portfolio.links.filter((link) => opensInNewTab(link.href));
+	const contactLinks = portfolio.links.filter((link) => !isExternalHttpLink(link.href));
+	const profileLinks = portfolio.links.filter((link) => isExternalHttpLink(link.href));
 
 	return (
 		<header className="pb-9 pt-10 text-left">
@@ -89,7 +86,12 @@ export function HeaderSection({
 								<span key={link.href}>
 									{index > 0 ? " - " : ""}
 
-									<a href={link.href} target="_blank" rel="noreferrer" className="underline underline-offset-2">
+									<a
+										className="underline underline-offset-2"
+										href={link.href}
+										rel="noreferrer"
+										target="_blank"
+									>
 										{link.label}
 									</a>
 								</span>
