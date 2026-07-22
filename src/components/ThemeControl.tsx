@@ -7,32 +7,6 @@ type ThemeControlProps = {
 };
 
 const defaultPreference: ThemePreference = "system";
-const themeOptionClassName = [
-	// LAYOUT & SIZING
-	"px-2.5 py-2 text-xs leading-none",
-
-	// BASIC INTERACTION
-	"appearance-none cursor-pointer",
-
-	// STATE: DEFAULT AND PRESSED
-	"aria-[pressed=false]:bg-transparent",
-	"aria-pressed:bg-(--foreground-color)",
-	"aria-pressed:text-(--background-color)",
-
-	// HOVER STATES
-	"aria-[pressed=false]:hover:bg-(--inactive-hover-color)",
-	"aria-pressed:hover:bg-(--active-hover-color)",
-
-	// FOCUS
-	"focus-visible:outline-2",
-	"focus-visible:outline-current",
-	"focus-visible:outline-solid",
-	"focus-visible:-outline-offset-2",
-
-	// FEATURE SUPPORT / COLOR-MIX VARIATIONS
-	"supports-[color:color-mix(in_srgb,black,white)]:aria-[pressed=false]:hover:bg-[color-mix(in_srgb,var(--foreground-color)_10%,transparent)]",
-	"supports-[color:color-mix(in_srgb,black,white)]:aria-pressed:hover:bg-[color-mix(in_srgb,var(--foreground-color)_85%,var(--background-color))]",
-].join(" ");
 
 export function ThemeControl({ theme }: ThemeControlProps) {
 	const preferences: { label: string; value: ThemePreference }[] = [
@@ -47,11 +21,21 @@ export function ThemeControl({ theme }: ThemeControlProps) {
 			{preferences.map(({ label, value }, index) => (
 				<button
 					aria-pressed={defaultPreference === value}
-					className={
-						index < preferences.length - 1
-							? `${themeOptionClassName} border-r border-(--border-color)`
-							: themeOptionClassName
-					}
+					className={[
+						// CONTROL LAYOUT & INTERACTION
+						"appearance-none cursor-pointer px-2.5 py-2 text-xs leading-none",
+						// DEFAULT AND SELECTED STATES
+						"aria-pressed:bg-(--foreground-color) aria-pressed:text-(--background-color)",
+						// HOVER FEEDBACK
+						"aria-[pressed=false]:hover:bg-(--inactive-hover-color) aria-pressed:hover:bg-(--active-hover-color)",
+						// KEYBOARD ACCESSIBILITY
+						"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:-outline-offset-2",
+						// ENHANCED HOVER COLORS WHERE COLOR-MIX IS AVAILABLE
+						"supports-[color:color-mix(in_srgb,black,white)]:aria-[pressed=false]:hover:bg-[color-mix(in_srgb,var(--foreground-color)_10%,transparent)]",
+						"supports-[color:color-mix(in_srgb,black,white)]:aria-pressed:hover:bg-[color-mix(in_srgb,var(--foreground-color)_85%,var(--background-color))]",
+						// SEPARATOR BETWEEN SEGMENTED CONTROLS
+						index < preferences.length - 1 ? "border-r border-(--border-color)" : "",
+					].join(" ")}
 					data-theme-preference={value}
 					key={value}
 					type="button"

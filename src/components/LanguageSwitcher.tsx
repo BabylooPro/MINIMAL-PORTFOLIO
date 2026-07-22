@@ -17,11 +17,14 @@ export function LanguageSwitcher({ currentLocale, label }: LanguageSwitcherProps
 						<li className="flex items-center" key={locale}>
 							<a
 								aria-current={isCurrentLocale ? "page" : undefined}
-								className={
+								className={[
+									// SHARED LINK SHAPE
+									"rounded-sm px-1 py-0.5",
+									// CURRENT LOCALE OR INTERACTIVE STATE
 									isCurrentLocale
-										? "rounded-sm bg-(--foreground-color) px-1 py-0.5 font-medium text-(--background-color)! no-underline"
-										: "rounded-sm px-1 py-0.5 hover:bg-(--inactive-hover-color)"
-								}
+										? "bg-(--foreground-color) font-medium text-(--background-color)! no-underline"
+										: "hover:bg-(--inactive-hover-color)",
+								].join(" ")}
 								href={config.pathname}
 								hrefLang={locale}
 								lang={locale}
