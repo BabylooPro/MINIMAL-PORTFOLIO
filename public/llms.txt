@@ -1,0 +1,11 @@
+# Max Remy
+
+Freelance software engineer portfolio based in Switzerland.
+
+## Portfolio
+
+- [English portfolio](https://maxremy.dev/en/)
+- [French portfolio](https://maxremy.dev/fr/)
+- [German portfolio](https://maxremy.dev/de/)
+- [Download CV](https://maxremy.dev/CV_Developer_Max_Remy.pdf)
+- [GitHub](https://github.com/babyloopro)
