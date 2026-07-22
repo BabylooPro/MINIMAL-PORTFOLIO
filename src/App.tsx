@@ -3,12 +3,12 @@ import { Container } from "./components/ui/Container";
 import type { Locale } from "./i18n/config";
 import type { Dictionary } from "./i18n/dictionaries";
 
-import { CodingManualSection } from "./sections/CodingManualSection";
 import { ExperienceSection } from "./sections/ExperienceSection";
 import { FooterSection } from "./sections/FooterSection";
 import { HeaderSection } from "./sections/HeaderSection";
 import { LanguagesSection } from "./sections/LanguagesSection";
 import { ProfileSection } from "./sections/ProfileSection";
+import { ProofWorkSection } from "./sections/ProofWorkSection";
 import { SideProjectsSection } from "./sections/SideProjectsSection";
 import { SkillsSection } from "./sections/SkillsSection";
 
@@ -34,16 +34,16 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 			<main className="space-y-7 pb-12">
 				<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
 
-				<CodingManualSection
-					description={messages.codingManual.description}
+				<ProofWorkSection
+					description={messages.proofWork.description}
 					links={portfolio.links}
-					nextVideoLabel={messages.codingManual.nextVideo}
-					postscript={messages.codingManual.postscript}
-					previousVideoLabel={messages.codingManual.previousVideo}
-					title={messages.sections.codingManual}
-					tooltipLabel={messages.codingManual.tooltipLabel}
-					videoCounterTemplate={messages.codingManual.videoCounterTemplate}
-					videoLabel={messages.codingManual.video}
+					nextVideoLabel={messages.proofWork.nextVideo}
+					postscript={messages.proofWork.postscript}
+					previousVideoLabel={messages.proofWork.previousVideo}
+					title={messages.sections.proofWork}
+					tooltipLabel={messages.proofWork.tooltipLabel}
+					videoCounterTemplate={messages.proofWork.videoCounterTemplate}
+					videoLabel={messages.proofWork.video}
 				/>
 
 				<SkillsSection

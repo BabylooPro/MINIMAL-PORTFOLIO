@@ -11,7 +11,7 @@ export const enMessages = {
 		profile: "Profile",
 		skills: "Skills",
 		languages: "Languages",
-		codingManual: "Proof of Work",
+		proofWork: "Proof of Work",
 		experience: "Professional Experience",
 		sideProjects: "Public Side Projects",
 	},
@@ -21,7 +21,7 @@ export const enMessages = {
 		email: "Email",
 		phone: "Phone",
 	},
-	codingManual: {
+	proofWork: {
 		description:
 			"Real development sessions where I write the code myself, condensed into ultra-fast timelapses. I use little to no AI in them, just to relive the good old days :)\n\nSlower versions are available on my YouTube channel.",
 		postscript:

@@ -1,2 +1,2 @@
 import "./theme-controller";
-import "./coding-manual-controller";
+import "./proof-work-controller";

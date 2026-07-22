@@ -39,7 +39,7 @@ function formatCounter(template: string, current: number, total: number): string
 }
 
 function initializeCarousel(carousel: HTMLElement): void {
-	if (carousel.dataset.codingManualInitialized === "true") {
+	if (carousel.dataset.proofWorkInitialized === "true") {
 		return;
 	}
 
@@ -47,20 +47,20 @@ function initializeCarousel(carousel: HTMLElement): void {
 	const counterTemplate = carousel.dataset.counterTemplate;
 	const videoLabel = carousel.dataset.videoLabel;
 	const previousButton = carousel.querySelector<HTMLButtonElement>(
-		'[data-coding-manual-direction="previous"]',
+		'[data-proof-work-direction="previous"]',
 	);
 	const nextButton = carousel.querySelector<HTMLButtonElement>(
-		'[data-coding-manual-direction="next"]',
+		'[data-proof-work-direction="next"]',
 	);
 	const previousPreview = carousel.querySelector<HTMLImageElement>(
-		'[data-coding-manual-preview="previous"]',
+		'[data-proof-work-preview="previous"]',
 	);
 	const nextPreview = carousel.querySelector<HTMLImageElement>(
-		'[data-coding-manual-preview="next"]',
+		'[data-proof-work-preview="next"]',
 	);
-	const player = carousel.querySelector<HTMLVideoElement>("[data-coding-manual-player]");
+	const player = carousel.querySelector<HTMLVideoElement>("[data-proof-work-player]");
 	const source = player?.querySelector<HTMLSourceElement>("source");
-	const counter = carousel.querySelector<HTMLElement>("[data-coding-manual-counter]");
+	const counter = carousel.querySelector<HTMLElement>("[data-proof-work-counter]");
 
 	if (
 		videos.length === 0 ||
@@ -77,7 +77,7 @@ function initializeCarousel(carousel: HTMLElement): void {
 		return;
 	}
 
-	carousel.dataset.codingManualInitialized = "true";
+	carousel.dataset.proofWorkInitialized = "true";
 
 	const videoPlayer = player;
 	const videoSource = source;
@@ -97,7 +97,7 @@ function initializeCarousel(carousel: HTMLElement): void {
 		const video = videos[(index + videos.length) % videos.length];
 
 		if (!video) {
-			throw new Error("Coding Manual carousel requires at least one video.");
+			throw new Error("Proof Work carousel requires at least one video.");
 		}
 
 		return video;
@@ -200,6 +200,6 @@ function initializeCarousel(carousel: HTMLElement): void {
 	renderActiveVideo(false);
 }
 
-for (const carousel of document.querySelectorAll<HTMLElement>("[data-coding-manual-carousel]")) {
+for (const carousel of document.querySelectorAll<HTMLElement>("[data-proof-work-carousel]")) {
 	initializeCarousel(carousel);
 }

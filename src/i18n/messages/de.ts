@@ -11,7 +11,7 @@ export const deMessages = {
 		profile: "Profil",
 		skills: "Kompetenzen",
 		languages: "Sprachen",
-		codingManual: "Arbeitsproben",
+		proofWork: "Arbeitsproben",
 		experience: "Berufliche Erfahrung",
 		sideProjects: "Öffentliche Nebenprojekte",
 	},
@@ -21,7 +21,7 @@ export const deMessages = {
 		email: "E-Mail",
 		phone: "Telefon",
 	},
-	codingManual: {
+	proofWork: {
 		description:
 			"Echte Entwicklungssessions, in denen ich den Code selbst schreibe, verdichtet zu ultraschnellen Zeitraffern. Ich nutze darin wenig bis keine KI, einfach, um das gute alte Gefühl wiederzufinden :)\n\nLangsamere Versionen gibt es auf meinem YouTube-Kanal.",
 		postscript:

@@ -11,7 +11,7 @@ export const frMessages = {
 		profile: "Profil",
 		skills: "Compétences",
 		languages: "Langues",
-		codingManual: "Démonstration de savoir-faire",
+		proofWork: "Démonstration de savoir-faire",
 		experience: "Expérience professionnelle",
 		sideProjects: "Projets personnels public",
 	},
@@ -21,7 +21,7 @@ export const frMessages = {
 		email: "E-mail",
 		phone: "Téléphone",
 	},
-	codingManual: {
+	proofWork: {
 		description:
 			"De véritables sessions de développement où j’écris le code moi-même, condensées en timelapses ultra-rapides. J’y utilise peu, voire pas, d’IA, juste pour retrouver les sensations de la bonne époque :)\n\nDes versions plus lentes sont disponibles sur ma chaîne YouTube.",
 		postscript:

@@ -8,7 +8,7 @@ export type Messages = {
 		profile: string;
 		skills: string;
 		languages: string;
-		codingManual: string;
+		proofWork: string;
 		experience: string;
 		sideProjects: string;
 	};
@@ -18,7 +18,7 @@ export type Messages = {
 		email: string;
 		phone: string;
 	};
-	codingManual: {
+	proofWork: {
 		description: string;
 		postscript: string;
 		tooltipLabel: string;

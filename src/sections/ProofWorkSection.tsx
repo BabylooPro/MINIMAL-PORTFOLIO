@@ -4,7 +4,7 @@ import { Tooltip } from "../components/ui/Tooltip";
 import type { ExternalLink } from "../types/portfolio";
 import { renderTextWithPortfolioLinks } from "../utils/renderTextWithPortfolioLinks";
 
-type CodingManualSectionProps = {
+type ProofWorkSectionProps = {
 	title: string;
 	description: string;
 	links: readonly ExternalLink[];
@@ -78,13 +78,13 @@ function VideoPreviewButton({
 				// POSITION PARAMS CHOOSE
 				positionClassName,
 			].join(" ")}
-			data-coding-manual-direction={direction}
+			data-proof-work-direction={direction}
 			type="button"
 		>
 			<img
 				alt=""
 				className="size-full object-cover grayscale"
-				data-coding-manual-preview={direction}
+				data-proof-work-preview={direction}
 				loading="lazy"
 				src={video.preview}
 				style={{ objectPosition: video.squareObjectPosition }}
@@ -97,7 +97,7 @@ function formatVideoCounter(template: string, current: number, total: number): s
 	return template.replace("{current}", String(current)).replace("{total}", String(total));
 }
 
-export function CodingManualSection({
+export function ProofWorkSection({
 	title,
 	description,
 	links,
@@ -107,7 +107,7 @@ export function CodingManualSection({
 	nextVideoLabel,
 	videoLabel,
 	videoCounterTemplate,
-}: CodingManualSectionProps) {
+}: ProofWorkSectionProps) {
 	const activeVideo = videos[0];
 	const previousVideo = videos[videos.length - 1];
 	const nextVideo = videos[1];
@@ -118,17 +118,17 @@ export function CodingManualSection({
 
 	return (
 		<section
-			aria-labelledby="coding-manual-title"
+			aria-labelledby="proof-work-title"
 			className="no-print"
-			data-coding-manual-carousel
+			data-proof-work-carousel
 			data-counter-template={videoCounterTemplate}
 			data-video-label={videoLabel}
 			data-videos={JSON.stringify(videos)}
 		>
 			<div className="relative z-30 flex items-center gap-1">
-				<SectionHeading id="coding-manual-title">{title}</SectionHeading>
+				<SectionHeading id="proof-work-title">{title}</SectionHeading>
 
-				<Tooltip id="coding-manual" label={tooltipLabel} trigger={<InfoIcon />}>
+				<Tooltip id="proof-work" label={tooltipLabel} trigger={<InfoIcon />}>
 					<p className="whitespace-pre-line">
 						{renderTextWithPortfolioLinks(description, links)}
 					</p>
@@ -152,7 +152,7 @@ export function CodingManualSection({
 							// CARD SURFACE
 							"rounded-lg border border-(--border-color) bg-black",
 						].join(" ")}
-						data-coding-manual-active-card
+						data-proof-work-active-card
 					>
 						<video
 							aria-label={`${videoLabel} 1`}
@@ -164,7 +164,7 @@ export function CodingManualSection({
 								"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",
 							].join(" ")}
 							controls
-							data-coding-manual-player
+							data-proof-work-player
 							muted
 							playsInline
 							poster={activeVideo.preview}
@@ -186,7 +186,7 @@ export function CodingManualSection({
 				<p
 					aria-live="polite"
 					className="mt-3 text-center text-sm text-(--muted-color)"
-					data-coding-manual-counter
+					data-proof-work-counter
 				>
 					{formatVideoCounter(videoCounterTemplate, 1, videos.length)}
 				</p>
