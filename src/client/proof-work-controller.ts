@@ -91,6 +91,8 @@ function initializeCarousel(carousel: HTMLElement): void {
 
 	let activeIndex = 0;
 	let isPlayerVisible = false;
+	let playbackRequest = 0;
+
 	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 	function videoAt(index: number): VideoDefinition {
@@ -108,21 +110,43 @@ function initializeCarousel(carousel: HTMLElement): void {
 		preview.style.objectPosition = video.squareObjectPosition;
 	}
 
+	function shouldPlay(): boolean {
+		return isPlayerVisible && !document.hidden && !reducedMotion.matches;
+	}
+
+	function stopPlayback(): void {
+		playbackRequest += 1;
+		videoPlayer.muted = true;
+		videoPlayer.pause();
+	}
+
 	function syncPlayback(): void {
-		if (!isPlayerVisible || document.hidden || reducedMotion.matches) {
-			videoPlayer.muted = true;
-			videoPlayer.pause();
+		if (!shouldPlay()) {
+			stopPlayback();
 			return;
 		}
 
-		void videoPlayer.play().catch(() => undefined);
+		if (!videoPlayer.paused) {
+			return;
+		}
+
+		const request = ++playbackRequest;
+
+		videoPlayer.muted = true;
+		void videoPlayer.play().then(
+			() => {
+				if (request !== playbackRequest || !shouldPlay()) {
+					stopPlayback();
+				}
+			},
+			() => undefined,
+		);
 	}
 
 	function renderActiveVideo(shouldReload = true): void {
 		const activeVideo = videoAt(activeIndex);
 
-		videoPlayer.pause();
-		videoPlayer.muted = true;
+		stopPlayback();
 		videoPlayer.setAttribute("aria-label", `${playerLabel} ${activeIndex + 1}`);
 		videoPlayer.style.objectPosition = activeVideo.squareObjectPosition;
 		videoPlayer.poster = activeVideo.preview;
@@ -171,28 +195,6 @@ function initializeCarousel(carousel: HTMLElement): void {
 			switchVideo(1);
 		}
 	});
-
-	const supportsHover = window.matchMedia("(hover: hover) and (pointer: fine)");
-
-	function enableHoverSound(): void {
-		videoPlayer.muted = false;
-		videoPlayer.volume = 1;
-
-		if (!reducedMotion.matches) {
-			void videoPlayer.play().catch(() => {
-				videoPlayer.muted = true;
-			});
-		}
-	}
-
-	function disableHoverSound(): void {
-		videoPlayer.muted = true;
-	}
-
-	if (supportsHover.matches) {
-		videoPlayer.addEventListener("mouseenter", enableHoverSound);
-		videoPlayer.addEventListener("mouseleave", disableHoverSound);
-	}
 
 	document.addEventListener("visibilitychange", handleDocumentVisibility);
 	reducedMotion.addEventListener("change", handleReducedMotionChange);
