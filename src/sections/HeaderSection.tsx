@@ -5,6 +5,7 @@ import { isExternalHttpLink } from "../utils/isExternalHttpLink";
 
 type HeaderSectionProps = {
 	currentLocale: Locale;
+	downloadCvLabel: string;
 	languageSwitcherLabel: string;
 	emailLabel: string;
 	phoneLabel: string;
@@ -29,6 +30,7 @@ function getContactLinkLabel(
 
 export function HeaderSection({
 	currentLocale,
+	downloadCvLabel,
 	emailLabel,
 	languageSwitcherLabel,
 	phoneLabel,
@@ -72,6 +74,7 @@ export function HeaderSection({
 											phoneLabel,
 										)}
 										href={link.href}
+										className="underline underline-offset-2"
 									>
 										{link.label}
 									</a>
@@ -100,6 +103,14 @@ export function HeaderSection({
 					) : null}
 				</div>
 			) : null}
+
+			<a
+				className="mt-1 inline-flex underline underline-offset-2"
+				download="CV_Developer_Max_Remy.pdf"
+				href="/CV_Developer_Max_Remy.pdf"
+			>
+				{downloadCvLabel}
+			</a>
 		</header>
 	);
 }

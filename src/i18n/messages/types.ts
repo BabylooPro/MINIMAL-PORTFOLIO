@@ -13,6 +13,7 @@ export type Messages = {
 		sideProjects: string;
 	};
 	labels: {
+		downloadCv: string;
 		languageSwitcher: string;
 		present: string;
 		email: string;

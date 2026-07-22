@@ -13,9 +13,10 @@ export const frMessages = {
 		languages: "Langues",
 		proofWork: "Démonstration de savoir-faire",
 		experience: "Expérience professionnelle",
-		sideProjects: "Projets personnels public",
+		sideProjects: "Projets personnels publics",
 	},
 	labels: {
+		downloadCv: "Télécharger le CV",
 		languageSwitcher: "Langue",
 		present: "Aujourd’hui",
 		email: "E-mail",

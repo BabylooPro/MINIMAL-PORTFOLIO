@@ -25,6 +25,7 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 		<Container>
 			<HeaderSection
 				currentLocale={locale}
+				downloadCvLabel={messages.labels.downloadCv}
 				emailLabel={messages.labels.email}
 				languageSwitcherLabel={messages.labels.languageSwitcher}
 				phoneLabel={messages.labels.phone}

@@ -16,6 +16,7 @@ export const enMessages = {
 		sideProjects: "Public Side Projects",
 	},
 	labels: {
+		downloadCv: "Download CV",
 		languageSwitcher: "Language",
 		present: "Present",
 		email: "Email",

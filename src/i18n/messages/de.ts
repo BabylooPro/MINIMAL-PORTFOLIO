@@ -16,6 +16,7 @@ export const deMessages = {
 		sideProjects: "Öffentliche Nebenprojekte",
 	},
 	labels: {
+		downloadCv: "Lebenslauf herunterladen",
 		languageSwitcher: "Sprache",
 		present: "Heute",
 		email: "E-Mail",
