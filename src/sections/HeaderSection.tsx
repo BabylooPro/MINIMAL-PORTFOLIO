@@ -88,7 +88,7 @@ export function HeaderSection({
 									].join(" ")}
 								>
 									<img
-										src="/myface.png"
+										src="/myface.jpg"
 										alt="My Face"
 										aria-hidden="true"
 										className="size-10 rounded-md object-cover max-sm:col-start-1 max-sm:row-span-2"
@@ -148,7 +148,7 @@ export function HeaderSection({
 								data-header-compact-identity
 							>
 								<img
-									src="/myface.png"
+									src="/myface.jpg"
 									alt=""
 									className="size-10 rounded-md object-cover sm:col-start-1 sm:row-span-2"
 								/>

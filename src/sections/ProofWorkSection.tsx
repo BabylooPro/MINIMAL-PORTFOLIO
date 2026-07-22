@@ -182,7 +182,7 @@ export function ProofWorkSection({
 							muted
 							playsInline
 							poster={activeVideo.preview}
-							preload="metadata"
+							preload="metadata" // USE `METADATA` TO SHOW VIDEO QUICKLY; `NONE` CAN DELAY LOADING
 							style={{ objectPosition: activeVideo.squareObjectPosition }}
 						>
 							<source src={activeVideo.source} type="video/mp4" />
