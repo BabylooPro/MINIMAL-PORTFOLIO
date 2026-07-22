@@ -148,7 +148,7 @@ export function ProofWorkSection({
 				</Tooltip>
 			</div>
 
-			<p className="mt-2 text-sm leading-5 text-(--muted-color) text-center">{summary}</p>
+			<p className="mt-2 text-sm leading-5">{summary}</p>
 
 			<div className="mt-3">
 				<div className="relative mx-auto h-[min(56vw,17rem)] w-full max-w-2xl sm:h-[min(72vw,22rem)]">
