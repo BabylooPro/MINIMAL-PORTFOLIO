@@ -22,7 +22,7 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 	const { messages, portfolio } = dictionary;
 
 	return (
-		<Container>
+		<>
 			<HeaderSection
 				currentLocale={locale}
 				downloadCvLabel={messages.labels.downloadCv}
@@ -32,50 +32,52 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 				portfolio={portfolio}
 			/>
 
-			<main className="space-y-7 pb-12">
-				<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
+			<Container>
+				<main className="mt-6 space-y-7 pb-24 sm:mt-0 sm:pb-36">
+					<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
 
-				<ProofWorkSection
-					description={messages.proofWork.description}
-					links={portfolio.links}
-					nextVideoLabel={messages.proofWork.nextVideo}
-					postscript={messages.proofWork.postscript}
-					previousVideoLabel={messages.proofWork.previousVideo}
-					title={messages.sections.proofWork}
-					summary={messages.proofWork.summary}
-					tooltipLabel={messages.proofWork.tooltipLabel}
-					videoCounterTemplate={messages.proofWork.videoCounterTemplate}
-					videoLabel={messages.proofWork.video}
-				/>
-
-				<SkillsSection
-					skillGroups={portfolio.skillGroups}
-					title={messages.sections.skills}
-				/>
-
-				<LanguagesSection
-					languages={portfolio.languages}
-					title={messages.sections.languages}
-				/>
-
-				{showSideProjects ? (
-					<SideProjectsSection
-						content={messages.sideProjects}
-						locale={locale}
-						title={messages.sections.sideProjects}
+					<ProofWorkSection
+						description={messages.proofWork.description}
+						links={portfolio.links}
+						nextVideoLabel={messages.proofWork.nextVideo}
+						postscript={messages.proofWork.postscript}
+						previousVideoLabel={messages.proofWork.previousVideo}
+						title={messages.sections.proofWork}
+						summary={messages.proofWork.summary}
+						tooltipLabel={messages.proofWork.tooltipLabel}
+						videoCounterTemplate={messages.proofWork.videoCounterTemplate}
+						videoLabel={messages.proofWork.video}
 					/>
-				) : null}
 
-				<ExperienceSection
-					experiences={portfolio.experiences}
-					locale={locale}
-					presentLabel={messages.labels.present}
-					title={messages.sections.experience}
-				/>
-			</main>
+					<SkillsSection
+						skillGroups={portfolio.skillGroups}
+						title={messages.sections.skills}
+					/>
+
+					<LanguagesSection
+						languages={portfolio.languages}
+						title={messages.sections.languages}
+					/>
+
+					{showSideProjects ? (
+						<SideProjectsSection
+							content={messages.sideProjects}
+							locale={locale}
+							title={messages.sections.sideProjects}
+						/>
+					) : null}
+
+					<ExperienceSection
+						experiences={portfolio.experiences}
+						locale={locale}
+						presentLabel={messages.labels.present}
+						title={messages.sections.experience}
+					/>
+				</main>
+			</Container>
 
 			<FooterSection company={portfolio.company} theme={messages.theme} />
-		</Container>
+		</>
 	);
 }
 

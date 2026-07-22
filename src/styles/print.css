@@ -43,4 +43,22 @@
 	.no-print {
 		display: none;
 	}
+
+	[data-page-header-shell],
+	[data-page-footer] {
+		position: static;
+	}
+
+	[data-header-scroll-hidden] {
+		/* biome-ignore lint/complexity/noImportantStyles: Print must override inline scroll state. */
+		height: auto !important;
+		/* biome-ignore lint/complexity/noImportantStyles: Print must override inline scroll state. */
+		max-height: none !important;
+		/* biome-ignore lint/complexity/noImportantStyles: Print must override inline scroll state. */
+		opacity: 1 !important;
+		/* biome-ignore lint/complexity/noImportantStyles: Print must override inline scroll state. */
+		overflow: visible !important;
+		/* biome-ignore lint/complexity/noImportantStyles: Print must override inline scroll state. */
+		transform: none !important;
+	}
 }

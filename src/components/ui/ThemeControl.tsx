@@ -23,7 +23,7 @@ export function ThemeControl({ theme }: ThemeControlProps) {
 					aria-pressed={defaultPreference === value}
 					className={[
 						// CONTROL LAYOUT & INTERACTION
-						"appearance-none cursor-pointer px-2.5 py-2 text-xs leading-none",
+						"appearance-none cursor-pointer px-1 py-1.5 text-xs leading-none sm:px-2 sm:py-1.5 sm:transition-[padding] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:px-2.5 sm:group-data-expanded/footer:py-2",
 						// DEFAULT AND SELECTED STATES
 						"aria-pressed:bg-(--foreground-color) aria-pressed:text-(--background-color)",
 						// HOVER FEEDBACK
