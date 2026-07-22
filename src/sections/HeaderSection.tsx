@@ -89,7 +89,7 @@ export function HeaderSection({
 								<span key={link.href}>
 									{index > 0 ? " - " : ""}
 
-									<a href={link.href} target="_blank" rel="noreferrer">
+									<a href={link.href} target="_blank" rel="noreferrer" className="underline underline-offset-2">
 										{link.label}
 									</a>
 								</span>
