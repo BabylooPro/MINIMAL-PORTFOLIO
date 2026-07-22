@@ -1,4 +1,4 @@
-import type { Messages } from "../i18n/messages/types";
+import type { Messages } from "../../i18n/messages/types";
 
 type ThemePreference = "light" | "dark" | "system";
 

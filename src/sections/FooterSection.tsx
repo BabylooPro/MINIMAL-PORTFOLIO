@@ -1,4 +1,4 @@
-import { ThemeControl } from "../components/ThemeControl";
+import { ThemeControl } from "../components/ui/ThemeControl";
 import type { Messages } from "../i18n/messages/types";
 
 type FooterSectionProps = {

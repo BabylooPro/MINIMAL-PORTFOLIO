@@ -1,4 +1,4 @@
-import { SectionHeading } from "../components/SectionHeading";
+import { SectionHeading } from "../components/ui/SectionHeading";
 
 type LanguagesSectionProps = {
 	title: string;

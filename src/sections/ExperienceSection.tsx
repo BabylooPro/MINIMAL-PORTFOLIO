@@ -1,4 +1,4 @@
-import { SectionHeading } from "../components/SectionHeading";
+import { SectionHeading } from "../components/ui/SectionHeading";
 import type { Locale } from "../i18n/config";
 import { formatPortfolioDate } from "../i18n/format";
 import type { Experience } from "../types/portfolio";

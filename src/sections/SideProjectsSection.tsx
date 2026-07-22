@@ -1,4 +1,4 @@
-import { SectionHeading } from "../components/SectionHeading";
+import { SectionHeading } from "../components/ui/SectionHeading";
 import sideProjects from "../generated/side-projects.json";
 import type { Locale } from "../i18n/config";
 import { formatSideProjectDate } from "../i18n/format";

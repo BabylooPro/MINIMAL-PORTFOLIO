@@ -1,4 +1,4 @@
-import { LanguageSwitcher } from "../components/LanguageSwitcher";
+import { LanguageSwitcher } from "../components/ui/LanguageSwitcher";
 import type { Locale } from "../i18n/config";
 import type { Portfolio } from "../types/portfolio";
 import { isExternalHttpLink } from "../utils/isExternalHttpLink";

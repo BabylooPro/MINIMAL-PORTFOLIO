@@ -1,6 +1,6 @@
-import { SectionHeading } from "../components/SectionHeading";
+import { SectionHeading } from "../components/ui/SectionHeading";
 import { InfoIcon } from "../components/svg/InfoIcon";
-import { Tooltip } from "../components/Tooltip";
+import { Tooltip } from "../components/ui/Tooltip";
 import type { ExternalLink } from "../types/portfolio";
 import { renderTextWithPortfolioLinks } from "../utils/renderTextWithPortfolioLinks";
 

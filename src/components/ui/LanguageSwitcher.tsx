@@ -1,4 +1,4 @@
-import { type Locale, localeConfigs, locales } from "../i18n/config";
+import { type Locale, localeConfigs, locales } from "../../i18n/config";
 
 type LanguageSwitcherProps = {
 	currentLocale: Locale;
