@@ -1,10 +1,10 @@
 import { StrictMode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import App from "./App";
 import { defaultLocale, getLegalPageFromPathname, getLocaleFromPathname } from "./i18n/config";
 import { getDictionary } from "./i18n/dictionaries";
 import { LegalPage } from "./pages/LegalPage";
+import PortfolioPage from "./pages/PortfolioPage";
 import "./styles/global.css";
 
 const root = document.getElementById("root");
@@ -33,7 +33,7 @@ flushSync(() => {
 				{legalPage ? (
 					<LegalPage dictionary={dictionary} locale={locale} page={legalPage} />
 				) : (
-					<App
+					<PortfolioPage
 						dictionary={dictionary}
 						locale={locale}
 						showSideProjects={requestedLocale !== null}

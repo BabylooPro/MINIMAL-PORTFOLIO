@@ -2,6 +2,7 @@ import { LanguageSwitcher } from "../components/ui/LanguageSwitcher";
 import type { LegalPageId, Locale } from "../i18n/config";
 import type { Portfolio } from "../types/portfolio";
 import { isExternalHttpLink } from "../utils/isExternalHttpLink";
+import { Container } from "./Container";
 
 type HeaderProps = {
 	currentLocale: Locale;
@@ -60,7 +61,7 @@ export function Header({
 				data-page-header-shell
 				tabIndex={-1}
 			>
-				<div className="mx-auto w-full max-w-2xl px-6 sm:px-8">
+				<Container>
 					<div
 						className={[
 							// HEADER SPACING AND BORDER
@@ -258,7 +259,7 @@ export function Header({
 							</div>
 						</div>
 					</div>
-				</div>
+				</Container>
 			</header>
 		</>
 	);

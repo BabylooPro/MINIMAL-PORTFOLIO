@@ -1,7 +1,7 @@
-import { Container } from "../components/ui/Container";
 import { getLocalePath, type LegalPageId, type Locale } from "../i18n/config";
 import type { Dictionary } from "../i18n/dictionaries";
 import type { Messages } from "../i18n/messages/types";
+import { Container } from "../layout/Container";
 import { Footer } from "../layout/Footer";
 import { Header } from "../layout/Header";
 

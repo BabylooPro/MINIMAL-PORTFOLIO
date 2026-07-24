@@ -2,6 +2,7 @@ import { ArrowUpIcon } from "../components/svg/ArrowUpIcon";
 import { ThemeSwitcher } from "../components/ui/ThemeSwitcher";
 import { getLegalPagePath, type LegalPageId, type Locale } from "../i18n/config";
 import type { Messages } from "../i18n/messages/types";
+import { Container } from "./Container";
 
 type FooterProps = {
 	company: string;
@@ -30,7 +31,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: F
 				<ArrowUpIcon />
 			</a>
 
-			<div className="mx-auto w-full max-w-2xl px-6 sm:px-8">
+			<Container>
 				<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 border-t border-(--border-color) py-3 sm:py-3 sm:transition-[padding] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:py-6">
 					<div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
 						<p className="text-xs sm:transition-[font-size] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:text-sm">
@@ -66,7 +67,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: F
 
 					<ThemeSwitcher theme={theme} />
 				</div>
-			</div>
+			</Container>
 		</footer>
 	);
 }

@@ -1,23 +1,22 @@
-import { Container } from "./components/ui/Container";
+import type { Locale } from "../i18n/config";
+import type { Dictionary } from "../i18n/dictionaries";
+import { Container } from "../layout/Container";
+import { Footer } from "../layout/Footer";
+import { Header } from "../layout/Header";
+import { ExperienceSection } from "../sections/ExperienceSection";
+import { LanguagesSection } from "../sections/LanguagesSection";
+import { ProfileSection } from "../sections/ProfileSection";
+import { ProofWorkSection } from "../sections/ProofWorkSection";
+import { SideProjectsSection } from "../sections/SideProjectsSection";
+import { SkillsSection } from "../sections/SkillsSection";
 
-import type { Locale } from "./i18n/config";
-import type { Dictionary } from "./i18n/dictionaries";
-import { Footer } from "./layout/Footer";
-import { Header } from "./layout/Header";
-import { ExperienceSection } from "./sections/ExperienceSection";
-import { LanguagesSection } from "./sections/LanguagesSection";
-import { ProfileSection } from "./sections/ProfileSection";
-import { ProofWorkSection } from "./sections/ProofWorkSection";
-import { SideProjectsSection } from "./sections/SideProjectsSection";
-import { SkillsSection } from "./sections/SkillsSection";
-
-type AppProps = {
+type PortfolioPageProps = {
 	locale: Locale;
 	dictionary: Dictionary;
 	showSideProjects: boolean;
 };
 
-function App({ locale, dictionary, showSideProjects }: AppProps) {
+function PortfolioPage({ locale, dictionary, showSideProjects }: PortfolioPageProps) {
 	const { messages, portfolio } = dictionary;
 
 	return (
@@ -85,4 +84,4 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 	);
 }
 
-export default App;
+export default PortfolioPage;

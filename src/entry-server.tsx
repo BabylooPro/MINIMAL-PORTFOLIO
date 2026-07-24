@@ -1,7 +1,5 @@
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import App from "./App";
-import { createLegalPageStructuredData, createStructuredData } from "./data/structured-data";
 import {
 	defaultLocale,
 	getLegalPageAbsoluteUrl,
@@ -13,6 +11,8 @@ import {
 import { getDictionary } from "./i18n/dictionaries";
 import { validateDictionaries } from "./i18n/validate";
 import { LegalPage } from "./pages/LegalPage";
+import PortfolioPage from "./pages/PortfolioPage";
+import { createLegalPageStructuredData, createStructuredData } from "./seo/structured-data";
 
 export type StaticRoute =
 	| { kind: "root" }
@@ -53,7 +53,11 @@ export function renderPage(route: StaticRoute): RenderedPage {
 
 		return {
 			appHtml: renderAppHtml(
-				<App dictionary={dictionary} locale={defaultLocale} showSideProjects={false} />,
+				<PortfolioPage
+					dictionary={dictionary}
+					locale={defaultLocale}
+					showSideProjects={false}
+				/>,
 			),
 			lang: "en",
 			pathname: "/",
@@ -98,7 +102,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 
 	return {
 		appHtml: renderAppHtml(
-			<App dictionary={dictionary} locale={route.locale} showSideProjects />,
+			<PortfolioPage dictionary={dictionary} locale={route.locale} showSideProjects />,
 		),
 		lang: localeConfig.htmlLang,
 		pathname: localeConfig.pathname,
