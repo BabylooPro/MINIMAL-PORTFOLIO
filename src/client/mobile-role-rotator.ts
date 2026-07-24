@@ -48,7 +48,7 @@ export function initializeMobileRoleRotator(): void {
 		for (const rotator of rotators) {
 			clearRotation(rotator);
 
-			if (mobileViewport.matches && !document.hidden) {
+			if (mobileViewport.matches && !document.hidden && !reducedMotion.matches) {
 				queueRoleChange(rotator);
 			}
 		}

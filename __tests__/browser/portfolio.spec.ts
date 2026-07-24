@@ -37,6 +37,22 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	).toBe(true);
 });
 
+test("keeps the mobile role stable when reduced motion is requested", async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto("/en/");
+
+	const visibleRole = page.locator("[data-mobile-role]:not([hidden])");
+	const initialRole = await visibleRole.textContent();
+
+	if (!initialRole) {
+		throw new Error("The mobile role rotator needs a visible initial role.");
+	}
+
+	await page.waitForTimeout(5_100);
+	await expect(page.locator("[data-mobile-role]:not([hidden])")).toHaveText(initialRole);
+});
+
 test("persists the theme and applies desktop and mobile header states", async ({ page }) => {
 	await page.goto("/en/");
 
