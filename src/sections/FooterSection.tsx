@@ -1,5 +1,5 @@
 import { ArrowUpIcon } from "../components/svg/ArrowUpIcon";
-import { ThemeControl } from "../components/ui/ThemeControl";
+import { ThemeSwitcher } from "../components/ui/ThemeSwitcher";
 import { getLegalPagePath, type LegalPageId, type Locale } from "../i18n/config";
 import type { Messages } from "../i18n/messages/types";
 
@@ -70,7 +70,7 @@ export function FooterSection({
 						</nav>
 					</div>
 
-					<ThemeControl theme={theme} />
+					<ThemeSwitcher theme={theme} />
 				</div>
 			</div>
 		</footer>

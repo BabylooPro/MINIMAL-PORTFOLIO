@@ -6,13 +6,13 @@ import { ChoiceSwitcher } from "./ChoiceSwitcher";
 
 type ThemePreference = "light" | "dark" | "system";
 
-type ThemeControlProps = {
+type ThemeSwitcherProps = {
 	theme: Messages["theme"];
 };
 
 const defaultPreference: ThemePreference = "system";
 
-export function ThemeControl({ theme }: ThemeControlProps) {
+export function ThemeSwitcher({ theme }: ThemeSwitcherProps) {
 	const preferences = [
 		{
 			buttonProps: { "data-theme-preference": "system" },

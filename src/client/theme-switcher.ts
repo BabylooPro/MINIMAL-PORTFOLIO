@@ -34,7 +34,7 @@ function isDarkTheme(preference: ThemePreference): boolean {
 	return preference === "dark" || (preference === "system" && systemTheme.matches);
 }
 
-function updateThemeControl(preference: ThemePreference): void {
+function updateThemeSwitcher(preference: ThemePreference): void {
 	const controls = document.querySelectorAll<HTMLButtonElement>("button[data-theme-preference]");
 
 	for (const control of controls) {
@@ -58,7 +58,7 @@ function applyPreference(preference: ThemePreference): void {
 
 	themeColor?.setAttribute("content", isDark ? "#000000" : "#ffffff");
 
-	updateThemeControl(preference);
+	updateThemeSwitcher(preference);
 }
 
 document.addEventListener("click", (event) => {
