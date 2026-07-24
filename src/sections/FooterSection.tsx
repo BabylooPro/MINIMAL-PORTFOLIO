@@ -50,7 +50,7 @@ export function FooterSection({
 										aria-current={
 											currentPage === "privacy" ? "page" : undefined
 										}
-										className="hover:text-(--foreground-color)"
+										className="hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)!"
 										href={getLegalPagePath(currentLocale, "privacy")}
 									>
 										{footer.privacy}
@@ -60,7 +60,7 @@ export function FooterSection({
 								<li>
 									<a
 										aria-current={currentPage === "legal" ? "page" : undefined}
-										className="hover:text-(--foreground-color)"
+										className="hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)!"
 										href={getLegalPagePath(currentLocale, "legal")}
 									>
 										{footer.legal}
