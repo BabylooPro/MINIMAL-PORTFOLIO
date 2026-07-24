@@ -1,13 +1,16 @@
 import { mkdir, readdir, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { getIgnoredProjectFiles } from "./ignored-project-files.mjs";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectDirectory = path.resolve(scriptDirectory, "..");
+const publicDirectory = path.join(projectDirectory, "public");
 const distDirectory = path.join(projectDirectory, "dist");
 const assetsDirectory = path.join(distDirectory, "assets");
 const indexPath = path.join(distDirectory, "index.html");
 const sitemapPath = path.join(distDirectory, "sitemap.xml");
+const hostingerConfigPath = path.join(distDirectory, ".htaccess");
 const serverDirectory = path.join(distDirectory, "server");
 const serverEntryPath = path.join(serverDirectory, "entry-server.js");
 const manifestDirectory = path.join(distDirectory, ".vite");
@@ -17,7 +20,9 @@ const pageMetadataMarker = "<!--page-metadata-->";
 const structuredDataMarker = "<!--structured-data-->";
 const pageTitlePattern = /<title data-page-title>.*?<\/title>/;
 const siteControllerEntry = "src/client/site-controller.ts";
+
 const siteName = "Max Remy";
+
 const routes = [
 	{ kind: "root" },
 	{ kind: "locale", locale: "en" },
@@ -56,6 +61,17 @@ async function listFiles(directory) {
 	);
 
 	return files.flat();
+}
+
+async function validatePublicAssets() {
+	const publicFiles = await listFiles(publicDirectory);
+	const ignoredFiles = await getIgnoredProjectFiles(projectDirectory, publicFiles);
+
+	if (ignoredFiles.length > 0) {
+		throw new Error(
+			`Public assets must not match .gitignore rules:\n${ignoredFiles.map((file) => `- ${file}`).join("\n")}`,
+		);
+	}
 }
 
 function escapeHtml(value) {
@@ -520,6 +536,10 @@ async function validateStaticOutput(renderedPages, files, sitemap, allowedJavaSc
 		throw new Error("The production sitemap file was not generated.");
 	}
 
+	if (!files.includes(hostingerConfigPath)) {
+		throw new Error("The Hostinger .htaccess configuration was not generated.");
+	}
+
 	for (const {
 		page,
 		route,
@@ -602,6 +622,8 @@ if (
 const siteController = getSiteControllerScript(templateHtml);
 getReactEntryScript(templateHtml);
 getLocaleRedirectScript(templateHtml);
+
+await validatePublicAssets();
 
 let manifest;
 
