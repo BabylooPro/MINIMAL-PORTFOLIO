@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+const locales = ["en", "fr", "de"] as const;
+
 test("keeps the back-to-top link usable without JavaScript", async ({ browser }) => {
 	const context = await browser.newContext({ javaScriptEnabled: false });
 	const page = await context.newPage();
@@ -50,4 +52,34 @@ test("persists the theme and applies desktop and mobile header states", async ({
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.evaluate(() => window.scrollTo(0, 100));
 	await expect(page.locator("[data-header-scroll-hidden]")).toHaveAttribute("data-collapsed", "");
+});
+
+test("keeps localized legal links and language switching on every locale", async ({ page }) => {
+	for (const locale of locales) {
+		await page.goto(`/${locale}/privacy/`);
+
+		await expect(page.locator("html")).toHaveAttribute("lang", locale);
+		await expect(page.locator(`[data-page-footer] a[href="/${locale}/legal/"]`)).toBeVisible();
+
+		for (const targetLocale of locales) {
+			await expect(page.locator(`a[hreflang="${targetLocale}"]`)).toHaveAttribute(
+				"href",
+				`/${targetLocale}/privacy/`,
+			);
+		}
+
+		const alternateLocale = locales.find((targetLocale) => targetLocale !== locale);
+
+		if (!alternateLocale) {
+			throw new Error("Each localized page needs an alternate language.");
+		}
+
+		await page.locator(`a[hreflang="${alternateLocale}"]`).click();
+		await expect(page).toHaveURL(`/${alternateLocale}/privacy/`);
+
+		await page.goto(`/${locale}/legal/`);
+		await expect(
+			page.locator(`[data-page-footer] a[href="/${locale}/privacy/"]`),
+		).toBeVisible();
+	}
 });
