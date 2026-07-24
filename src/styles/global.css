@@ -64,6 +64,10 @@ body {
 	overscroll-behavior-y: none;
 }
 
+main > * {
+	overflow-x: clip;
+}
+
 a {
 	color: inherit;
 	text-decoration-thickness: from-font;

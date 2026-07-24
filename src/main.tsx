@@ -29,15 +29,17 @@ const appRoot = createRoot(root);
 flushSync(() => {
 	appRoot.render(
 		<StrictMode>
-			{legalPage ? (
-				<LegalPage dictionary={dictionary} locale={locale} page={legalPage} />
-			) : (
-				<App
-					dictionary={dictionary}
-					locale={locale}
-					showSideProjects={requestedLocale !== null}
-				/>
-			)}
+			<div className="overflow-x-clip">
+				{legalPage ? (
+					<LegalPage dictionary={dictionary} locale={locale} page={legalPage} />
+				) : (
+					<App
+						dictionary={dictionary}
+						locale={locale}
+						showSideProjects={requestedLocale !== null}
+					/>
+				)}
+			</div>
 		</StrictMode>,
 	);
 });

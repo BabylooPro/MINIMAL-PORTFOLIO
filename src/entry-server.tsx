@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import App from "./App";
 import { createLegalPageStructuredData, createStructuredData } from "./data/structured-data";
@@ -33,6 +34,10 @@ export type RenderedPage = {
 
 let dictionariesAreValidated = false;
 
+function renderAppHtml(content: ReactNode): string {
+	return renderToStaticMarkup(<div className="overflow-x-clip">{content}</div>);
+}
+
 function validateBeforeRendering(): void {
 	if (!dictionariesAreValidated) {
 		validateDictionaries();
@@ -47,7 +52,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 		const dictionary = getDictionary(defaultLocale);
 
 		return {
-			appHtml: renderToStaticMarkup(
+			appHtml: renderAppHtml(
 				<App dictionary={dictionary} locale={defaultLocale} showSideProjects={false} />,
 			),
 			lang: "en",
@@ -71,7 +76,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 		const title = `${content.title} | ${dictionary.portfolio.name}`;
 
 		return {
-			appHtml: renderToStaticMarkup(
+			appHtml: renderAppHtml(
 				<LegalPage dictionary={dictionary} locale={route.locale} page={route.page} />,
 			),
 			lang: localeConfig.htmlLang,
@@ -92,7 +97,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 	}
 
 	return {
-		appHtml: renderToStaticMarkup(
+		appHtml: renderAppHtml(
 			<App dictionary={dictionary} locale={route.locale} showSideProjects />,
 		),
 		lang: localeConfig.htmlLang,
