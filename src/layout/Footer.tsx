@@ -24,7 +24,6 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: F
 				aria-label={footer.backToTop}
 				className="absolute bottom-full left-1/2 z-50 mb-2 flex size-9 -translate-x-1/2 items-center justify-center rounded-full border border-(--border-color) bg-(--background-color) text-(--foreground-color) shadow-sm transition-[background-color,color,transform] hover:bg-(--foreground-color) hover:text-(--background-color) focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2"
 				href="#top"
-				hidden
 				data-back-to-top
 				title={footer.backToTop}
 			>
