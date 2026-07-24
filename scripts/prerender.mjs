@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, rm, unlink, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, stat, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { getIgnoredProjectFiles } from "./ignored-project-files.mjs";
@@ -10,6 +10,7 @@ const distDirectory = path.join(projectDirectory, "dist");
 const assetsDirectory = path.join(distDirectory, "assets");
 const indexPath = path.join(distDirectory, "index.html");
 const sitemapPath = path.join(distDirectory, "sitemap.xml");
+const socialImagePath = path.join(distDirectory, "og-image.jpg");
 const hostingerConfigPath = path.join(distDirectory, ".htaccess");
 const serverDirectory = path.join(distDirectory, "server");
 const serverEntryPath = path.join(serverDirectory, "entry-server.js");
@@ -36,10 +37,10 @@ const routes = [
 	{ kind: "legal", locale: "de", page: "legal" },
 ];
 
-const alternateLinks = [
-	{ hreflang: "en", href: "https://maxremy.dev/en/" },
-	{ hreflang: "fr", href: "https://maxremy.dev/fr/" },
-	{ hreflang: "de", href: "https://maxremy.dev/de/" },
+const localizedAlternateLinks = [
+	{ hreflang: "en-CH", href: "https://maxremy.dev/en/" },
+	{ hreflang: "fr-CH", href: "https://maxremy.dev/fr/" },
+	{ hreflang: "de-CH", href: "https://maxremy.dev/de/" },
 	{ hreflang: "x-default", href: "https://maxremy.dev/" },
 ];
 
@@ -82,6 +83,66 @@ function escapeHtml(value) {
 		.replaceAll(">", "&gt;");
 }
 
+function getJpegDimensions(source) {
+	if (source.length < 4 || source[0] !== 0xff || source[1] !== 0xd8) {
+		throw new Error("The social image must be a valid JPEG.");
+	}
+
+	let offset = 2;
+
+	while (offset < source.length) {
+		if (source[offset] !== 0xff) {
+			throw new Error("The social image must be a valid JPEG.");
+		}
+
+		while (source[offset] === 0xff) {
+			offset += 1;
+		}
+
+		const marker = source[offset];
+		offset += 1;
+
+		if (marker === undefined || marker === 0xd9 || marker === 0xda) {
+			break;
+		}
+
+		if (marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) {
+			continue;
+		}
+
+		if (offset + 2 > source.length) {
+			break;
+		}
+
+		const segmentLength = source.readUInt16BE(offset);
+
+		if (segmentLength < 2 || offset + segmentLength > source.length) {
+			throw new Error("The social image must be a valid JPEG.");
+		}
+
+		const isStartOfFrame =
+			(marker >= 0xc0 && marker <= 0xc3) ||
+			(marker >= 0xc5 && marker <= 0xc7) ||
+			(marker >= 0xc9 && marker <= 0xcb) ||
+			(marker >= 0xcd && marker <= 0xcf);
+
+		if (isStartOfFrame) {
+			if (segmentLength < 8) {
+				throw new Error("The social image must be a valid JPEG.");
+			}
+
+			return {
+				height: source.readUInt16BE(offset + 3),
+				width: source.readUInt16BE(offset + 5),
+			};
+		}
+
+		offset += segmentLength;
+	}
+
+	throw new Error("The social image does not contain JPEG dimensions.");
+}
+
 function escapeRegularExpression(value) {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -113,6 +174,22 @@ function getMetaHttpEquivElements(html, value) {
 	return (html.match(/<meta\b[^>]*>/gi) ?? []).filter(
 		(element) => getAttribute(element, "http-equiv")?.toLowerCase() === value.toLowerCase(),
 	);
+}
+
+function getMetaPropertyElements(html, property) {
+	return (html.match(/<meta\b[^>]*>/gi) ?? []).filter(
+		(element) => getAttribute(element, "property") === property,
+	);
+}
+
+function getLinkElements(html, rel) {
+	return (html.match(/<link\b[^>]*>/gi) ?? []).filter(
+		(element) => getAttribute(element, "rel") === rel,
+	);
+}
+
+function getAnchorElements(html) {
+	return html.match(/<a\b[^>]*>/gi) ?? [];
 }
 
 function isModuleScript(scriptElement) {
@@ -249,8 +326,13 @@ function renderMetadata(page) {
 	const escapedDescription = escapeHtml(page.description);
 	const escapedOgDescription = escapeHtml(page.ogDescription);
 	const escapedCanonical = escapeHtml(page.canonical);
+	const escapedSocialImageUrl = escapeHtml(page.socialImage.url);
+	const escapedSocialImageAlt = escapeHtml(page.socialImage.alt);
+
+	const robots = page.indexable ? "index,follow,max-image-preview:large" : "noindex,follow";
 
 	return [
+		`<meta name="robots" content="${robots}" />`,
 		`<meta name="description" content="${escapedDescription}" />`,
 		`<link rel="canonical" href="${escapedCanonical}" />`,
 		`<meta property="og:type" content="${page.ogType}" />`,
@@ -259,22 +341,36 @@ function renderMetadata(page) {
 		`<meta property="og:url" content="${escapedCanonical}" />`,
 		`<meta property="og:site_name" content="${siteName}" />`,
 		`<meta property="og:locale" content="${page.ogLocale}" />`,
-		'<meta name="twitter:card" content="summary" />',
+		`<meta property="og:image" content="${escapedSocialImageUrl}" />`,
+		`<meta property="og:image:type" content="${page.socialImage.type}" />`,
+		`<meta property="og:image:width" content="${page.socialImage.width}" />`,
+		`<meta property="og:image:height" content="${page.socialImage.height}" />`,
+		`<meta property="og:image:alt" content="${escapedSocialImageAlt}" />`,
+		'<meta name="twitter:card" content="summary_large_image" />',
 		`<meta name="twitter:title" content="${escapedTitle}" />`,
 		`<meta name="twitter:description" content="${escapedOgDescription}" />`,
+		`<meta name="twitter:image" content="${escapedSocialImageUrl}" />`,
+		`<meta name="twitter:image:alt" content="${escapedSocialImageAlt}" />`,
 	].join("\n        ");
 }
 
 function getAlternateLinks(route) {
+	return route.kind === "locale" ? localizedAlternateLinks : [];
+}
+
+function getLanguageSwitcherLinks(route) {
 	if (route.kind !== "legal") {
-		return alternateLinks;
+		return [
+			{ hreflang: "en", href: "https://maxremy.dev/en/" },
+			{ hreflang: "fr", href: "https://maxremy.dev/fr/" },
+			{ hreflang: "de", href: "https://maxremy.dev/de/" },
+		];
 	}
 
 	return [
 		{ hreflang: "en", href: `https://maxremy.dev/en/${route.page}/` },
 		{ hreflang: "fr", href: `https://maxremy.dev/fr/${route.page}/` },
 		{ hreflang: "de", href: `https://maxremy.dev/de/${route.page}/` },
-		{ hreflang: "x-default", href: `https://maxremy.dev/en/${route.page}/` },
 	];
 }
 
@@ -282,6 +378,32 @@ function renderAlternateLinks(links) {
 	return links
 		.map((link) => `<link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`)
 		.join("\n        ");
+}
+
+function renderSitemap(renderedPages) {
+	const indexablePages = renderedPages.filter(({ page }) => page.indexable);
+	const entries = indexablePages
+		.map(({ page, alternateLinks }) => {
+			const alternates = alternateLinks
+				.map(
+					(link) =>
+						`\t\t<xhtml:link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`,
+				)
+				.join("\n");
+
+			return ["\t<url>", `\t\t<loc>${page.canonical}</loc>`, alternates, "\t</url>"].join(
+				"\n",
+			);
+		})
+		.join("\n");
+
+	return [
+		'<?xml version="1.0" encoding="UTF-8"?>',
+		'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+		entries,
+		"</urlset>",
+		"",
+	].join("\n");
 }
 
 function routeOutputPath(route) {
@@ -331,7 +453,40 @@ function removeLocaleRedirect(html) {
 	return html.replace(redirectScript, "");
 }
 
-function validatePageHtml(page, route, indexHtml, siteControllerSrc, pageAlternateLinks) {
+function assertSingleMetadata(elements, content, description) {
+	if (elements.length !== 1 || getAttribute(elements[0], "content") !== escapeHtml(content)) {
+		throw new Error(`The production HTML has an invalid ${description}.`);
+	}
+}
+
+function parseStructuredData(indexHtml, route) {
+	const structuredDataScripts = getScriptElements(indexHtml).filter(isJsonLdScript);
+
+	if (structuredDataScripts.length !== 1) {
+		throw new Error(`The ${route.kind} page must contain exactly one JSON-LD script.`);
+	}
+
+	const [structuredDataScript] = structuredDataScripts;
+	const content = structuredDataScript.slice(
+		structuredDataScript.indexOf(">") + 1,
+		structuredDataScript.lastIndexOf("</script>"),
+	);
+
+	try {
+		return JSON.parse(content);
+	} catch {
+		throw new Error(`The ${route.kind} page contains invalid JSON-LD structured data.`);
+	}
+}
+
+function validatePageHtml(
+	page,
+	route,
+	indexHtml,
+	siteControllerSrc,
+	pageAlternateLinks,
+	languageSwitcherLinks,
+) {
 	if (!indexHtml.includes("Max Remy")) {
 		throw new Error(`The ${route.kind} page does not contain "Max Remy".`);
 	}
@@ -453,8 +608,82 @@ function validatePageHtml(page, route, indexHtml, siteControllerSrc, pageAlterna
 		throw new Error(`The ${route.kind} page has an incorrect canonical URL.`);
 	}
 
+	if (getLinkElements(indexHtml, "canonical").length !== 1) {
+		throw new Error(`The ${route.kind} page must contain exactly one canonical URL.`);
+	}
+
 	if (!indexHtml.includes(`<title>${escapeHtml(page.title)}</title>`)) {
 		throw new Error(`The ${route.kind} page has an incorrect document title.`);
+	}
+
+	assertSingleMetadata(
+		getMetaElements(indexHtml, "robots"),
+		page.indexable ? "index,follow,max-image-preview:large" : "noindex,follow",
+		"robots directive",
+	);
+	assertSingleMetadata(
+		getMetaElements(indexHtml, "description"),
+		page.description,
+		"description metadata",
+	);
+	assertSingleMetadata(
+		getMetaElements(indexHtml, "twitter:card"),
+		"summary_large_image",
+		"Twitter card metadata",
+	);
+	assertSingleMetadata(
+		getMetaElements(indexHtml, "twitter:title"),
+		page.title,
+		"Twitter title metadata",
+	);
+	assertSingleMetadata(
+		getMetaElements(indexHtml, "twitter:description"),
+		page.ogDescription,
+		"Twitter description metadata",
+	);
+	assertSingleMetadata(
+		getMetaElements(indexHtml, "twitter:image"),
+		page.socialImage.url,
+		"Twitter image metadata",
+	);
+	assertSingleMetadata(
+		getMetaElements(indexHtml, "twitter:image:alt"),
+		page.socialImage.alt,
+		"Twitter image alt metadata",
+	);
+
+	const expectedOpenGraphMetadata = [
+		["og:type", page.ogType],
+		["og:title", page.title],
+		["og:description", page.ogDescription],
+		["og:url", page.canonical],
+		["og:site_name", siteName],
+		["og:locale", page.ogLocale],
+		["og:image", page.socialImage.url],
+		["og:image:type", page.socialImage.type],
+		["og:image:width", String(page.socialImage.width)],
+		["og:image:height", String(page.socialImage.height)],
+		["og:image:alt", page.socialImage.alt],
+	];
+
+	for (const [property, content] of expectedOpenGraphMetadata) {
+		assertSingleMetadata(
+			getMetaPropertyElements(indexHtml, property),
+			content,
+			`${property} metadata`,
+		);
+	}
+
+	let socialImageUrl;
+
+	try {
+		socialImageUrl = new URL(page.socialImage.url);
+	} catch {
+		throw new Error(`The ${route.kind} page has a non-absolute social image URL.`);
+	}
+
+	if (socialImageUrl.protocol !== "https:") {
+		throw new Error(`The ${route.kind} page has a non-HTTPS social image URL.`);
 	}
 
 	for (const link of pageAlternateLinks) {
@@ -463,12 +692,26 @@ function validatePageHtml(page, route, indexHtml, siteControllerSrc, pageAlterna
 		}
 	}
 
-	if (!/<script\b(?=[^>]*\btype=["']application\/ld\+json["'])[^>]*>/i.test(indexHtml)) {
-		throw new Error(`The ${route.kind} page does not contain JSON-LD structured data.`);
+	if (getLinkElements(indexHtml, "alternate").length !== pageAlternateLinks.length) {
+		throw new Error(`The ${route.kind} page has an invalid hreflang cluster.`);
 	}
 
-	if (!indexHtml.includes(`"inLanguage":"${page.lang}"`)) {
+	const structuredData = parseStructuredData(indexHtml, route);
+
+	if (structuredData.inLanguage !== page.lang) {
 		throw new Error(`The ${route.kind} page has incorrect JSON-LD language data.`);
+	}
+
+	if (
+		page.ogType === "profile" &&
+		(structuredData["@type"] !== "ProfilePage" ||
+			structuredData.primaryImageOfPage?.url !== page.socialImage.url ||
+			structuredData.primaryImageOfPage?.width !== page.socialImage.width ||
+			structuredData.primaryImageOfPage?.height !== page.socialImage.height ||
+			structuredData.mainEntity?.["@type"] !== "Person" ||
+			structuredData.mainEntity?.["@id"] !== "https://maxremy.dev/#max-remy")
+	) {
+		throw new Error(`The ${route.kind} page has incomplete profile JSON-LD data.`);
 	}
 
 	if (/react-dom|react-jsx-runtime|createRoot|hydrateRoot/i.test(indexHtml)) {
@@ -502,9 +745,15 @@ function validatePageHtml(page, route, indexHtml, siteControllerSrc, pageAlterna
 	}
 
 	if (
-		!pageAlternateLinks
-			.slice(0, 3)
-			.every((link) => indexHtml.includes(`href="${new URL(link.href).pathname}"`))
+		!languageSwitcherLinks.every((link) => {
+			const href = new URL(link.href).pathname;
+
+			return getAnchorElements(indexHtml).some(
+				(anchor) =>
+					getAttribute(anchor, "href") === href &&
+					getAttribute(anchor, "hreflang") === link.hreflang,
+			);
+		})
 	) {
 		throw new Error(`The ${route.kind} page does not contain the language selector.`);
 	}
@@ -547,12 +796,40 @@ async function validateStaticOutput(renderedPages, files, sitemap, allowedJavaSc
 		html,
 		siteControllerSrc,
 		alternateLinks: pageAlternateLinks,
+		languageSwitcherLinks,
 	} of renderedPages) {
 		if (!files.includes(outputPath)) {
 			throw new Error(`The ${route.kind} output file was not generated.`);
 		}
 
-		validatePageHtml(page, route, html, siteControllerSrc, pageAlternateLinks);
+		validatePageHtml(
+			page,
+			route,
+			html,
+			siteControllerSrc,
+			pageAlternateLinks,
+			languageSwitcherLinks,
+		);
+	}
+
+	if (!files.includes(socialImagePath)) {
+		throw new Error("The social image was not generated.");
+	}
+
+	if ((await stat(socialImagePath)).size > 250_000) {
+		throw new Error("The social image exceeds the 250 kB budget.");
+	}
+
+	const [{ page: firstPage }] = renderedPages;
+	const socialImageDimensions = getJpegDimensions(await readFile(socialImagePath));
+
+	if (
+		socialImageDimensions.width !== firstPage.socialImage.width ||
+		socialImageDimensions.height !== firstPage.socialImage.height
+	) {
+		throw new Error(
+			`The social image must be ${firstPage.socialImage.width} × ${firstPage.socialImage.height}, received ${socialImageDimensions.width} × ${socialImageDimensions.height}.`,
+		);
 	}
 
 	if (
@@ -581,8 +858,15 @@ async function validateStaticOutput(renderedPages, files, sitemap, allowedJavaSc
 		}
 	}
 
-	if (!renderedPages.every(({ page }) => sitemap.includes(`<loc>${page.canonical}</loc>`))) {
-		throw new Error("The generated sitemap does not contain every rendered URL.");
+	const indexablePages = renderedPages.filter(({ page }) => page.indexable);
+	const nonIndexablePages = renderedPages.filter(({ page }) => !page.indexable);
+
+	if (!indexablePages.every(({ page }) => sitemap.includes(`<loc>${page.canonical}</loc>`))) {
+		throw new Error("The generated sitemap does not contain every indexable URL.");
+	}
+
+	if (nonIndexablePages.some(({ page }) => sitemap.includes(`<loc>${page.canonical}</loc>`))) {
+		throw new Error("The generated sitemap contains a non-indexable URL.");
 	}
 }
 
@@ -640,6 +924,7 @@ const renderedPages = await Promise.all(
 	routes.map(async (route) => {
 		const page = renderPage(route);
 		const pageAlternateLinks = getAlternateLinks(route);
+		const languageSwitcherLinks = getLanguageSwitcherLinks(route);
 
 		if (typeof page.appHtml !== "string" || page.appHtml.length === 0) {
 			throw new Error(`The ${route.kind} static renderer returned an empty document.`);
@@ -670,17 +955,13 @@ const renderedPages = await Promise.all(
 			html,
 			siteControllerSrc: siteController.src,
 			alternateLinks: pageAlternateLinks,
+			languageSwitcherLinks,
 		};
 	}),
 );
 
-let sitemap;
-
-try {
-	sitemap = await readFile(sitemapPath, "utf8");
-} catch {
-	throw new Error("The production sitemap file was not generated.");
-}
+const sitemap = renderSitemap(renderedPages);
+await writeFile(sitemapPath, sitemap, "utf8");
 
 await rm(serverDirectory, {
 	recursive: true,
