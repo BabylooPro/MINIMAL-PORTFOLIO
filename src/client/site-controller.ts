@@ -1,9 +1,9 @@
 import { initializeMobileRoleRotator } from "./mobile-role-rotator";
 import { initializeProofWorkController } from "./proof-work-controller";
 import { initializeScrollStateController } from "./scroll-state-controller";
-import { initializeThemeSwitcher } from "./theme-switcher";
+import { initializeThemeController } from "./theme-controller";
 
-initializeThemeSwitcher();
+initializeThemeController();
 initializeProofWorkController();
 initializeMobileRoleRotator();
 initializeScrollStateController();

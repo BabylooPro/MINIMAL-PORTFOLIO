@@ -2,7 +2,7 @@ type ThemePreference = "light" | "dark" | "system";
 
 const storageKey = "theme-preference";
 
-export function initializeThemeSwitcher(): void {
+export function initializeThemeController(): void {
 	const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
 	const themeColor = document.querySelector<HTMLMetaElement>("meta[data-theme-color]");
@@ -35,7 +35,7 @@ export function initializeThemeSwitcher(): void {
 		return preference === "dark" || (preference === "system" && systemTheme.matches);
 	}
 
-	function updateThemeSwitcher(preference: ThemePreference): void {
+	function updateThemeControls(preference: ThemePreference): void {
 		const controls = document.querySelectorAll<HTMLButtonElement>(
 			"button[data-theme-preference]",
 		);
@@ -61,7 +61,7 @@ export function initializeThemeSwitcher(): void {
 
 		themeColor?.setAttribute("content", isDark ? "#000000" : "#ffffff");
 
-		updateThemeSwitcher(preference);
+		updateThemeControls(preference);
 	}
 
 	document.addEventListener("click", (event) => {
