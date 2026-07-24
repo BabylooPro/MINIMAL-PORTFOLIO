@@ -12,5 +12,7 @@
 		.map((language) => language.trim().toLowerCase().split("-")[0])
 		.find((language) => supportedLocales.has(language));
 
-	window.location.replace(`/${locale ?? "en"}/`);
+	if (locale && locale !== "en") {
+		window.location.replace(`/${locale}/`);
+	}
 })();

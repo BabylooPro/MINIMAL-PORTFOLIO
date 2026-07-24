@@ -119,6 +119,7 @@ const siteControllerAssets = readSiteControllerAssets({
 	distDirectory,
 });
 const staticTemplateHtml = removeReactAndUnusedModules(templateHtml);
+const localizedTemplateHtml = removeLocaleRedirect(staticTemplateHtml);
 
 const renderedPages = await Promise.all(
 	routes.map(async (route) => {
@@ -132,7 +133,7 @@ const renderedPages = await Promise.all(
 
 		const structuredDataJson = JSON.stringify(page.structuredData).replaceAll("<", "\\u003c");
 		const routeTemplateHtml =
-			route.kind === "root" ? staticTemplateHtml : removeLocaleRedirect(staticTemplateHtml);
+			route.kind === "root" ? staticTemplateHtml : localizedTemplateHtml;
 		const html = routeTemplateHtml
 			.replace('<html lang="en">', `<html lang="${page.lang}">`)
 			.replace(pageTitlePattern, `<title>${escapeHtml(page.title)}</title>`)

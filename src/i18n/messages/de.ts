@@ -42,7 +42,7 @@ export const deMessages = {
 				"Die Auswahl von System, Hell oder Dunkel speichert nur diese Einstellung im lokalen Speicher Ihres Browsers. Die Website übermittelt diese Einstellung nicht an Max Remy Dev.",
 			languageTitle: "Sprache",
 			languageDescription:
-				"Nur auf der Startseite liest die Website die in Ihrem Browser eingestellte Sprache, um Sie auf die passende lokalisierte URL weiterzuleiten. Diese Erkennung erfolgt lokal, wird nicht gespeichert und nicht an Max Remy Dev übermittelt. Die manuelle Sprachauswahl verwendet einen Link zur entsprechenden URL und wird ebenfalls nicht gespeichert.",
+				"Die Website liest die im Browser konfigurierte Sprache aus, um Browser auf Französisch und Deutsch zu ihren lokalisierten URLs weiterzuleiten. Englisch und nicht unterstützte Sprachen verbleiben auf der englischen Startseite. Diese Erkennung erfolgt lokal, wird nicht gespeichert und nicht an Max Remy Dev übermittelt. Die manuelle Sprachauswahl verwendet einen Link zur entsprechenden URL und wird ebenfalls nicht gespeichert.",
 			cvDownloadTitle: "Lebenslauf herunterladen",
 			cvDownloadDescription:
 				"Der Link zum Herunterladen des Lebenslaufs stellt eine statische PDF-Datei bereit. Dieses Portfolio verwendet weder ein Formular noch ein Analyse-Tool, um Downloads zu identifizieren.",

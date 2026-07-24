@@ -3,6 +3,30 @@ import { localeConfigs } from "../../src/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
 
+test("keeps English at the root and redirects French browser language", async ({ browser }) => {
+	const englishContext = await browser.newContext({ locale: "en-CH" });
+	const englishPage = await englishContext.newPage();
+
+	await englishPage.goto("http://127.0.0.1:4174/");
+	await expect(englishPage).toHaveURL("http://127.0.0.1:4174/");
+	await expect(englishPage.locator("main")).toContainText("Profile");
+	await englishContext.close();
+
+	const italianContext = await browser.newContext({ locale: "it-CH" });
+	const italianPage = await italianContext.newPage();
+
+	await italianPage.goto("http://127.0.0.1:4174/");
+	await expect(italianPage).toHaveURL("http://127.0.0.1:4174/");
+	await italianContext.close();
+
+	const frenchContext = await browser.newContext({ locale: "fr-CH" });
+	const frenchPage = await frenchContext.newPage();
+
+	await frenchPage.goto("http://127.0.0.1:4174/");
+	await expect(frenchPage).toHaveURL("http://127.0.0.1:4174/fr/");
+	await frenchContext.close();
+});
+
 test("keeps the back-to-top link usable without JavaScript", async ({ browser }) => {
 	const context = await browser.newContext({ javaScriptEnabled: false });
 	const page = await context.newPage();

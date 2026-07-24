@@ -41,7 +41,7 @@ export const enMessages = {
 				"Choosing System, Light, or Dark stores only that preference in your browser's local storage. The site does not send that preference to Max Remy Dev.",
 			languageTitle: "Language",
 			languageDescription:
-				"On the root page only, the site reads your browser language to redirect you to the corresponding localized URL. That detection happens locally, is not stored, and is not sent to Max Remy Dev. Choosing a language manually uses a link to the corresponding URL and is not stored either.",
+				"The site reads your browser language to redirect French and German browsers to their localized URLs. English and unsupported languages stay on the English root page. That detection happens locally, is not stored, and is not sent to Max Remy Dev. Choosing a language manually uses a link to the corresponding URL and is not stored either.",
 			cvDownloadTitle: "CV download",
 			cvDownloadDescription:
 				"The Download CV link provides a static PDF file. This portfolio uses no form or analytics tool to identify downloads.",

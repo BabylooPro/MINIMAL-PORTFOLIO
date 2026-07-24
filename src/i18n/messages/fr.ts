@@ -43,7 +43,7 @@ export const frMessages = {
 				"Le choix Système, Clair ou Sombre enregistre uniquement cette préférence dans le stockage local de votre navigateur. Le site ne transmet pas cette préférence à Max Remy Dev.",
 			languageTitle: "Langue",
 			languageDescription:
-				"Uniquement sur la page d’accueil, le site lit la langue configurée dans votre navigateur afin de vous rediriger vers l’URL localisée correspondante. Cette détection s’effectue localement, n’est pas enregistrée et n’est pas transmise à Max Remy Dev. Le choix manuel d’une langue utilise un lien vers l’URL correspondante et n’est pas enregistré non plus.",
+				"Le site lit la langue configurée dans votre navigateur afin de rediriger les navigateurs en français et en allemand vers leurs URL localisées. L’anglais et les langues non prises en charge restent sur la page d’accueil anglaise. Cette détection s’effectue localement, n’est pas enregistrée et n’est pas transmise à Max Remy Dev. Le choix manuel d’une langue utilise un lien vers l’URL correspondante et n’est pas enregistré non plus.",
 			cvDownloadTitle: "Téléchargement du CV",
 			cvDownloadDescription:
 				"Le lien « Télécharger le CV » met à disposition un fichier PDF statique. Le portfolio n’utilise ni formulaire, ni outil de mesure pour identifier les téléchargements.",
