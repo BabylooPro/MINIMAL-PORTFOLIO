@@ -121,6 +121,10 @@ export function validatePageHtml({
 		throw new Error(`The ${route.kind} page has an invalid Content Security Policy.`);
 	}
 
+	if (/\sstyle\s*=/i.test(indexHtml)) {
+		throw new Error(`The ${route.kind} page must not contain inline styles.`);
+	}
+
 	const firstScriptIndex = indexHtml.search(/<script\b/i);
 
 	if (firstScriptIndex < 0 || indexHtml.indexOf(contentSecurityPolicy) > firstScriptIndex) {

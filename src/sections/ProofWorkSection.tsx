@@ -17,38 +17,44 @@ type ProofWorkSectionProps = {
 	videoCounterTemplate: string;
 };
 
+type SquarePosition = `object-[${string}]`;
+
 const videos = [
 	{
 		source: "/videos/timelapse/1.mp4",
 		preview: "/videos/timelapse/previews/1.jpg",
-		squareObjectPosition: "50% 67%",
+		squarePosition: "object-[50%_67%]",
 	},
 	{
 		source: "/videos/timelapse/2.mp4",
 		preview: "/videos/timelapse/previews/2.jpg",
-		squareObjectPosition: "50% 72%",
+		squarePosition: "object-[50%_72%]",
 	},
 	{
 		source: "/videos/timelapse/3.mp4",
 		preview: "/videos/timelapse/previews/3.jpg",
-		squareObjectPosition: "50% 60%",
+		squarePosition: "object-[50%_60%]",
 	},
 	{
 		source: "/videos/timelapse/4.mp4",
 		preview: "/videos/timelapse/previews/4.jpg",
-		squareObjectPosition: "50% 80%",
+		squarePosition: "object-[50%_80%]",
 	},
 	{
 		source: "/videos/timelapse/5.mp4",
 		preview: "/videos/timelapse/previews/5.jpg",
-		squareObjectPosition: "50% 7%",
+		squarePosition: "object-[50%_7%]",
 	},
 	{
 		source: "/videos/timelapse/6.mp4",
 		preview: "/videos/timelapse/previews/6.jpg",
-		squareObjectPosition: "50% 80%",
+		squarePosition: "object-[50%_80%]",
 	},
-] as const;
+] as const satisfies readonly {
+	source: string;
+	preview: string;
+	squarePosition: SquarePosition;
+}[];
 
 type Video = (typeof videos)[number];
 
@@ -86,11 +92,10 @@ function VideoPreviewButton({
 		>
 			<img
 				alt=""
-				className="size-full object-cover grayscale"
+				className={`size-full object-cover grayscale ${video.squarePosition}`}
 				data-proof-work-preview={direction}
 				loading="lazy"
 				src={video.preview}
-				style={{ objectPosition: video.squareObjectPosition }}
 			/>
 
 			<span
@@ -174,7 +179,7 @@ export function ProofWorkSection({
 							aria-label={`${videoLabel} 1`}
 							className={[
 								// DEFAULT INLINE PLAYER
-								"block aspect-square w-full object-cover",
+								`block aspect-square w-full object-cover ${activeVideo.squarePosition}`,
 								// FULLSCREEN PLAYER
 								"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
 								"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",
@@ -185,7 +190,6 @@ export function ProofWorkSection({
 							playsInline
 							poster={activeVideo.preview}
 							preload="metadata" // WITH PRELOAD METADATA FOR SHOW FAST START FIRST VIDEO MUTED
-							style={{ objectPosition: activeVideo.squareObjectPosition }}
 						>
 							<source src={activeVideo.source} type="video/mp4" />
 						</video>

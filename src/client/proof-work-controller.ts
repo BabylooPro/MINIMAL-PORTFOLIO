@@ -1,7 +1,7 @@
 type VideoDefinition = {
 	source: string;
 	preview: string;
-	squareObjectPosition: string;
+	squarePosition: string;
 };
 
 let isProofWorkControllerInitialized = false;
@@ -18,12 +18,12 @@ export function initializeProofWorkController(): void {
 			return false;
 		}
 
-		const { preview, source, squareObjectPosition } = value as Record<string, unknown>;
+		const { preview, source, squarePosition } = value as Record<string, unknown>;
 
 		return (
 			typeof preview === "string" &&
 			typeof source === "string" &&
-			typeof squareObjectPosition === "string"
+			typeof squarePosition === "string"
 		);
 	}
 
@@ -97,6 +97,7 @@ export function initializeProofWorkController(): void {
 		const nextControl = nextButton;
 		const counterTextTemplate = counterTemplate;
 		const playerLabel = videoLabel;
+		const squarePositionClasses = [...new Set(videos.map((video) => video.squarePosition))];
 
 		let activeIndex = 0;
 		let isPlayerVisible = false;
@@ -114,9 +115,14 @@ export function initializeProofWorkController(): void {
 			return video;
 		}
 
+		function setSquarePosition(element: HTMLElement, squarePosition: string): void {
+			element.classList.remove(...squarePositionClasses);
+			element.classList.add(squarePosition);
+		}
+
 		function setPreview(preview: HTMLImageElement, video: VideoDefinition): void {
 			preview.src = video.preview;
-			preview.style.objectPosition = video.squareObjectPosition;
+			setSquarePosition(preview, video.squarePosition);
 		}
 
 		function shouldPlay(): boolean {
@@ -157,7 +163,7 @@ export function initializeProofWorkController(): void {
 
 			stopPlayback();
 			videoPlayer.setAttribute("aria-label", `${playerLabel} ${activeIndex + 1}`);
-			videoPlayer.style.objectPosition = activeVideo.squareObjectPosition;
+			setSquarePosition(videoPlayer, activeVideo.squarePosition);
 			videoPlayer.poster = activeVideo.preview;
 
 			if (shouldReload) {

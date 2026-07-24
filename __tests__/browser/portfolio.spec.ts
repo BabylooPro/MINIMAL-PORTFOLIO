@@ -20,11 +20,13 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
 	await expect(player.locator("source")).toHaveAttribute("src", "/videos/timelapse/1.mp4");
+	await expect(player).toHaveClass(/object-\[50%_67%\]/);
 
 	await page.locator('[data-proof-work-direction="next"]').click();
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
 	await expect(player.locator("source")).toHaveAttribute("src", "/videos/timelapse/2.mp4");
+	await expect(player).toHaveClass(/object-\[50%_72%\]/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
 	expect(
