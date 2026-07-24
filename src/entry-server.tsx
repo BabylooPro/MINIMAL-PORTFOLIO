@@ -34,7 +34,7 @@ export type RenderedPage = {
 
 let dictionariesAreValidated = false;
 
-function renderAppHtml(content: ReactNode): string {
+function renderPageHtml(content: ReactNode): string {
 	return renderToStaticMarkup(<div className="overflow-x-clip">{content}</div>);
 }
 
@@ -52,7 +52,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 		const dictionary = getDictionary(defaultLocale);
 
 		return {
-			appHtml: renderAppHtml(
+			appHtml: renderPageHtml(
 				<PortfolioPage
 					dictionary={dictionary}
 					locale={defaultLocale}
@@ -80,7 +80,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 		const title = `${content.title} | ${dictionary.portfolio.name}`;
 
 		return {
-			appHtml: renderAppHtml(
+			appHtml: renderPageHtml(
 				<LegalPage dictionary={dictionary} locale={route.locale} page={route.page} />,
 			),
 			lang: localeConfig.htmlLang,
@@ -101,7 +101,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 	}
 
 	return {
-		appHtml: renderAppHtml(
+		appHtml: renderPageHtml(
 			<PortfolioPage dictionary={dictionary} locale={route.locale} showSideProjects />,
 		),
 		lang: localeConfig.htmlLang,
