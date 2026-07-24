@@ -23,6 +23,12 @@ const routes = [
 	{ kind: "locale", locale: "en" },
 	{ kind: "locale", locale: "fr" },
 	{ kind: "locale", locale: "de" },
+	{ kind: "legal", locale: "en", page: "privacy" },
+	{ kind: "legal", locale: "fr", page: "privacy" },
+	{ kind: "legal", locale: "de", page: "privacy" },
+	{ kind: "legal", locale: "en", page: "legal" },
+	{ kind: "legal", locale: "fr", page: "legal" },
+	{ kind: "legal", locale: "de", page: "legal" },
 ];
 
 const alternateLinks = [
@@ -231,7 +237,7 @@ function renderMetadata(page) {
 	return [
 		`<meta name="description" content="${escapedDescription}" />`,
 		`<link rel="canonical" href="${escapedCanonical}" />`,
-		`<meta property="og:type" content="${page.pathname === "/" ? "website" : "profile"}" />`,
+		`<meta property="og:type" content="${page.ogType}" />`,
 		`<meta property="og:title" content="${escapedTitle}" />`,
 		`<meta property="og:description" content="${escapedOgDescription}" />`,
 		`<meta property="og:url" content="${escapedCanonical}" />`,
@@ -243,14 +249,33 @@ function renderMetadata(page) {
 	].join("\n        ");
 }
 
-function renderAlternateLinks() {
-	return alternateLinks
+function getAlternateLinks(route) {
+	if (route.kind !== "legal") {
+		return alternateLinks;
+	}
+
+	return [
+		{ hreflang: "en", href: `https://maxremy.dev/en/${route.page}/` },
+		{ hreflang: "fr", href: `https://maxremy.dev/fr/${route.page}/` },
+		{ hreflang: "de", href: `https://maxremy.dev/de/${route.page}/` },
+		{ hreflang: "x-default", href: `https://maxremy.dev/en/${route.page}/` },
+	];
+}
+
+function renderAlternateLinks(links) {
+	return links
 		.map((link) => `<link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`)
 		.join("\n        ");
 }
 
 function routeOutputPath(route) {
-	return route.kind === "root" ? indexPath : path.join(distDirectory, route.locale, "index.html");
+	if (route.kind === "root") {
+		return indexPath;
+	}
+
+	return route.kind === "legal"
+		? path.join(distDirectory, route.locale, route.page, "index.html")
+		: path.join(distDirectory, route.locale, "index.html");
 }
 
 function removeReactAndUnusedModules(html) {
@@ -290,7 +315,7 @@ function removeLocaleRedirect(html) {
 	return html.replace(redirectScript, "");
 }
 
-function validatePageHtml(page, route, indexHtml, siteControllerSrc) {
+function validatePageHtml(page, route, indexHtml, siteControllerSrc, pageAlternateLinks) {
 	if (!indexHtml.includes("Max Remy")) {
 		throw new Error(`The ${route.kind} page does not contain "Max Remy".`);
 	}
@@ -416,7 +441,7 @@ function validatePageHtml(page, route, indexHtml, siteControllerSrc) {
 		throw new Error(`The ${route.kind} page has an incorrect document title.`);
 	}
 
-	for (const link of alternateLinks) {
+	for (const link of pageAlternateLinks) {
 		if (!indexHtml.includes(`hreflang="${link.hreflang}" href="${link.href}"`)) {
 			throw new Error(`The ${route.kind} page is missing hreflang="${link.hreflang}".`);
 		}
@@ -461,7 +486,7 @@ function validatePageHtml(page, route, indexHtml, siteControllerSrc) {
 	}
 
 	if (
-		!alternateLinks
+		!pageAlternateLinks
 			.slice(0, 3)
 			.every((link) => indexHtml.includes(`href="${new URL(link.href).pathname}"`))
 	) {
@@ -495,12 +520,19 @@ async function validateStaticOutput(renderedPages, files, sitemap, allowedJavaSc
 		throw new Error("The production sitemap file was not generated.");
 	}
 
-	for (const { page, route, outputPath, html, siteControllerSrc } of renderedPages) {
+	for (const {
+		page,
+		route,
+		outputPath,
+		html,
+		siteControllerSrc,
+		alternateLinks: pageAlternateLinks,
+	} of renderedPages) {
 		if (!files.includes(outputPath)) {
 			throw new Error(`The ${route.kind} output file was not generated.`);
 		}
 
-		validatePageHtml(page, route, html, siteControllerSrc);
+		validatePageHtml(page, route, html, siteControllerSrc, pageAlternateLinks);
 	}
 
 	if (
@@ -529,8 +561,8 @@ async function validateStaticOutput(renderedPages, files, sitemap, allowedJavaSc
 		}
 	}
 
-	if (!alternateLinks.every((link) => sitemap.includes(`<loc>${link.href}</loc>`))) {
-		throw new Error("The generated sitemap does not contain every localized URL.");
+	if (!renderedPages.every(({ page }) => sitemap.includes(`<loc>${page.canonical}</loc>`))) {
+		throw new Error("The generated sitemap does not contain every rendered URL.");
 	}
 }
 
@@ -585,6 +617,7 @@ const staticTemplateHtml = removeReactAndUnusedModules(templateHtml);
 const renderedPages = await Promise.all(
 	routes.map(async (route) => {
 		const page = renderPage(route);
+		const pageAlternateLinks = getAlternateLinks(route);
 
 		if (typeof page.appHtml !== "string" || page.appHtml.length === 0) {
 			throw new Error(`The ${route.kind} static renderer returned an empty document.`);
@@ -598,7 +631,7 @@ const renderedPages = await Promise.all(
 			.replace(pageTitlePattern, `<title>${escapeHtml(page.title)}</title>`)
 			.replace(rootPattern, `<div id="root">${page.appHtml}</div>`)
 			.replace(pageMetadataMarker, renderMetadata(page))
-			.replace(alternateLinksMarker, renderAlternateLinks())
+			.replace(alternateLinksMarker, renderAlternateLinks(pageAlternateLinks))
 			.replace(
 				structuredDataMarker,
 				`<script type="application/ld+json">${structuredDataJson}</script>`,
@@ -608,7 +641,14 @@ const renderedPages = await Promise.all(
 		await mkdir(path.dirname(outputPath), { recursive: true });
 		await writeFile(outputPath, html, "utf8");
 
-		return { page, route, outputPath, html, siteControllerSrc: siteController.src };
+		return {
+			page,
+			route,
+			outputPath,
+			html,
+			siteControllerSrc: siteController.src,
+			alternateLinks: pageAlternateLinks,
+		};
 	}),
 );
 

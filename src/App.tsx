@@ -33,7 +33,7 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 			/>
 
 			<Container>
-				<main className="mt-6 space-y-7 pb-24 sm:mt-0 sm:pb-36">
+				<main className="mt-6 space-y-7 pb-44 sm:mt-0 sm:pb-44">
 					<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
 
 					<ProofWorkSection
@@ -76,7 +76,12 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 				</main>
 			</Container>
 
-			<FooterSection company={portfolio.company} theme={messages.theme} />
+			<FooterSection
+				company={portfolio.company}
+				currentLocale={locale}
+				footer={messages.footer}
+				theme={messages.theme}
+			/>
 		</>
 	);
 }

@@ -1,11 +1,18 @@
-import { type Locale, localeConfigs, locales } from "../../i18n/config";
+import {
+	getLegalPagePath,
+	type LegalPageId,
+	type Locale,
+	localeConfigs,
+	locales,
+} from "../../i18n/config";
 
 type LanguageSwitcherProps = {
 	currentLocale: Locale;
 	label: string;
+	page?: LegalPageId;
 };
 
-export function LanguageSwitcher({ currentLocale, label }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ currentLocale, label, page }: LanguageSwitcherProps) {
 	return (
 		<nav aria-label={label} className="no-print shrink-0">
 			<ul className="flex items-center text-xs">
@@ -25,7 +32,7 @@ export function LanguageSwitcher({ currentLocale, label }: LanguageSwitcherProps
 										? "bg-(--foreground-color) font-medium text-(--background-color)! no-underline"
 										: "hover:bg-(--inactive-hover-color)",
 								].join(" ")}
-								href={config.pathname}
+								href={page ? getLegalPagePath(locale, page) : config.pathname}
 								hrefLang={locale}
 								lang={locale}
 							>

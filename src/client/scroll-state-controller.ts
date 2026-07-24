@@ -7,12 +7,16 @@ const desktopViewport = window.matchMedia("(min-width: 40rem)");
 
 const header = document.querySelector<HTMLElement>("[data-page-header]");
 const footer = document.querySelector<HTMLElement>("[data-page-footer]");
+const backToTop = document.querySelector<HTMLAnchorElement>("[data-back-to-top]");
+const pageTop = document.querySelector<HTMLElement>("[data-page-top]");
 const headerIdentity = document.querySelector<HTMLElement>("[data-header-identity]");
 const compactHeaderIdentity = document.querySelector<HTMLElement>("[data-header-compact-identity]");
 const headerIdentityTransition = document.querySelector<HTMLElement>(
 	"[data-header-identity-transition]",
 );
+
 let initialHeaderPadding: { bottom: number; top: number } | null = null;
+
 const headerIdentityHeights = { compact: 0, normal: 0 };
 const collapsibleElements = Array.from(
 	document.querySelectorAll<HTMLElement>("[data-header-scroll-hidden]"),
@@ -40,6 +44,23 @@ function progressBetween(value: number, start: number, end: number): number {
 
 function isAtPageBottom(): boolean {
 	return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
+}
+
+function updateBackToTopVisibility(): void {
+	backToTop?.toggleAttribute("hidden", window.scrollY === 0);
+}
+
+function returnFocusToPageTop(event: MouseEvent): void {
+	if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+		return;
+	}
+
+	event.preventDefault();
+	window.scrollTo(0, 0);
+	window.requestAnimationFrame(() => {
+		pageTop?.focus({ preventScroll: true });
+		window.scrollTo(0, 0);
+	});
 }
 
 function getInitialHeaderPadding(): { bottom: number; top: number } | null {
@@ -159,8 +180,43 @@ function updateMobileScrollState(): void {
 	}
 }
 
+function updateForcedCompactHeader(): void {
+	if (!header?.hasAttribute("data-force-compact")) {
+		return;
+	}
+
+	header.setAttribute("data-scrolled", "");
+	header.setAttribute("data-fully-compact", "");
+
+	if (!desktopViewport.matches) {
+		footer?.removeAttribute("data-expanded");
+		header.style.removeProperty("padding-top");
+		header.style.removeProperty("padding-bottom");
+
+		for (const { element } of collapsibleElements) {
+			element.setAttribute("data-collapsed", "");
+			element.setAttribute("inert", "");
+		}
+
+		return;
+	}
+
+	footer?.toggleAttribute("data-expanded", isAtPageBottom());
+	header.style.paddingTop = `${compactHeaderPadding}px`;
+	header.style.paddingBottom = `${fullyCollapsedHeaderBottomPadding}px`;
+	updateHeaderIdentity(1);
+	updateCollapsibleElements(1);
+}
+
 function updateScrollState(): void {
 	animationFrame = undefined;
+	updateBackToTopVisibility();
+
+	if (header?.hasAttribute("data-force-compact")) {
+		setCollapseMode(desktopViewport.matches ? "desktop" : "mobile");
+		updateForcedCompactHeader();
+		return;
+	}
 
 	if (!desktopViewport.matches) {
 		if (setCollapseMode("mobile")) {
@@ -210,6 +266,7 @@ function scheduleScrollStateUpdate(): void {
 
 function handleScroll(): void {
 	if (!desktopViewport.matches) {
+		updateBackToTopVisibility();
 		updateMobileScrollState();
 		return;
 	}
@@ -231,6 +288,8 @@ window.addEventListener("resize", scheduleScrollStateUpdate);
 window.addEventListener("pageshow", updateScrollState);
 window.addEventListener("beforeprint", prepareForPrint);
 window.addEventListener("afterprint", updateScrollState);
+
+backToTop?.addEventListener("click", returnFocusToPageTop);
 
 desktopViewport.addEventListener("change", updateScrollState);
 

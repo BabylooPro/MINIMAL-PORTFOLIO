@@ -34,3 +34,19 @@ export function createStructuredData(
 		},
 	};
 }
+
+export function createLegalPageStructuredData(
+	locale: Locale,
+	pageUrl: string,
+	title: string,
+	description: string,
+): object {
+	return {
+		"@context": "https://schema.org",
+		"@type": "WebPage",
+		url: pageUrl,
+		inLanguage: locale,
+		name: title,
+		description,
+	};
+}
