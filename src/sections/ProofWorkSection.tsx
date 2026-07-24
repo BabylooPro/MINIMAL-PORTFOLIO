@@ -76,6 +76,8 @@ function VideoPreviewButton({
 				// POINTER AND KEYBOARD FEEDBACK
 				"cursor-pointer opacity-70 transition-[opacity,scale] hover:scale-[1.1] hover:opacity-100",
 				"focus-visible:scale-[1.1] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
+				// SCALE TOWARD THE ACTIVE CARD
+				direction === "previous" ? "origin-left" : "origin-right",
 				// POSITION PARAMS CHOOSE
 				positionClassName,
 			].join(" ")}
