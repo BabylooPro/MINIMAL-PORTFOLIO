@@ -7,6 +7,7 @@ const projectDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url
 const outputDirectory = path.join(projectDirectory, "dist");
 const assetsDirectory = path.join(outputDirectory, "assets");
 const previewDirectory = path.join(outputDirectory, "videos", "timelapse", "previews");
+const socialImagePath = path.join(outputDirectory, "og-image.jpg");
 
 const budgets = {
 	maximumControllerGzipBytes: 3_500,
@@ -15,6 +16,7 @@ const budgets = {
 	expectedPreviewCount: 6,
 	maximumPreviewFileBytes: 25_000,
 	maximumPreviewBytes: 120_000,
+	maximumSocialImageBytes: 250_000,
 };
 
 async function listFiles(directory) {
@@ -56,6 +58,7 @@ const assetFiles = await listFiles(assetsDirectory);
 const javascriptFiles = assetFiles.filter((file) => file.endsWith(".js"));
 const cssFiles = assetFiles.filter((file) => file.endsWith(".css"));
 const previewFiles = (await listFiles(previewDirectory)).filter((file) => file.endsWith(".jpg"));
+const socialImageBytes = (await stat(socialImagePath)).size;
 
 assertEqual("JavaScript file count", javascriptFiles.length, budgets.expectedJavascriptFileCount);
 assertEqual("CSS file count", cssFiles.length, 1);
@@ -91,7 +94,8 @@ for (const previewFile of previewFiles) {
 }
 
 assertWithinBudget("Preview image size", previewBytes, budgets.maximumPreviewBytes);
+assertWithinBudget("Social image", socialImageBytes, budgets.maximumSocialImageBytes);
 
 console.log(
-	`Production budget passed: controller ${controllerGzipBytes} B gzip, CSS ${cssGzipBytes} B gzip, ${previewFiles.length} previews ${previewBytes} B.`,
+	`Production budget passed: controller ${controllerGzipBytes} B gzip, CSS ${cssGzipBytes} B gzip, ${previewFiles.length} previews ${previewBytes} B, social image ${socialImageBytes} B.`,
 );
