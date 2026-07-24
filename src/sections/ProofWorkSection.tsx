@@ -1,6 +1,6 @@
 import { InfoIcon } from "../components/svg/InfoIcon";
-import { SectionHeading } from "../components/ui/SectionHeading";
 import { Tooltip } from "../components/ui/Tooltip";
+import { Section, SectionHeading } from "../layout/Section";
 import type { ExternalLink } from "../types/portfolio";
 import { renderTextWithPortfolioLinks } from "../utils/renderTextWithPortfolioLinks";
 
@@ -136,13 +136,13 @@ export function ProofWorkSection({
 	}
 
 	return (
-		<section
-			aria-labelledby="proof-work-title"
+		<Section
 			className="no-print"
 			data-proof-work-carousel
 			data-counter-template={videoCounterTemplate}
 			data-video-label={videoLabel}
 			data-videos={JSON.stringify(videos)}
+			labelledBy="proof-work-title"
 		>
 			<div className="relative flex items-center gap-1">
 				<SectionHeading id="proof-work-title">{title}</SectionHeading>
@@ -211,6 +211,6 @@ export function ProofWorkSection({
 					{formatVideoCounter(videoCounterTemplate, 1, videos.length)}
 				</p>
 			</div>
-		</section>
+		</Section>
 	);
 }

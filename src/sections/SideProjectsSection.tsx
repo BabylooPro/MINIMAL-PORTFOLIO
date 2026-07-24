@@ -1,8 +1,8 @@
-import { SectionHeading } from "../components/ui/SectionHeading";
 import sideProjects from "../generated/side-projects.json";
 import type { Locale } from "../i18n/config";
 import { formatSideProjectDate } from "../i18n/format";
 import type { Messages } from "../i18n/messages/types";
+import { Section, SectionHeading } from "../layout/Section";
 import type { GeneratedSideProject } from "../types/side-projects";
 
 type SideProjectsSectionProps = {
@@ -38,7 +38,7 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 	}
 
 	return (
-		<section aria-labelledby="side-projects-title">
+		<Section labelledBy="side-projects-title">
 			<SectionHeading id="side-projects-title">{title}</SectionHeading>
 
 			<ul className="mt-4 grid grid-cols-1 gap-x-3 sm:grid-cols-2">
@@ -111,6 +111,6 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 					);
 				})}
 			</ul>
-		</section>
+		</Section>
 	);
 }

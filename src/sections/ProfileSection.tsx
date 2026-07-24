@@ -1,4 +1,4 @@
-import { SectionHeading } from "../components/ui/SectionHeading";
+import { Section, SectionHeading } from "../layout/Section";
 
 type ProfileSectionProps = {
 	title: string;
@@ -14,13 +14,14 @@ export function ProfileSection({ summary, title }: ProfileSectionProps) {
 	});
 
 	return (
-		<section aria-labelledby="profile-title">
+		<Section labelledBy="profile-title">
 			<SectionHeading id="profile-title">{title}</SectionHeading>
+
 			{paragraphs.map((paragraph) => (
 				<p key={paragraph.id} className="leading-6 first:mt-2">
 					{paragraph.content}
 				</p>
 			))}
-		</section>
+		</Section>
 	);
 }

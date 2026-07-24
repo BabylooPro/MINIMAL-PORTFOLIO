@@ -1,6 +1,6 @@
-import { SectionHeading } from "../components/ui/SectionHeading";
 import type { Locale } from "../i18n/config";
 import { formatPortfolioDate } from "../i18n/format";
+import { Section, SectionHeading } from "../layout/Section";
 import type { Experience } from "../types/portfolio";
 
 type ExperienceSectionProps = {
@@ -25,7 +25,7 @@ export function ExperienceSection({
 	}
 
 	return (
-		<section aria-labelledby="experience-title">
+		<Section labelledBy="experience-title">
 			<SectionHeading id="experience-title">{title}</SectionHeading>
 
 			<ol className="mt-4 space-y-6">
@@ -76,6 +76,6 @@ export function ExperienceSection({
 					);
 				})}
 			</ol>
-		</section>
+		</Section>
 	);
 }

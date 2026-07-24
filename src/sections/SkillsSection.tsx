@@ -1,4 +1,4 @@
-import { SectionHeading } from "../components/ui/SectionHeading";
+import { Section, SectionHeading } from "../layout/Section";
 import type { SkillGroup } from "../types/portfolio";
 
 type SkillsSectionProps = {
@@ -12,8 +12,9 @@ export function SkillsSection({ skillGroups, title }: SkillsSectionProps) {
 	}
 
 	return (
-		<section aria-labelledby="skills-title">
+		<Section labelledBy="skills-title">
 			<SectionHeading id="skills-title">{title}</SectionHeading>
+
 			<ul className="mt-2 space-y-0.5">
 				{skillGroups.map((skillGroup) => (
 					<li key={skillGroup.id} className="leading-5">
@@ -24,6 +25,6 @@ export function SkillsSection({ skillGroups, title }: SkillsSectionProps) {
 					</li>
 				))}
 			</ul>
-		</section>
+		</Section>
 	);
 }
