@@ -3,7 +3,7 @@ import { ThemeSwitcher } from "../components/ui/ThemeSwitcher";
 import { getLegalPagePath, type LegalPageId, type Locale } from "../i18n/config";
 import type { Messages } from "../i18n/messages/types";
 
-type FooterSectionProps = {
+type FooterProps = {
 	company: string;
 	currentLocale: Locale;
 	currentPage?: LegalPageId;
@@ -11,13 +11,7 @@ type FooterSectionProps = {
 	theme: Messages["theme"];
 };
 
-export function FooterSection({
-	company,
-	currentLocale,
-	currentPage,
-	footer,
-	theme,
-}: FooterSectionProps) {
+export function Footer({ company, currentLocale, currentPage, footer, theme }: FooterProps) {
 	const year = new Date().getFullYear();
 
 	return (

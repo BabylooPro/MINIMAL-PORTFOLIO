@@ -2,8 +2,8 @@ import { Container } from "../components/ui/Container";
 import { getLocalePath, type LegalPageId, type Locale } from "../i18n/config";
 import type { Dictionary } from "../i18n/dictionaries";
 import type { Messages } from "../i18n/messages/types";
-import { FooterSection } from "../sections/FooterSection";
-import { HeaderSection } from "../sections/HeaderSection";
+import { Footer } from "../layout/Footer";
+import { Header } from "../layout/Header";
 
 const externalUrls = {
 	commercialRegister: "https://www.zefix.ch/fr/search/entity/list/firm/1580533",
@@ -259,7 +259,7 @@ export function LegalPage({ dictionary, locale, page }: LegalPageProps) {
 
 	return (
 		<>
-			<HeaderSection
+			<Header
 				currentLocale={locale}
 				downloadCvLabel={messages.labels.downloadCv}
 				emailLabel={messages.labels.email}
@@ -309,7 +309,7 @@ export function LegalPage({ dictionary, locale, page }: LegalPageProps) {
 				</main>
 			</Container>
 
-			<FooterSection
+			<Footer
 				company={portfolio.company}
 				currentLocale={locale}
 				currentPage={page}

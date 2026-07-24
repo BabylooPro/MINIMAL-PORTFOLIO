@@ -2,10 +2,9 @@ import { Container } from "./components/ui/Container";
 
 import type { Locale } from "./i18n/config";
 import type { Dictionary } from "./i18n/dictionaries";
-
+import { Footer } from "./layout/Footer";
+import { Header } from "./layout/Header";
 import { ExperienceSection } from "./sections/ExperienceSection";
-import { FooterSection } from "./sections/FooterSection";
-import { HeaderSection } from "./sections/HeaderSection";
 import { LanguagesSection } from "./sections/LanguagesSection";
 import { ProfileSection } from "./sections/ProfileSection";
 import { ProofWorkSection } from "./sections/ProofWorkSection";
@@ -23,7 +22,7 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 
 	return (
 		<>
-			<HeaderSection
+			<Header
 				currentLocale={locale}
 				downloadCvLabel={messages.labels.downloadCv}
 				emailLabel={messages.labels.email}
@@ -76,7 +75,7 @@ function App({ locale, dictionary, showSideProjects }: AppProps) {
 				</main>
 			</Container>
 
-			<FooterSection
+			<Footer
 				company={portfolio.company}
 				currentLocale={locale}
 				footer={messages.footer}

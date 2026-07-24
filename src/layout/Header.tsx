@@ -3,7 +3,7 @@ import type { LegalPageId, Locale } from "../i18n/config";
 import type { Portfolio } from "../types/portfolio";
 import { isExternalHttpLink } from "../utils/isExternalHttpLink";
 
-type HeaderSectionProps = {
+type HeaderProps = {
 	currentLocale: Locale;
 	downloadCvLabel: string;
 	languageSwitcherLabel: string;
@@ -31,7 +31,7 @@ function getContactLinkLabel(
 	return undefined;
 }
 
-export function HeaderSection({
+export function Header({
 	currentLocale,
 	downloadCvLabel,
 	emailLabel,
@@ -41,7 +41,7 @@ export function HeaderSection({
 	portfolio,
 	isPermanentlyCompact = false,
 	usePageHeading = true,
-}: HeaderSectionProps) {
+}: HeaderProps) {
 	const IdentityHeading = usePageHeading ? "h1" : "p";
 	const contactLinks = portfolio.links.filter((link) => !isExternalHttpLink(link.href));
 	const mobileRoles = portfolio.role
