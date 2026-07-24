@@ -9,7 +9,12 @@ type TooltipProps = {
 
 export function Tooltip({ children, id, label, trigger }: TooltipProps) {
 	return (
-		<div className="group relative flex">
+		<div
+			className={[
+				"group relative flex",
+				"[&:has(details[open])]:[--info-tooltip-opacity:1] [&:has(details[open])]:[--info-tooltip-pointer-events:auto]",
+			].join(" ")}
+		>
 			<button
 				aria-describedby={id}
 				aria-label={label}
@@ -27,7 +32,7 @@ export function Tooltip({ children, id, label, trigger }: TooltipProps) {
 				{trigger}
 			</button>
 
-			<details className="peer group relative flex sm:hidden">
+			<details className="group relative flex sm:hidden">
 				<summary
 					aria-describedby={id}
 					aria-label={label}
@@ -47,17 +52,15 @@ export function Tooltip({ children, id, label, trigger }: TooltipProps) {
 			<div
 				className={[
 					// RESPONSIVE PANEL POSITION
-					"fixed left-1/2 top-1/2 z-20 max-h-[calc(100dvh-2rem)] w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
+					"fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
 					"sm:absolute sm:top-full sm:mt-2 sm:max-h-none sm:translate-y-0",
 					// PANEL SURFACE & CONTENT STYLE
 					"rounded-md border border-(--border-color) bg-(--background-color) p-3 text-sm leading-5 text-(--body-color) shadow-lg",
 					// HIDDEN STATE & MOTION
 					"opacity-(--info-tooltip-opacity,0) [pointer-events:var(--info-tooltip-pointer-events,none)] transition-opacity motion-reduce:transition-none",
 					// DESKTOP HOVER AND KEYBOARD INTERACTIONS
-					"group-focus-within:[--info-tooltip-opacity:1] group-focus-within:[--info-tooltip-pointer-events:auto]",
-					"group-hover:[--info-tooltip-opacity:1] group-hover:[--info-tooltip-pointer-events:auto]",
-					// MOBILE TAP INTERACTION
-					"peer-open:[--info-tooltip-opacity:1] peer-open:[--info-tooltip-pointer-events:auto]",
+					"sm:group-focus-within:[--info-tooltip-opacity:1] sm:group-focus-within:[--info-tooltip-pointer-events:auto]",
+					"sm:group-hover:[--info-tooltip-opacity:1] sm:group-hover:[--info-tooltip-pointer-events:auto]",
 				].join(" ")}
 				id={id}
 			>

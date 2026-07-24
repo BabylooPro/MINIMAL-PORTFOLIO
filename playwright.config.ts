@@ -14,7 +14,7 @@ export default defineConfig({
 		},
 		{
 			name: "webkit-proof-work",
-			grep: /updates the Proof Work carousel/,
+			grep: /Proof Work/,
 			use: { browserName: "webkit" },
 		},
 	],

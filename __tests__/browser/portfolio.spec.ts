@@ -68,6 +68,57 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	).toBe(true);
 });
 
+test("keeps the mobile Proof Work tooltip above the sticky header", async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 350 });
+	await page.goto("/en/");
+
+	const summary = page.locator('summary[aria-describedby="proof-work"]');
+	await summary.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await summary.click();
+
+	const tooltip = page.locator("#proof-work");
+	await expect(tooltip).toBeVisible();
+	await expect(tooltip).toHaveCSS("opacity", "1");
+	await expect(tooltip).toHaveCSS("border-left-width", "1px");
+	await expect(tooltip).toHaveCSS("border-right-width", "1px");
+
+	expect(
+		await page.evaluate(() => {
+			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
+			const panel = document.querySelector<HTMLElement>("#proof-work");
+
+			if (!header || !panel) {
+				throw new Error("The header and Proof Work tooltip must be rendered.");
+			}
+
+			const headerBox = header.getBoundingClientRect();
+			const panelBox = panel.getBoundingClientRect();
+			const left = Math.max(headerBox.left, panelBox.left);
+			const right = Math.min(headerBox.right, panelBox.right);
+			const top = Math.max(headerBox.top, panelBox.top);
+			const bottom = Math.min(headerBox.bottom, panelBox.bottom);
+
+			if (right <= left || bottom <= top) {
+				throw new Error("The mobile tooltip must overlap the sticky header in this test.");
+			}
+
+			const topmostElement = document.elementFromPoint(
+				left + (right - left) / 2,
+				top + (bottom - top) / 2,
+			);
+
+			return Boolean(topmostElement && panel.contains(topmostElement));
+		}),
+	).toBe(true);
+
+	expect(
+		await tooltip.evaluate((panel) => ({
+			panel: getComputedStyle(panel).zIndex,
+			trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex,
+		})),
+	).toEqual({ panel: "50", trigger: "auto" });
+});
+
 test("keeps the mobile role stable when reduced motion is requested", async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.setViewportSize({ width: 390, height: 844 });
