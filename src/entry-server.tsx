@@ -12,6 +12,7 @@ import { getDictionary } from "./i18n/dictionaries";
 import { validateDictionaries } from "./i18n/validate";
 import { LegalPage } from "./pages/LegalPage";
 import PortfolioPage from "./pages/PortfolioPage";
+import { socialImage } from "./seo/social-image";
 import { createLegalPageStructuredData, createStructuredData } from "./seo/structured-data";
 
 export type StaticRoute =
@@ -22,6 +23,7 @@ export type StaticRoute =
 export type RenderedPage = {
 	appHtml: string;
 	lang: string;
+	indexable: boolean;
 	pathname: string;
 	title: string;
 	description: string;
@@ -29,6 +31,7 @@ export type RenderedPage = {
 	canonical: string;
 	ogLocale: string;
 	ogType: "profile" | "website";
+	socialImage: typeof socialImage & { alt: string };
 	structuredData: object;
 };
 
@@ -59,7 +62,8 @@ export function renderPage(route: StaticRoute): RenderedPage {
 					showSideProjects={false}
 				/>,
 			),
-			lang: "en",
+			lang: localeConfigs[defaultLocale].htmlLang,
+			indexable: false,
 			pathname: "/",
 			title: dictionary.messages.meta.title,
 			description: dictionary.messages.meta.description,
@@ -67,6 +71,10 @@ export function renderPage(route: StaticRoute): RenderedPage {
 			canonical: rootUrl,
 			ogLocale: "en_CH",
 			ogType: "website",
+			socialImage: {
+				...socialImage,
+				alt: dictionary.messages.meta.socialImageAlt,
+			},
 			structuredData: createStructuredData(defaultLocale, dictionary, rootUrl),
 		};
 	}
@@ -84,6 +92,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 				<LegalPage dictionary={dictionary} locale={route.locale} page={route.page} />,
 			),
 			lang: localeConfig.htmlLang,
+			indexable: false,
 			pathname: canonical,
 			title,
 			description: content.description,
@@ -91,6 +100,10 @@ export function renderPage(route: StaticRoute): RenderedPage {
 			canonical,
 			ogLocale: localeConfig.ogLocale,
 			ogType: "website",
+			socialImage: {
+				...socialImage,
+				alt: dictionary.messages.meta.socialImageAlt,
+			},
 			structuredData: createLegalPageStructuredData(
 				route.locale,
 				canonical,
@@ -105,6 +118,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 			<PortfolioPage dictionary={dictionary} locale={route.locale} showSideProjects />,
 		),
 		lang: localeConfig.htmlLang,
+		indexable: true,
 		pathname: localeConfig.pathname,
 		title: dictionary.messages.meta.title,
 		description: dictionary.messages.meta.description,
@@ -112,6 +126,10 @@ export function renderPage(route: StaticRoute): RenderedPage {
 		canonical: localeConfig.absoluteUrl,
 		ogLocale: localeConfig.ogLocale,
 		ogType: "profile",
+		socialImage: {
+			...socialImage,
+			alt: dictionary.messages.meta.socialImageAlt,
+		},
 		structuredData: createStructuredData(route.locale, dictionary),
 	};
 }

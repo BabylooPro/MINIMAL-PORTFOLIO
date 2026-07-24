@@ -1,6 +1,7 @@
-import { type Locale, localeConfigs } from "../i18n/config";
+import { type Locale, localeConfigs, rootUrl } from "../i18n/config";
 import type { Dictionary } from "../i18n/dictionaries";
 import { isExternalHttpLink } from "../utils/isExternalHttpLink";
+import { socialImage } from "./social-image";
 
 export function createStructuredData(
 	locale: Locale,
@@ -8,20 +9,33 @@ export function createStructuredData(
 	pageUrl = localeConfigs[locale].absoluteUrl,
 ): object {
 	const email = dictionary.portfolio.links.find((link) => link.href.startsWith("mailto:"));
+	const telephone = dictionary.portfolio.links.find((link) => link.href.startsWith("tel:"));
+	const image = {
+		"@type": "ImageObject",
+		url: socialImage.url,
+		contentUrl: socialImage.url,
+		encodingFormat: socialImage.type,
+		width: socialImage.width,
+		height: socialImage.height,
+		caption: dictionary.messages.meta.socialImageAlt,
+	};
 
 	return {
 		"@context": "https://schema.org",
 		"@type": "ProfilePage",
 		url: pageUrl,
-		inLanguage: locale,
+		inLanguage: localeConfigs[locale].htmlLang,
 		name: dictionary.messages.meta.title,
 		description: dictionary.messages.meta.description,
+		primaryImageOfPage: image,
 		mainEntity: {
 			"@type": "Person",
+			"@id": `${rootUrl}#max-remy`,
 			name: dictionary.portfolio.name,
 			jobTitle: dictionary.portfolio.role,
 			url: pageUrl,
-			...(email ? { email: email.href } : {}),
+			...(email ? { email: email.href.replace("mailto:", "") } : {}),
+			...(telephone ? { telephone: telephone.href.replace("tel:", "") } : {}),
 			address: {
 				"@type": "PostalAddress",
 				addressLocality: "Moudon",
@@ -45,7 +59,7 @@ export function createLegalPageStructuredData(
 		"@context": "https://schema.org",
 		"@type": "WebPage",
 		url: pageUrl,
-		inLanguage: locale,
+		inLanguage: localeConfigs[locale].htmlLang,
 		name: title,
 		description,
 	};

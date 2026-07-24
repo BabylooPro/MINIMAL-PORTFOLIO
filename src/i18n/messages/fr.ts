@@ -3,9 +3,11 @@ import type { Messages } from "./types";
 export const frMessages = {
 	meta: {
 		title: "Max Remy - Développeur",
-		description: "Ingénieur logiciel autodidacte avec 10 ans d’expérience en freelance.",
+		description: "Développeur autodidacte avec 10 ans d’expérience en freelance.",
 		ogDescription:
-			"Ingénieur logiciel spécialisé dans le backend, le web, le mobile, le cloud et les applications distribuées.",
+			"Développeur freelance autodidacte basé dans le canton de Vaud, en Suisse, avec 10 ans d’expérience.",
+		socialImageAlt:
+			"Portrait de Max Remy portant des lunettes de natation et faisant un pouce levé.",
 	},
 	sections: {
 		profile: "Profil",

@@ -3,6 +3,7 @@ export type Messages = {
 		title: string;
 		description: string;
 		ogDescription: string;
+		socialImageAlt: string;
 	};
 	sections: {
 		profile: string;

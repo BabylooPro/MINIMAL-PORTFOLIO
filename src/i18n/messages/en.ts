@@ -3,9 +3,10 @@ import type { Messages } from "./types";
 export const enMessages = {
 	meta: {
 		title: "Max Remy - Developer",
-		description: "Self-taught software engineer with 10 years of freelance experience.",
+		description: "Self-taught developer with 10 years of freelance experience.",
 		ogDescription:
-			"Software engineer specialized in backend, web, mobile, cloud, and distributed applications.",
+			"Self-taught freelance developer based in Vaud, Switzerland, with 10 years of experience.",
+		socialImageAlt: "Portrait of Max Remy wearing swim goggles and giving a thumbs-up.",
 	},
 	sections: {
 		profile: "Profile",
