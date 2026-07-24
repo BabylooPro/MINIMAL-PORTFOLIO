@@ -2,86 +2,90 @@ type ThemePreference = "light" | "dark" | "system";
 
 const storageKey = "theme-preference";
 
-const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
+export function initializeThemeSwitcher(): void {
+	const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
-const themeColor = document.querySelector<HTMLMetaElement>("meta[data-theme-color]");
+	const themeColor = document.querySelector<HTMLMetaElement>("meta[data-theme-color]");
 
-function isThemePreference(value: unknown): value is ThemePreference {
-	return value === "light" || value === "dark" || value === "system";
-}
-
-function readStoredPreference(): ThemePreference {
-	try {
-		const value = window.localStorage.getItem(storageKey);
-
-		return isThemePreference(value) ? value : "system";
-	} catch {
-		return "system";
+	function isThemePreference(value: unknown): value is ThemePreference {
+		return value === "light" || value === "dark" || value === "system";
 	}
-}
 
-function savePreference(preference: ThemePreference): void {
-	try {
-		window.localStorage.setItem(storageKey, preference);
-	} catch {
-		// SESSION ONLY
+	function readStoredPreference(): ThemePreference {
+		try {
+			const value = window.localStorage.getItem(storageKey);
+
+			return isThemePreference(value) ? value : "system";
+		} catch {
+			return "system";
+		}
 	}
-}
 
-let currentPreference = readStoredPreference();
+	function savePreference(preference: ThemePreference): void {
+		try {
+			window.localStorage.setItem(storageKey, preference);
+		} catch {
+			// SESSION ONLY
+		}
+	}
 
-function isDarkTheme(preference: ThemePreference): boolean {
-	return preference === "dark" || (preference === "system" && systemTheme.matches);
-}
+	let currentPreference = readStoredPreference();
 
-function updateThemeSwitcher(preference: ThemePreference): void {
-	const controls = document.querySelectorAll<HTMLButtonElement>("button[data-theme-preference]");
+	function isDarkTheme(preference: ThemePreference): boolean {
+		return preference === "dark" || (preference === "system" && systemTheme.matches);
+	}
 
-	for (const control of controls) {
-		control.setAttribute(
-			"aria-pressed",
-			String(control.dataset.themePreference === preference),
+	function updateThemeSwitcher(preference: ThemePreference): void {
+		const controls = document.querySelectorAll<HTMLButtonElement>(
+			"button[data-theme-preference]",
 		);
-	}
-}
 
-function applyPreference(preference: ThemePreference): void {
-	const isDark = isDarkTheme(preference);
-
-	if (preference === "system") {
-		document.documentElement.removeAttribute("data-theme");
-	} else {
-		document.documentElement.dataset.theme = preference;
+		for (const control of controls) {
+			control.setAttribute(
+				"aria-pressed",
+				String(control.dataset.themePreference === preference),
+			);
+		}
 	}
 
-	document.documentElement.dataset.themePreference = preference;
+	function applyPreference(preference: ThemePreference): void {
+		const isDark = isDarkTheme(preference);
 
-	themeColor?.setAttribute("content", isDark ? "#000000" : "#ffffff");
+		if (preference === "system") {
+			document.documentElement.removeAttribute("data-theme");
+		} else {
+			document.documentElement.dataset.theme = preference;
+		}
 
-	updateThemeSwitcher(preference);
-}
+		document.documentElement.dataset.themePreference = preference;
 
-document.addEventListener("click", (event) => {
-	if (!(event.target instanceof Element)) {
-		return;
+		themeColor?.setAttribute("content", isDark ? "#000000" : "#ffffff");
+
+		updateThemeSwitcher(preference);
 	}
 
-	const control = event.target.closest<HTMLButtonElement>("button[data-theme-preference]");
-	const preference = control?.dataset.themePreference;
+	document.addEventListener("click", (event) => {
+		if (!(event.target instanceof Element)) {
+			return;
+		}
 
-	if (!isThemePreference(preference)) {
-		return;
-	}
+		const control = event.target.closest<HTMLButtonElement>("button[data-theme-preference]");
+		const preference = control?.dataset.themePreference;
 
-	savePreference(preference);
-	currentPreference = preference;
-	applyPreference(currentPreference);
-});
+		if (!isThemePreference(preference)) {
+			return;
+		}
 
-systemTheme.addEventListener("change", () => {
-	if (currentPreference === "system") {
+		savePreference(preference);
+		currentPreference = preference;
 		applyPreference(currentPreference);
-	}
-});
+	});
 
-applyPreference(currentPreference);
+	systemTheme.addEventListener("change", () => {
+		if (currentPreference === "system") {
+			applyPreference(currentPreference);
+		}
+	});
+
+	applyPreference(currentPreference);
+}
