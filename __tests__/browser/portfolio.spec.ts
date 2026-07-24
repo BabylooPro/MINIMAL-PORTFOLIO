@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { localeConfigs } from "../../src/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
 
@@ -74,14 +75,13 @@ test("keeps localized legal links and language switching on every locale", async
 	for (const locale of locales) {
 		await page.goto(`/${locale}/privacy/`);
 
-		await expect(page.locator("html")).toHaveAttribute("lang", locale);
+		await expect(page.locator("html")).toHaveAttribute("lang", localeConfigs[locale].htmlLang);
 		await expect(page.locator(`[data-page-footer] a[href="/${locale}/legal/"]`)).toBeVisible();
 
 		for (const targetLocale of locales) {
-			await expect(page.locator(`a[hreflang="${targetLocale}"]`)).toHaveAttribute(
-				"href",
-				`/${targetLocale}/privacy/`,
-			);
+			await expect(
+				page.locator(`a[hreflang="${localeConfigs[targetLocale].htmlLang}"]`),
+			).toHaveAttribute("href", `/${targetLocale}/privacy/`);
 		}
 
 		const alternateLocale = locales.find((targetLocale) => targetLocale !== locale);
@@ -90,7 +90,7 @@ test("keeps localized legal links and language switching on every locale", async
 			throw new Error("Each localized page needs an alternate language.");
 		}
 
-		await page.locator(`a[hreflang="${alternateLocale}"]`).click();
+		await page.locator(`a[hreflang="${localeConfigs[alternateLocale].htmlLang}"]`).click();
 		await expect(page).toHaveURL(`/${alternateLocale}/privacy/`);
 
 		await page.goto(`/${locale}/legal/`);

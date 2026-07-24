@@ -23,8 +23,8 @@ export function LanguageSwitcher({ currentLocale, label, page }: LanguageSwitche
 			label: config.shortLabel,
 			linkProps: {
 				href: page ? getLegalPagePath(locale, page) : config.pathname,
-				hrefLang: locale,
-				lang: locale,
+				hrefLang: config.htmlLang,
+				lang: config.htmlLang,
 			},
 		};
 	});
