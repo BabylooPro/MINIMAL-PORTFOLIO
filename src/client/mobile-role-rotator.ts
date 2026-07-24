@@ -1,5 +1,6 @@
 const roleChangeInterval = 5000;
 const roleFadeDuration = 500;
+let isMobileRoleRotatorInitialized = false;
 
 type RoleRotator = {
 	activeIndex: number;
@@ -9,6 +10,12 @@ type RoleRotator = {
 };
 
 export function initializeMobileRoleRotator(): void {
+	if (isMobileRoleRotatorInitialized) {
+		return;
+	}
+
+	isMobileRoleRotatorInitialized = true;
+
 	const mobileViewport = window.matchMedia("(max-width: 39.999rem)");
 	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 

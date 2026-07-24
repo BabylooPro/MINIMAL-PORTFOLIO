@@ -1,8 +1,15 @@
 type ThemePreference = "light" | "dark" | "system";
 
 const storageKey = "theme-preference";
+let isThemeControllerInitialized = false;
 
 export function initializeThemeController(): void {
+	if (isThemeControllerInitialized) {
+		return;
+	}
+
+	isThemeControllerInitialized = true;
+
 	const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
 
 	const themeColor = document.querySelector<HTMLMetaElement>("meta[data-theme-color]");

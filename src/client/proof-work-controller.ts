@@ -4,7 +4,15 @@ type VideoDefinition = {
 	squareObjectPosition: string;
 };
 
+let isProofWorkControllerInitialized = false;
+
 export function initializeProofWorkController(): void {
+	if (isProofWorkControllerInitialized) {
+		return;
+	}
+
+	isProofWorkControllerInitialized = true;
+
 	function isVideoDefinition(value: unknown): value is VideoDefinition {
 		if (!value || typeof value !== "object") {
 			return false;

@@ -1,4 +1,12 @@
+let isScrollStateControllerInitialized = false;
+
 export function initializeScrollStateController(): void {
+	if (isScrollStateControllerInitialized) {
+		return;
+	}
+
+	isScrollStateControllerInitialized = true;
+
 	const collapseDistance = 180;
 	const compactHeaderPadding = 16;
 	const fullyCollapsedHeaderBottomPadding = compactHeaderPadding;
