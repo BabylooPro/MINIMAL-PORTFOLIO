@@ -13,6 +13,7 @@ const budgets = {
 	maximumCssGzipBytes: 8_000,
 	expectedJavascriptFileCount: 1,
 	expectedPreviewCount: 6,
+	maximumPreviewFileBytes: 25_000,
 	maximumPreviewBytes: 120_000,
 };
 
@@ -78,6 +79,17 @@ assertWithinBudget(
 	budgets.maximumControllerGzipBytes,
 );
 assertWithinBudget("CSS gzip size", cssGzipBytes, budgets.maximumCssGzipBytes);
+
+for (const previewFile of previewFiles) {
+	const previewBytes = (await stat(previewFile)).size;
+
+	assertWithinBudget(
+		`Preview image ${path.basename(previewFile)} size`,
+		previewBytes,
+		budgets.maximumPreviewFileBytes,
+	);
+}
+
 assertWithinBudget("Preview image size", previewBytes, budgets.maximumPreviewBytes);
 
 console.log(
