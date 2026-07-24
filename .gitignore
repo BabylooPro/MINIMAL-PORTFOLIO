@@ -31,3 +31,7 @@ dist-ssr
 # Coverage or profiling instrumentation
 *.profraw
 *.profdata
+
+# Playwright reports
+playwright-report/
+test-results/
