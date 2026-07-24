@@ -1,3 +1,28 @@
+import {
+	getScrollStateElements,
+	type HeaderIdentityHeights,
+	markCollapsibleElementsReady,
+	measureCollapsibleElements,
+	measureHeaderIdentity,
+	prepareForPrint,
+	readInitialHeaderPadding,
+	resetCollapsibleElements,
+	resetHeaderIdentityStyles,
+	returnFocusToPageTop,
+	updateBackToTopVisibility,
+	updateCollapsibleElements,
+	updateDesktopScrollState,
+	updateForcedCompactDesktopHeader,
+	updateForcedCompactMobileHeader,
+	updateHeaderIdentity,
+	updateMobileScrollState,
+} from "./header-scroll-dom";
+import {
+	getDesktopScrollProgress,
+	type HeaderPadding,
+	isAtPageBottom,
+} from "./header-scroll-state";
+
 let isScrollStateControllerInitialized = false;
 
 export function initializeScrollStateController(): void {
@@ -7,163 +32,19 @@ export function initializeScrollStateController(): void {
 
 	isScrollStateControllerInitialized = true;
 
-	const collapseDistance = 180;
-	const compactHeaderPadding = 16;
-	const fullyCollapsedHeaderBottomPadding = compactHeaderPadding;
-	const mobileCollapseThreshold = 24;
-	const headerIdentityCollapseStart = 0.65;
 	const desktopViewport = window.matchMedia("(min-width: 40rem)");
-
-	const header = document.querySelector<HTMLElement>("[data-page-header]");
-	const footer = document.querySelector<HTMLElement>("[data-page-footer]");
-	const backToTop = document.querySelector<HTMLAnchorElement>("[data-back-to-top]");
-	const pageTop = document.querySelector<HTMLElement>("[data-page-top]");
-	const headerIdentity = document.querySelector<HTMLElement>("[data-header-identity]");
-	const compactHeaderIdentity = document.querySelector<HTMLElement>(
-		"[data-header-compact-identity]",
-	);
-	const headerIdentityTransition = document.querySelector<HTMLElement>(
-		"[data-header-identity-transition]",
-	);
-
-	let initialHeaderPadding: { bottom: number; top: number } | null = null;
-
-	const headerIdentityHeights = { compact: 0, normal: 0 };
-	const collapsibleElements = Array.from(
-		document.querySelectorAll<HTMLElement>("[data-header-scroll-hidden]"),
-	).map((element) => ({
-		content: element.querySelector<HTMLElement>("[data-header-scroll-content]"),
-		element,
-		height: 0,
-	}));
-
+	const elements = getScrollStateElements();
+	let initialHeaderPadding: HeaderPadding | null = null;
+	const headerIdentityHeights: HeaderIdentityHeights = { compact: 0, normal: 0 };
 	let animationFrame: number | undefined;
 	let collapseMode: "desktop" | "mobile" | undefined;
 
-	function readPixels(value: string): number {
-		const pixels = Number.parseFloat(value);
-		return Number.isFinite(pixels) ? pixels : 0;
-	}
-
-	function interpolate(from: number, to: number, progress: number): number {
-		return from + (to - from) * progress;
-	}
-
-	function progressBetween(value: number, start: number, end: number): number {
-		return Math.min(Math.max((value - start) / (end - start), 0), 1);
-	}
-
-	function isAtPageBottom(): boolean {
-		return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1;
-	}
-
-	function updateBackToTopVisibility(): void {
-		backToTop?.toggleAttribute("hidden", window.scrollY === 0);
-	}
-
-	function returnFocusToPageTop(event: MouseEvent): void {
-		if (
-			event.button !== 0 ||
-			event.metaKey ||
-			event.ctrlKey ||
-			event.shiftKey ||
-			event.altKey
-		) {
-			return;
-		}
-
-		event.preventDefault();
-		window.scrollTo(0, 0);
-		window.requestAnimationFrame(() => {
-			pageTop?.focus({ preventScroll: true });
-			window.scrollTo(0, 0);
+	function isDocumentAtBottom(): boolean {
+		return isAtPageBottom({
+			documentHeight: document.documentElement.scrollHeight,
+			scrollY: window.scrollY,
+			viewportHeight: window.innerHeight,
 		});
-	}
-
-	function getInitialHeaderPadding(): { bottom: number; top: number } | null {
-		if (!header) {
-			return null;
-		}
-
-		return {
-			bottom: readPixels(getComputedStyle(header).paddingBottom),
-			top: readPixels(getComputedStyle(header).paddingTop),
-		};
-	}
-
-	function measureCollapsibleElements(): void {
-		for (const collapsible of collapsibleElements) {
-			if (collapsible.content) {
-				const height = collapsible.content.getBoundingClientRect().height;
-
-				if (height > 0) {
-					collapsible.height = height;
-					collapsible.element.style.setProperty("--header-details-height", `${height}px`);
-				}
-			}
-		}
-	}
-
-	function measureHeaderIdentity(): void {
-		if (!headerIdentity || !compactHeaderIdentity) {
-			return;
-		}
-
-		const normalHeight = headerIdentity.getBoundingClientRect().height;
-		const compactHeight = compactHeaderIdentity.getBoundingClientRect().height;
-
-		if (normalHeight > 0) {
-			headerIdentityHeights.normal = normalHeight;
-		}
-
-		if (compactHeight > 0) {
-			headerIdentityHeights.compact = compactHeight;
-		}
-	}
-
-	function updateCollapsibleElements(progress: number): void {
-		for (const { element, height } of collapsibleElements) {
-			const remaining = 1 - progress;
-
-			element.style.height = `${height * remaining}px`;
-			element.style.opacity = String(remaining);
-			element.toggleAttribute("inert", progress === 1);
-		}
-	}
-
-	function updateHeaderIdentity(progress: number): void {
-		if (
-			!headerIdentity ||
-			!compactHeaderIdentity ||
-			!headerIdentityTransition ||
-			headerIdentityHeights.normal === 0 ||
-			headerIdentityHeights.compact === 0
-		) {
-			return;
-		}
-
-		const identityProgress = progressBetween(progress, headerIdentityCollapseStart, 1);
-		const compactIdentityStart = 0.3;
-		const isCompactIdentity = identityProgress >= compactIdentityStart;
-		const compactIdentityProgress = progressBetween(identityProgress, compactIdentityStart, 1);
-
-		headerIdentityTransition.style.height = `${interpolate(
-			headerIdentityHeights.normal,
-			headerIdentityHeights.compact,
-			compactIdentityProgress,
-		)}px`;
-		headerIdentity.style.opacity = isCompactIdentity ? "0" : "1";
-		headerIdentity.style.transform = "none";
-		compactHeaderIdentity.style.opacity = isCompactIdentity ? "1" : "0";
-		compactHeaderIdentity.style.transform = "none";
-	}
-
-	function resetHeaderIdentityStyles(): void {
-		headerIdentityTransition?.style.removeProperty("height");
-		headerIdentity?.style.removeProperty("opacity");
-		headerIdentity?.style.removeProperty("transform");
-		compactHeaderIdentity?.style.removeProperty("opacity");
-		compactHeaderIdentity?.style.removeProperty("transform");
 	}
 
 	function setCollapseMode(mode: "desktop" | "mobile"): boolean {
@@ -172,64 +53,33 @@ export function initializeScrollStateController(): void {
 		}
 
 		collapseMode = mode;
-
-		for (const { element } of collapsibleElements) {
-			element.style.removeProperty("height");
-			element.style.removeProperty("opacity");
-			element.removeAttribute("data-collapsed");
-			element.removeAttribute("inert");
-		}
-
-		resetHeaderIdentityStyles();
+		resetCollapsibleElements(elements.collapsibleElements);
+		resetHeaderIdentityStyles(elements);
 
 		return true;
 	}
 
-	function updateMobileScrollState(): void {
-		const detailsCollapsed = window.scrollY > mobileCollapseThreshold;
-		const pageScrolled = window.scrollY > 0;
-
-		header?.toggleAttribute("data-scrolled", pageScrolled);
-
-		for (const { element } of collapsibleElements) {
-			element.toggleAttribute("data-collapsed", detailsCollapsed);
-			element.toggleAttribute("inert", detailsCollapsed);
-		}
-	}
-
 	function updateForcedCompactHeader(): void {
-		if (!header?.hasAttribute("data-force-compact")) {
+		if (!elements.header?.hasAttribute("data-force-compact")) {
 			return;
 		}
 
-		header.setAttribute("data-scrolled", "");
-		header.setAttribute("data-fully-compact", "");
+		elements.header.setAttribute("data-scrolled", "");
+		elements.header.setAttribute("data-fully-compact", "");
 
 		if (!desktopViewport.matches) {
-			footer?.removeAttribute("data-expanded");
-			header.style.removeProperty("padding-top");
-			header.style.removeProperty("padding-bottom");
-
-			for (const { element } of collapsibleElements) {
-				element.setAttribute("data-collapsed", "");
-				element.setAttribute("inert", "");
-			}
-
+			updateForcedCompactMobileHeader(elements);
 			return;
 		}
 
-		footer?.toggleAttribute("data-expanded", isAtPageBottom());
-		header.style.paddingTop = `${compactHeaderPadding}px`;
-		header.style.paddingBottom = `${fullyCollapsedHeaderBottomPadding}px`;
-		updateHeaderIdentity(1);
-		updateCollapsibleElements(1);
+		updateForcedCompactDesktopHeader(elements, headerIdentityHeights, isDocumentAtBottom());
 	}
 
 	function updateScrollState(): void {
 		animationFrame = undefined;
-		updateBackToTopVisibility();
+		updateBackToTopVisibility(elements.backToTop, window.scrollY);
 
-		if (header?.hasAttribute("data-force-compact")) {
+		if (elements.header?.hasAttribute("data-force-compact")) {
 			setCollapseMode(desktopViewport.matches ? "desktop" : "mobile");
 			updateForcedCompactHeader();
 			return;
@@ -237,40 +87,23 @@ export function initializeScrollStateController(): void {
 
 		if (!desktopViewport.matches) {
 			if (setCollapseMode("mobile")) {
-				header?.removeAttribute("data-fully-compact");
-				footer?.removeAttribute("data-expanded");
-				header?.style.removeProperty("padding-top");
-				header?.style.removeProperty("padding-bottom");
+				elements.header?.removeAttribute("data-fully-compact");
+				elements.footer?.removeAttribute("data-expanded");
+				elements.header?.style.removeProperty("padding-top");
+				elements.header?.style.removeProperty("padding-bottom");
 			}
 
-			updateMobileScrollState();
+			updateMobileScrollState(elements, window.scrollY);
 			return;
 		}
 
-		const progress = Math.min(window.scrollY / collapseDistance, 1);
+		const progress = getDesktopScrollProgress(window.scrollY);
 
 		setCollapseMode("desktop");
-		header?.toggleAttribute("data-scrolled", progress > 0);
-		header?.toggleAttribute("data-fully-compact", progress === 1);
-		footer?.toggleAttribute("data-expanded", isAtPageBottom());
-		initialHeaderPadding ??= getInitialHeaderPadding();
-
-		if (header && initialHeaderPadding) {
-			const bottomPadding =
-				progress === 1
-					? fullyCollapsedHeaderBottomPadding
-					: interpolate(initialHeaderPadding.bottom, compactHeaderPadding, progress);
-
-			header.style.paddingTop = `${interpolate(
-				initialHeaderPadding.top,
-				compactHeaderPadding,
-				progress,
-			)}px`;
-			header.style.paddingBottom = `${bottomPadding}px`;
-		}
-
-		updateHeaderIdentity(progress);
-		updateCollapsibleElements(progress);
+		initialHeaderPadding ??= readInitialHeaderPadding(elements.header);
+		updateDesktopScrollState(elements, initialHeaderPadding, progress, isDocumentAtBottom());
+		updateHeaderIdentity(elements, headerIdentityHeights, progress);
+		updateCollapsibleElements(elements.collapsibleElements, progress);
 	}
 
 	function scheduleScrollStateUpdate(): void {
@@ -283,59 +116,50 @@ export function initializeScrollStateController(): void {
 
 	function handleScroll(): void {
 		if (!desktopViewport.matches) {
-			updateBackToTopVisibility();
-			updateMobileScrollState();
+			updateBackToTopVisibility(elements.backToTop, window.scrollY);
+			updateMobileScrollState(elements, window.scrollY);
 			return;
 		}
 
 		scheduleScrollStateUpdate();
 	}
 
-	function prepareForPrint(): void {
-		for (const { element } of collapsibleElements) {
-			element.style.removeProperty("height");
-			element.style.removeProperty("opacity");
-			element.removeAttribute("data-collapsed");
-			element.removeAttribute("inert");
-		}
+	function handleObservedResize(): void {
+		measureHeaderIdentity(elements, headerIdentityHeights);
+		measureCollapsibleElements(elements.collapsibleElements);
+		scheduleScrollStateUpdate();
 	}
 
 	window.addEventListener("scroll", handleScroll, { passive: true });
 	window.addEventListener("resize", scheduleScrollStateUpdate);
 	window.addEventListener("pageshow", updateScrollState);
-	window.addEventListener("beforeprint", prepareForPrint);
+	window.addEventListener("beforeprint", () => prepareForPrint(elements.collapsibleElements));
 	window.addEventListener("afterprint", updateScrollState);
 
-	backToTop?.addEventListener("click", returnFocusToPageTop);
+	elements.backToTop?.addEventListener("click", (event) =>
+		returnFocusToPageTop(event, elements.pageTop),
+	);
 
 	desktopViewport.addEventListener("change", updateScrollState);
 
-	function handleObservedResize(): void {
-		measureHeaderIdentity();
-		measureCollapsibleElements();
-		scheduleScrollStateUpdate();
-	}
-
 	const resizeObserver = new ResizeObserver(handleObservedResize);
 
-	if (headerIdentity) {
-		resizeObserver.observe(headerIdentity);
+	if (elements.headerIdentity) {
+		resizeObserver.observe(elements.headerIdentity);
 	}
 
-	if (compactHeaderIdentity) {
-		resizeObserver.observe(compactHeaderIdentity);
+	if (elements.compactHeaderIdentity) {
+		resizeObserver.observe(elements.compactHeaderIdentity);
 	}
 
-	for (const { content } of collapsibleElements) {
+	for (const { content } of elements.collapsibleElements) {
 		if (content) {
 			resizeObserver.observe(content);
 		}
 	}
 
-	measureHeaderIdentity();
-	measureCollapsibleElements();
-	for (const { element } of collapsibleElements) {
-		element.setAttribute("data-ready", "");
-	}
+	measureHeaderIdentity(elements, headerIdentityHeights);
+	measureCollapsibleElements(elements.collapsibleElements);
+	markCollapsibleElementsReady(elements.collapsibleElements);
 	updateScrollState();
 }
