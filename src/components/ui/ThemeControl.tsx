@@ -1,4 +1,8 @@
 import type { Messages } from "../../i18n/messages/types";
+import { MoonIcon } from "../svg/MoonIcon";
+import { SunIcon } from "../svg/SunIcon";
+import { SystemIcon } from "../svg/SystemIcon";
+import { ChoiceSwitcher } from "./ChoiceSwitcher";
 
 type ThemePreference = "light" | "dark" | "system";
 
@@ -9,40 +13,34 @@ type ThemeControlProps = {
 const defaultPreference: ThemePreference = "system";
 
 export function ThemeControl({ theme }: ThemeControlProps) {
-	const preferences: { label: string; value: ThemePreference }[] = [
-		{ label: theme.system, value: "system" },
-		{ label: theme.light, value: "light" },
-		{ label: theme.dark, value: "dark" },
+	const preferences = [
+		{
+			buttonProps: { "data-theme-preference": "system" },
+			icon: <SystemIcon />,
+			id: "system",
+			isSelected: defaultPreference === "system",
+			label: theme.system,
+		},
+		{
+			buttonProps: { "data-theme-preference": "light" },
+			icon: <SunIcon />,
+			id: "light",
+			isSelected: defaultPreference === "light",
+			label: theme.light,
+		},
+		{
+			buttonProps: { "data-theme-preference": "dark" },
+			icon: <MoonIcon />,
+			id: "dark",
+			isSelected: defaultPreference === "dark",
+			label: theme.dark,
+		},
 	];
 
 	return (
-		<fieldset className="no-print m-0 inline-flex min-is-0 flex-none overflow-hidden rounded-md border border-(--border-color) p-0">
+		<fieldset className="no-print m-0 min-is-0 flex-none p-0">
 			<legend className="sr-only">{theme.legend}</legend>
-			{preferences.map(({ label, value }, index) => (
-				<button
-					aria-pressed={defaultPreference === value}
-					className={[
-						// CONTROL LAYOUT & INTERACTION
-						"appearance-none cursor-pointer px-1 py-1.5 text-xs leading-none sm:px-2 sm:py-1.5 sm:transition-[padding] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:px-2.5 sm:group-data-expanded/footer:py-2",
-						// DEFAULT AND SELECTED STATES
-						"aria-pressed:bg-(--foreground-color) aria-pressed:text-(--background-color)",
-						// HOVER FEEDBACK
-						"aria-[pressed=false]:hover:bg-(--inactive-hover-color) aria-pressed:hover:bg-(--active-hover-color)",
-						// KEYBOARD ACCESSIBILITY
-						"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:-outline-offset-2",
-						// ENHANCED HOVER COLORS WHERE COLOR-MIX IS AVAILABLE
-						"supports-[color:color-mix(in_srgb,black,white)]:aria-[pressed=false]:hover:bg-[color-mix(in_srgb,var(--foreground-color)_10%,transparent)]",
-						"supports-[color:color-mix(in_srgb,black,white)]:aria-pressed:hover:bg-[color-mix(in_srgb,var(--foreground-color)_85%,var(--background-color))]",
-						// SEPARATOR BETWEEN SEGMENTED CONTROLS
-						index < preferences.length - 1 ? "border-r border-(--border-color)" : "",
-					].join(" ")}
-					data-theme-preference={value}
-					key={value}
-					type="button"
-				>
-					{label}
-				</button>
-			))}
+			<ChoiceSwitcher action="button" choices={preferences} />
 		</fieldset>
 	);
 }
