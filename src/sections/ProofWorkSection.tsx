@@ -184,12 +184,12 @@ export function ProofWorkSection({
 								"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
 								"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",
 							].join(" ")}
-							controls
 							data-proof-work-player
 							muted
 							playsInline
 							poster={activeVideo.preview}
 							preload="metadata" // WITH PRELOAD METADATA FOR SHOW FAST START FIRST VIDEO MUTED
+							tabIndex={0}
 						>
 							<source src={activeVideo.source} type="video/mp4" />
 						</video>

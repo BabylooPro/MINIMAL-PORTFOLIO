@@ -195,6 +195,10 @@ export function initializeProofWorkController(): void {
 			syncPlayback();
 		}
 
+		function enablePlayerControls(): void {
+			videoPlayer.controls = true;
+		}
+
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				isPlayerVisible = Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.5);
@@ -205,6 +209,9 @@ export function initializeProofWorkController(): void {
 
 		previousControl.addEventListener("click", () => switchVideo(-1));
 		nextControl.addEventListener("click", () => switchVideo(1));
+		videoPlayer.addEventListener("pointerenter", enablePlayerControls);
+		videoPlayer.addEventListener("pointerdown", enablePlayerControls);
+		videoPlayer.addEventListener("focus", enablePlayerControls);
 		videoPlayer.addEventListener("ended", () => {
 			if (isPlayerVisible && !document.hidden) {
 				switchVideo(1);
