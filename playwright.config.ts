@@ -5,9 +5,19 @@ export default defineConfig({
 	timeout: 30_000,
 	use: {
 		baseURL: "http://127.0.0.1:4174",
-		channel: "chromium",
 		headless: true,
 	},
+	projects: [
+		{
+			name: "chromium",
+			use: { browserName: "chromium", channel: "chromium" },
+		},
+		{
+			name: "webkit-proof-work",
+			grep: /updates the Proof Work carousel/,
+			use: { browserName: "webkit" },
+		},
+	],
 	webServer: {
 		command: "pnpm build:static && pnpm preview --host 127.0.0.1 --port 4174",
 		url: "http://127.0.0.1:4174",
