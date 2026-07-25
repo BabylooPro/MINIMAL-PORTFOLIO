@@ -11,7 +11,7 @@ export function Tooltip({ children, id, label, trigger }: TooltipProps) {
 	return (
 		<div
 			className={[
-				"group relative flex",
+				"group relative flex sm:static",
 				"[&:has(details[open])]:[--info-tooltip-opacity:1] [&:has(details[open])]:[--info-tooltip-pointer-events:auto]",
 			].join(" ")}
 		>
