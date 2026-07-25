@@ -43,7 +43,7 @@ export function ExperienceSection({
 					return (
 						<li key={experience.id}>
 							<article>
-								<header className="grid gap-x-6 gap-y-1 border-t border-(--border-color) pt-2 sm:grid-cols-[minmax(0,1fr)_auto]">
+								<header className="grid gap-x-6 gap-y-1 pt-2 sm:grid-cols-[minmax(0,1fr)_auto]">
 									<div>
 										<h3 className="font-semibold text-(--foreground-color)">
 											{experience.role}

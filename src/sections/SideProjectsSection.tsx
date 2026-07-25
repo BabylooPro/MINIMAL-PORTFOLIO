@@ -52,7 +52,7 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 					return (
 						<li key={project.slug} className="row-span-5 grid grid-rows-subgrid">
 							<article className="row-span-5 grid grid-rows-subgrid">
-								<h3 className="border-t border-(--border-color) pt-2 font-semibold text-(--foreground-color)">
+								<h3 className="pt-2 font-semibold text-(--foreground-color)">
 									{localizedProject?.title ?? project.name}
 								</h3>
 

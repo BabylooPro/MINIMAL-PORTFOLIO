@@ -144,7 +144,12 @@ export function ProofWorkSection({
 			data-videos={JSON.stringify(videos)}
 			labelledBy="proof-work-title"
 		>
-			<div className="relative flex items-center gap-1">
+			<div
+				className={[
+					"relative flex items-center gap-1",
+					"after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-(--muted-color)",
+				].join(" ")}
+			>
 				<SectionHeading id="proof-work-title">{title}</SectionHeading>
 
 				<Tooltip id="proof-work" label={tooltipLabel} trigger={<InfoIcon />}>
