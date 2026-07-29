@@ -1,24 +1,14 @@
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import PortfolioPage from "@/app/(landing)/page";
-import { LegalPage } from "@/app/(legal)/[page]/page";
-import {
-	defaultLocale,
-	getLegalPageAbsoluteUrl,
-	type LegalPageId,
-	type Locale,
-	localeConfigs,
-	rootUrl,
-} from "@/lib/i18n/config";
+import { PageRenderer } from "@/app/page-renderer";
+import type { AppRoute } from "@/app/routes";
+import { defaultLocale, getLegalPageAbsoluteUrl, localeConfigs, rootUrl } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { validateDictionaries } from "@/lib/i18n/validate";
 import { socialImage } from "@/lib/seo/social-image";
 import { createLegalPageStructuredData, createStructuredData } from "@/lib/seo/structured-data";
 
-export type StaticRoute =
-	| { kind: "root" }
-	| { kind: "locale"; locale: Locale }
-	| { kind: "legal"; locale: Locale; page: LegalPageId };
+export type { AppRoute as StaticRoute } from "@/app/routes";
 
 export type RenderedPage = {
 	appHtml: string;
@@ -48,20 +38,14 @@ function validateBeforeRendering(): void {
 	}
 }
 
-export function renderPage(route: StaticRoute): RenderedPage {
+export function renderPage(route: AppRoute): RenderedPage {
 	validateBeforeRendering();
 
 	if (route.kind === "root") {
 		const dictionary = getDictionary(defaultLocale);
 
 		return {
-			appHtml: renderPageHtml(
-				<PortfolioPage
-					dictionary={dictionary}
-					locale={defaultLocale}
-					showSideProjects={false}
-				/>,
-			),
+			appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
 			lang: localeConfigs[defaultLocale].htmlLang,
 			indexable: false,
 			pathname: "/",
@@ -88,9 +72,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 		const title = `${content.title} | ${dictionary.portfolio.name}`;
 
 		return {
-			appHtml: renderPageHtml(
-				<LegalPage dictionary={dictionary} locale={route.locale} page={route.page} />,
-			),
+			appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
 			lang: localeConfig.htmlLang,
 			indexable: false,
 			pathname: canonical,
@@ -114,9 +96,7 @@ export function renderPage(route: StaticRoute): RenderedPage {
 	}
 
 	return {
-		appHtml: renderPageHtml(
-			<PortfolioPage dictionary={dictionary} locale={route.locale} showSideProjects />,
-		),
+		appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
 		lang: localeConfig.htmlLang,
 		indexable: true,
 		pathname: localeConfig.pathname,

@@ -1,9 +1,8 @@
 import { StrictMode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import PortfolioPage from "@/app/(landing)/page";
-import { LegalPage } from "@/app/(legal)/[page]/page";
-import { defaultLocale, getLegalPageFromPathname, getLocaleFromPathname } from "@/lib/i18n/config";
+import { PageRenderer } from "@/app/page-renderer";
+import { getRouteFromPathname, getRouteLocale, getRouteTitle } from "@/app/routes";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
 const root = document.getElementById("root");
@@ -12,31 +11,19 @@ if (!root) {
 	throw new Error('Root element "#root" was not found.');
 }
 
-const requestedLocale = getLocaleFromPathname(window.location.pathname);
-const locale = requestedLocale ?? defaultLocale;
-const legalPage = getLegalPageFromPathname(window.location.pathname);
+const route = getRouteFromPathname(window.location.pathname);
+const locale = getRouteLocale(route);
 const dictionary = getDictionary(locale);
-const title = legalPage
-	? `${dictionary.messages.legalPages[legalPage].title} | ${dictionary.portfolio.name}`
-	: dictionary.messages.meta.title;
 
 document.documentElement.lang = locale;
-document.title = title;
+document.title = getRouteTitle(route, dictionary);
 
 const appRoot = createRoot(root);
 
 flushSync(() => {
 	appRoot.render(
 		<StrictMode>
-			{legalPage ? (
-				<LegalPage dictionary={dictionary} locale={locale} page={legalPage} />
-			) : (
-				<PortfolioPage
-					dictionary={dictionary}
-					locale={locale}
-					showSideProjects={requestedLocale !== null}
-				/>
-			)}
+			<PageRenderer dictionary={dictionary} route={route} />
 		</StrictMode>,
 	);
 });
