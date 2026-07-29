@@ -6,15 +6,13 @@ import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
 
 const themeBootstrapPath = fileURLToPath(
-	new URL("./src/client/theme-bootstrap.js", import.meta.url),
+	new URL("./src/features/themes/theme-bootstrap.js", import.meta.url),
 );
 const localeRedirectPath = fileURLToPath(
-	new URL("./src/client/locale-redirect.js", import.meta.url),
+	new URL("./src/features/locale/locale-redirect.js", import.meta.url),
 );
 const indexHtmlPath = fileURLToPath(new URL("./index.html", import.meta.url));
-const siteControllerPath = fileURLToPath(
-	new URL("./src/client/site-controller.ts", import.meta.url),
-);
+const siteControllerPath = fileURLToPath(new URL("./app/site-controller.ts", import.meta.url));
 const siteControllerMarker = "<!--site-controller-->";
 const siteControllerScriptPattern =
 	/<script\b(?=[^>]*\bdata-site-controller\b)[\s\S]*?<\/script>/gi;
@@ -196,6 +194,18 @@ function injectSiteController(): Plugin {
 }
 
 export default defineConfig({
+	resolve: {
+		alias: [
+			{
+				find: "@/app",
+				replacement: fileURLToPath(new URL("./app", import.meta.url)),
+			},
+			{
+				find: "@",
+				replacement: fileURLToPath(new URL("./src", import.meta.url)),
+			},
+		],
+	},
 	build: {
 		manifest: true,
 		rollupOptions: {

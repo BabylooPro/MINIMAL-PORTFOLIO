@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { localeConfigs } from "../../src/i18n/config";
+import { localeConfigs } from "../../src/lib/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
 

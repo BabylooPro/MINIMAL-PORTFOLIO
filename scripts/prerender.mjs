@@ -41,7 +41,7 @@ const alternateLinksMarker = "<!--alternate-links-->";
 const pageMetadataMarker = "<!--page-metadata-->";
 const structuredDataMarker = "<!--structured-data-->";
 const pageTitlePattern = /<title data-page-title>.*?<\/title>/;
-const siteControllerEntry = "src/client/site-controller.ts";
+const siteControllerEntry = "app/site-controller.ts";
 
 const siteName = "Max Remy";
 

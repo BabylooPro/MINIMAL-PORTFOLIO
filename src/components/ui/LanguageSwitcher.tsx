@@ -1,11 +1,11 @@
+import { ChoiceSwitcher } from "@/components/ui/ChoiceSwitcher";
 import {
 	getLegalPagePath,
 	type LegalPageId,
 	type Locale,
 	localeConfigs,
 	locales,
-} from "../../i18n/config";
-import { ChoiceSwitcher } from "./ChoiceSwitcher";
+} from "@/lib/i18n/config";
 
 type LanguageSwitcherProps = {
 	currentLocale: Locale;

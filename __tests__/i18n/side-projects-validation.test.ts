@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { formatSideProjectDate } from "../../src/i18n/format.ts";
-import { validateSideProjectTranslations } from "../../src/i18n/side-projects-validation.ts";
+import { formatSideProjectDate } from "../../src/lib/i18n/format.ts";
+import { validateSideProjectTranslations } from "../../src/lib/i18n/side-projects-validation.ts";
 
 const projects = [{ slug: "project-one" }, { slug: "project-two" }];
 

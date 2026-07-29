@@ -62,9 +62,18 @@ async function fixture({ config = configuration, existingSnapshot } = {}) {
 	);
 
 	if (existingSnapshot !== undefined) {
-		await mkdir(path.join(projectDirectory, "src", "generated"), { recursive: true });
+		await mkdir(path.join(projectDirectory, "src", "features", "landing", "generated"), {
+			recursive: true,
+		});
 		await writeFile(
-			path.join(projectDirectory, "src", "generated", "side-projects.json"),
+			path.join(
+				projectDirectory,
+				"src",
+				"features",
+				"landing",
+				"generated",
+				"side-projects.json",
+			),
 			`${JSON.stringify(existingSnapshot)}\n`,
 			"utf8",
 		);
@@ -119,7 +128,14 @@ test("writes a valid response in the configuration order", async () => {
 
 		const generated = JSON.parse(
 			await readFile(
-				path.join(projectDirectory, "src", "generated", "side-projects.json"),
+				path.join(
+					projectDirectory,
+					"src",
+					"features",
+					"landing",
+					"generated",
+					"side-projects.json",
+				),
 				"utf8",
 			),
 		);

@@ -38,7 +38,14 @@ export async function refreshSideProjects({
 	timeoutMs = REQUEST_TIMEOUT_MS,
 }) {
 	const configurationPath = path.join(projectDirectory, "config", "side-projects.json");
-	const outputPath = path.join(projectDirectory, "src", "generated", "side-projects.json");
+	const outputPath = path.join(
+		projectDirectory,
+		"src",
+		"features",
+		"landing",
+		"generated",
+		"side-projects.json",
+	);
 	const cacheDirectory = path.join(projectDirectory, ".cache", "github");
 	const configuration = await readConfiguration(configurationPath);
 	const existingSnapshot = await readSnapshot(outputPath);
