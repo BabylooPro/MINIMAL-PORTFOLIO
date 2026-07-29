@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { PageRenderer } from "@/app/page-renderer";
-import type { AppRoute } from "@/app/routes";
+import { PageRenderer } from "@/app/routing/page-renderer";
+import type { AppRoute } from "@/app/routing/routes";
 import { defaultLocale, getLegalPageAbsoluteUrl, localeConfigs, rootUrl } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { validateDictionaries } from "@/lib/i18n/validate";
 import { socialImage } from "@/lib/seo/social-image";
 import { createLegalPageStructuredData, createStructuredData } from "@/lib/seo/structured-data";
 
-export type { AppRoute as StaticRoute } from "@/app/routes";
+export type { AppRoute as StaticRoute } from "@/app/routing/routes";
 
 export type RenderedPage = {
 	appHtml: string;

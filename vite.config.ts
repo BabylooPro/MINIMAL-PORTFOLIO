@@ -12,7 +12,9 @@ const localeRedirectPath = fileURLToPath(
 	new URL("./src/features/locale/locale-redirect.js", import.meta.url),
 );
 const indexHtmlPath = fileURLToPath(new URL("./index.html", import.meta.url));
-const siteControllerPath = fileURLToPath(new URL("./app/site-controller.ts", import.meta.url));
+const siteControllerPath = fileURLToPath(
+	new URL("./app/client/site-controller.ts", import.meta.url),
+);
 const siteControllerMarker = "<!--site-controller-->";
 const siteControllerScriptPattern =
 	/<script\b(?=[^>]*\bdata-site-controller\b)[\s\S]*?<\/script>/gi;

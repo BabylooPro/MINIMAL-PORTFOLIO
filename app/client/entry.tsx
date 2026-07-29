@@ -1,8 +1,8 @@
 import { StrictMode } from "react";
 import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
-import { PageRenderer } from "@/app/page-renderer";
-import { getRouteFromPathname, getRouteLocale, getRouteTitle } from "@/app/routes";
+import { PageRenderer } from "@/app/routing/page-renderer";
+import { getRouteFromPathname, getRouteLocale, getRouteTitle } from "@/app/routing/routes";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
 const root = document.getElementById("root");

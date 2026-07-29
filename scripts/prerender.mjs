@@ -34,14 +34,14 @@ const sitemapPath = path.join(distDirectory, "sitemap.xml");
 const socialImagePath = path.join(distDirectory, "og-image.jpg");
 const hostingerConfigPath = path.join(distDirectory, ".htaccess");
 const serverDirectory = path.join(distDirectory, "server");
-const serverEntryPath = path.join(serverDirectory, "entry-server.js");
+const serverEntryPath = path.join(serverDirectory, "entry.js");
 const manifestDirectory = path.join(distDirectory, ".vite");
 const manifestPath = path.join(manifestDirectory, "manifest.json");
 const alternateLinksMarker = "<!--alternate-links-->";
 const pageMetadataMarker = "<!--page-metadata-->";
 const structuredDataMarker = "<!--structured-data-->";
 const pageTitlePattern = /<title data-page-title>.*?<\/title>/;
-const siteControllerEntry = "app/site-controller.ts";
+const siteControllerEntry = "app/client/site-controller.ts";
 
 const siteName = "Max Remy";
 

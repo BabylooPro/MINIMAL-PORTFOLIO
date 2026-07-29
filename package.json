@@ -8,7 +8,7 @@
 		"build": "pnpm refresh && pnpm build:static",
 		"build:static": "tsc -b && pnpm build:client && pnpm build:server && pnpm prerender",
 		"build:client": "vite build",
-		"build:server": "vite build --ssr app/entry-server.tsx --outDir dist/server",
+		"build:server": "vite build --ssr app/server/entry.tsx --outDir dist/server",
 		"prerender": "node scripts/prerender.mjs",
 		"refresh": "node scripts/refresh.mjs",
 		"test": "node --import ./scripts/register-aliases.mjs --experimental-strip-types --test",
