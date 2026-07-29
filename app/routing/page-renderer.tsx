@@ -1,5 +1,6 @@
-import PortfolioPage from "@/app/pages/(landing)/page";
-import { LegalPage } from "@/app/pages/(legal)/[page]/page";
+import { LegalPage } from "@/app/pages/legal/page";
+import PortfolioPage from "@/app/pages/portfolio/page";
+
 import { type AppRoute, getRouteLocale } from "@/app/routing/routes";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 

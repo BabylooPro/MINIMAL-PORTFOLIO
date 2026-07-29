@@ -1,7 +1,9 @@
 import RootLayout from "@/app/layout";
+
 import { LegalNoticeSection } from "@/features/legal/LegalNoticeSection";
 import { PrivacySection } from "@/features/legal/PrivacySection";
 import { getLocalePath, type LegalPageId, type Locale } from "@/lib/i18n/config";
+
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
 type LegalPageProps = {

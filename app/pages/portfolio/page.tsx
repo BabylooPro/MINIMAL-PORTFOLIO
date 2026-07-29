@@ -1,10 +1,12 @@
 import RootLayout from "@/app/layout";
+
 import { ExperienceSection } from "@/features/landing/ExperienceSection";
 import { LanguagesSection } from "@/features/landing/LanguagesSection";
 import { ProfileSection } from "@/features/landing/ProfileSection";
 import { ProofWorkSection } from "@/features/landing/ProofWorkSection";
 import { SideProjectsSection } from "@/features/landing/SideProjectsSection";
 import { SkillsSection } from "@/features/landing/SkillsSection";
+
 import type { Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
 
