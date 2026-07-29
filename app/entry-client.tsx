@@ -3,7 +3,6 @@ import { flushSync } from "react-dom";
 import { createRoot } from "react-dom/client";
 import PortfolioPage from "@/app/(landing)/page";
 import { LegalPage } from "@/app/(legal)/[page]/page";
-import "@/app/styles/global.css";
 import { defaultLocale, getLegalPageFromPathname, getLocaleFromPathname } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
@@ -29,17 +28,15 @@ const appRoot = createRoot(root);
 flushSync(() => {
 	appRoot.render(
 		<StrictMode>
-			<div className="overflow-x-clip">
-				{legalPage ? (
-					<LegalPage dictionary={dictionary} locale={locale} page={legalPage} />
-				) : (
-					<PortfolioPage
-						dictionary={dictionary}
-						locale={locale}
-						showSideProjects={requestedLocale !== null}
-					/>
-				)}
-			</div>
+			{legalPage ? (
+				<LegalPage dictionary={dictionary} locale={locale} page={legalPage} />
+			) : (
+				<PortfolioPage
+					dictionary={dictionary}
+					locale={locale}
+					showSideProjects={requestedLocale !== null}
+				/>
+			)}
 		</StrictMode>,
 	);
 });

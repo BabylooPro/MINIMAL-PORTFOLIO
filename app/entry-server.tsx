@@ -38,7 +38,7 @@ export type RenderedPage = {
 let dictionariesAreValidated = false;
 
 function renderPageHtml(content: ReactNode): string {
-	return renderToStaticMarkup(<div className="overflow-x-clip">{content}</div>);
+	return renderToStaticMarkup(content);
 }
 
 function validateBeforeRendering(): void {

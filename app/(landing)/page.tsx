@@ -1,7 +1,5 @@
-import { Container } from "@/components/ui/Container";
-import { Header } from "@/components/ui/Header";
+import RootLayout from "@/app/layout";
 import { ExperienceSection } from "@/features/landing/ExperienceSection";
-import { Footer } from "@/features/landing/Footer";
 import { LanguagesSection } from "@/features/landing/LanguagesSection";
 import { ProfileSection } from "@/features/landing/ProfileSection";
 import { ProofWorkSection } from "@/features/landing/ProofWorkSection";
@@ -20,67 +18,49 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: PortfolioPagePr
 	const { messages, portfolio } = dictionary;
 
 	return (
-		<>
-			<Header
-				currentLocale={locale}
-				downloadCvLabel={messages.labels.downloadCv}
-				emailLabel={messages.labels.email}
-				languageSwitcherLabel={messages.labels.languageSwitcher}
-				phoneLabel={messages.labels.phone}
-				portfolio={portfolio}
-			/>
+		<RootLayout dictionary={dictionary} locale={locale}>
+			<main className="mt-6 space-y-7 pb-44 sm:mt-0 sm:pb-44">
+				<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
 
-			<Container>
-				<main className="mt-6 space-y-7 pb-44 sm:mt-0 sm:pb-44">
-					<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
+				<ProofWorkSection
+					description={messages.proofWork.description}
+					links={portfolio.links}
+					nextVideoLabel={messages.proofWork.nextVideo}
+					postscript={messages.proofWork.postscript}
+					previousVideoLabel={messages.proofWork.previousVideo}
+					title={messages.sections.proofWork}
+					summary={messages.proofWork.summary}
+					tooltipLabel={messages.proofWork.tooltipLabel}
+					videoCounterTemplate={messages.proofWork.videoCounterTemplate}
+					videoLabel={messages.proofWork.video}
+				/>
 
-					<ProofWorkSection
-						description={messages.proofWork.description}
-						links={portfolio.links}
-						nextVideoLabel={messages.proofWork.nextVideo}
-						postscript={messages.proofWork.postscript}
-						previousVideoLabel={messages.proofWork.previousVideo}
-						title={messages.sections.proofWork}
-						summary={messages.proofWork.summary}
-						tooltipLabel={messages.proofWork.tooltipLabel}
-						videoCounterTemplate={messages.proofWork.videoCounterTemplate}
-						videoLabel={messages.proofWork.video}
-					/>
+				<SkillsSection
+					skillGroups={portfolio.skillGroups}
+					title={messages.sections.skills}
+				/>
 
-					<SkillsSection
-						skillGroups={portfolio.skillGroups}
-						title={messages.sections.skills}
-					/>
+				<LanguagesSection
+					languages={portfolio.languages}
+					title={messages.sections.languages}
+				/>
 
-					<LanguagesSection
-						languages={portfolio.languages}
-						title={messages.sections.languages}
-					/>
-
-					{showSideProjects ? (
-						<SideProjectsSection
-							content={messages.sideProjects}
-							locale={locale}
-							title={messages.sections.sideProjects}
-						/>
-					) : null}
-
-					<ExperienceSection
-						experiences={portfolio.experiences}
+				{showSideProjects ? (
+					<SideProjectsSection
+						content={messages.sideProjects}
 						locale={locale}
-						presentLabel={messages.labels.present}
-						title={messages.sections.experience}
+						title={messages.sections.sideProjects}
 					/>
-				</main>
-			</Container>
+				) : null}
 
-			<Footer
-				company={portfolio.company}
-				currentLocale={locale}
-				footer={messages.footer}
-				theme={messages.theme}
-			/>
-		</>
+				<ExperienceSection
+					experiences={portfolio.experiences}
+					locale={locale}
+					presentLabel={messages.labels.present}
+					title={messages.sections.experience}
+				/>
+			</main>
+		</RootLayout>
 	);
 }
 
