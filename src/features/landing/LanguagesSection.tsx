@@ -33,6 +33,7 @@ export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
 									<Tooltip
 										id={`language-${languageIndex}-listening`}
 										label={language.capabilities.listening}
+										mobilePlacement="anchored"
 										trigger={<EarIcon />}
 									>
 										<p>{language.capabilities.listening}</p>
@@ -45,6 +46,7 @@ export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
 									<Tooltip
 										id={`language-${languageIndex}-speaking`}
 										label={language.capabilities.speaking}
+										mobilePlacement="anchored"
 										trigger={<PersonVoiceIcon />}
 									>
 										<p>{language.capabilities.speaking}</p>
@@ -57,6 +59,7 @@ export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
 									<Tooltip
 										id={`language-${languageIndex}-writing`}
 										label={language.capabilities.writing}
+										mobilePlacement="anchored"
 										trigger={<MessageIcon />}
 									>
 										<p>{language.capabilities.writing}</p>
