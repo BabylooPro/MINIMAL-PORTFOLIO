@@ -130,6 +130,7 @@ export function ProofWorkSection({
 	const activeVideo = videos[0];
 	const previousVideo = videos[videos.length - 1];
 	const nextVideo = videos[1];
+	const tooltipHasLink = links.some((link) => description.includes(link.label));
 
 	if (!activeVideo || !previousVideo || !nextVideo) {
 		return null;
@@ -152,7 +153,12 @@ export function ProofWorkSection({
 			>
 				<SectionHeading id="proof-work-title">{title}</SectionHeading>
 
-				<Tooltip id="proof-work" label={tooltipLabel} trigger={<InfoIcon />}>
+				<Tooltip
+					id="proof-work"
+					interactive={tooltipHasLink}
+					label={tooltipLabel}
+					trigger={<InfoIcon />}
+				>
 					<p className="whitespace-pre-line">
 						{renderTextWithPortfolioLinks(description, links)}
 					</p>
