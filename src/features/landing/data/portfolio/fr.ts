@@ -63,9 +63,28 @@ export const portfolioFr = {
 	summary:
 		"Un développeur couteau suisse avec 10 ans d’expérience en freelance.\nEntièrement autodidacte, sans diplôme formel.",
 	languages: [
-		"Français - langue maternelle (C2)",
-		"Anglais - niveau intermédiaire (B1+)",
-		"Allemand - niveau débutant (A1)",
+		{
+			label: "Français - langue maternelle (C2)",
+			capabilities: {
+				listening: "Compréhension orale",
+				speaking: "Expression orale fluide",
+				writing: "Expression écrite",
+			},
+		},
+		{
+			label: "Anglais - niveau intermédiaire (B1+)",
+			capabilities: {
+				listening: "Compréhension orale",
+				speaking: "Expression orale de niveau intermédiaire",
+				writing: "Expression écrite",
+			},
+		},
+		{
+			label: "Allemand - niveau débutant (A1)",
+			capabilities: {
+				listening: "Compréhension orale",
+			},
+		},
 	],
 	experiences: createLocalizedExperiences(experienceContent),
 	skillGroups: createSkillGroups(skillGroupLabels),

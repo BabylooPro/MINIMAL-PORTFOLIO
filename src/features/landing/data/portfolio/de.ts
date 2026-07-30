@@ -62,9 +62,28 @@ export const portfolioDe = {
 	summary:
 		"Ein Schweizer Taschenmesser-Entwickler mit 10 Jahren Erfahrung als Freiberufler.\nVollständig autodidaktisch, ohne formalen Abschluss.",
 	languages: [
-		"Französisch - Muttersprache (C2)",
-		"Englisch - Mittelstufe (B1+)",
-		"Deutsch - Anfänger (A1)",
+		{
+			label: "Französisch - Muttersprache (C2)",
+			capabilities: {
+				listening: "Hörverständnis",
+				speaking: "Fliessendes Sprechen",
+				writing: "Schreiben",
+			},
+		},
+		{
+			label: "Englisch - Mittelstufe (B1+)",
+			capabilities: {
+				listening: "Hörverständnis",
+				speaking: "Sprechen auf Mittelstufenniveau",
+				writing: "Schreiben",
+			},
+		},
+		{
+			label: "Deutsch - Anfänger (A1)",
+			capabilities: {
+				listening: "Hörverständnis",
+			},
+		},
 	],
 	experiences: createLocalizedExperiences(experienceContent),
 	skillGroups: createSkillGroups(skillGroupLabels),

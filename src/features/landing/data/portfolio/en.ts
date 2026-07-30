@@ -61,7 +61,30 @@ export const portfolioEn = {
 	location: "Moudon, Vaud, Switzerland",
 	summary:
 		"A Swiss Army knife developer with 10 years of freelance experience.\nEntirely self-taught, with no formal degree.",
-	languages: ["French - Native (C2)", "English - Intermediate (B1+)", "German - Beginner (A1)"],
+	languages: [
+		{
+			label: "French - Native (C2)",
+			capabilities: {
+				listening: "Listening",
+				speaking: "Fluent speaking",
+				writing: "Writing",
+			},
+		},
+		{
+			label: "English - Intermediate (B1+)",
+			capabilities: {
+				listening: "Listening",
+				speaking: "Intermediate speaking",
+				writing: "Writing",
+			},
+		},
+		{
+			label: "German - Beginner (A1)",
+			capabilities: {
+				listening: "Listening",
+			},
+		},
+	],
 	experiences: createLocalizedExperiences(experienceContent),
 	skillGroups: createSkillGroups(skillGroupLabels),
 } satisfies Portfolio;

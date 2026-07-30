@@ -23,6 +23,15 @@ export type SkillGroup = {
 	skills: readonly string[];
 };
 
+export type Language = {
+	label: string;
+	capabilities: {
+		listening?: string;
+		speaking?: string;
+		writing?: string;
+	};
+};
+
 export type Portfolio = {
 	name: string;
 	company: string;
@@ -33,5 +42,5 @@ export type Portfolio = {
 	links: readonly ExternalLink[];
 	experiences: readonly Experience[];
 	skillGroups: readonly SkillGroup[];
-	languages: readonly string[];
+	languages: readonly Language[];
 };

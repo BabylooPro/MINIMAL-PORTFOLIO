@@ -52,8 +52,8 @@ export function Tooltip({ children, id, label, trigger }: TooltipProps) {
 			<div
 				className={[
 					// RESPONSIVE PANEL POSITION
-					"fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
-					"sm:absolute sm:top-full sm:mt-2 sm:max-h-none sm:translate-y-0",
+					"fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
+					"sm:absolute sm:top-full sm:mt-2 sm:max-h-none sm:max-w-96 sm:translate-y-0",
 					// PANEL SURFACE & CONTENT STYLE
 					"rounded-md border border-(--border-color) bg-(--background-color) p-3 text-sm leading-5 text-(--body-color) shadow-lg",
 					// HIDDEN STATE & MOTION
