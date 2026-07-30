@@ -10,6 +10,7 @@ How [maxremy.dev](https://maxremy.dev/) is built :
 - Tailwind CSS 4
 - Biome
 - Node.js (static prerendering)
+- Deployment: Cloudflare Pages
 
 ## Performance
 

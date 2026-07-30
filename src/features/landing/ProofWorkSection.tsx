@@ -1,6 +1,7 @@
 import { InfoIcon } from "@/components/icons/InfoIcon";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { Tooltip } from "@/components/ui/Tooltip";
+import { getMediaUrl } from "@/lib/media-origin";
 import type { ExternalLink } from "@/types/portfolio";
 import { renderTextWithPortfolioLinks } from "@/utils/renderTextWithPortfolioLinks";
 
@@ -21,32 +22,32 @@ type SquarePosition = `object-[${string}]`;
 
 const videos = [
 	{
-		source: "/videos/timelapse/1.mp4",
+		source: getMediaUrl("/videos/timelapse/1.mp4"),
 		preview: "/videos/timelapse/previews/1.jpg",
 		squarePosition: "object-[50%_67%]",
 	},
 	{
-		source: "/videos/timelapse/2.mp4",
+		source: getMediaUrl("/videos/timelapse/2.mp4"),
 		preview: "/videos/timelapse/previews/2.jpg",
 		squarePosition: "object-[50%_72%]",
 	},
 	{
-		source: "/videos/timelapse/3.mp4",
+		source: getMediaUrl("/videos/timelapse/3.mp4"),
 		preview: "/videos/timelapse/previews/3.jpg",
 		squarePosition: "object-[50%_60%]",
 	},
 	{
-		source: "/videos/timelapse/4.mp4",
+		source: getMediaUrl("/videos/timelapse/4.mp4"),
 		preview: "/videos/timelapse/previews/4.jpg",
 		squarePosition: "object-[50%_80%]",
 	},
 	{
-		source: "/videos/timelapse/5.mp4",
+		source: getMediaUrl("/videos/timelapse/5.mp4"),
 		preview: "/videos/timelapse/previews/5.jpg",
 		squarePosition: "object-[50%_7%]",
 	},
 	{
-		source: "/videos/timelapse/6.mp4",
+		source: getMediaUrl("/videos/timelapse/6.mp4"),
 		preview: "/videos/timelapse/previews/6.jpg",
 		squarePosition: "object-[50%_80%]",
 	},

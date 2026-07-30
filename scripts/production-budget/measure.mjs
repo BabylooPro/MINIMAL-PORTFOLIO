@@ -2,11 +2,18 @@ import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
+import { performanceBudget } from "../../config/performance-budget.mjs";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export const projectDirectory = path.resolve(scriptDirectory, "../..");
 export const defaultOutputDirectory = path.join(projectDirectory, "dist");
+export const defaultMediaSourceDirectory = path.join(
+	projectDirectory,
+	"public",
+	"videos",
+	"timelapse",
+);
 
 const reactRuntimePattern = /react-dom|react-jsx-runtime|createRoot|hydrateRoot/i;
 const hydrationPattern = /createRoot|hydrateRoot/i;
@@ -192,7 +199,7 @@ export function getJavaScriptResourceReferences(source) {
 	return references;
 }
 
-export function classifyResourceReference(reference, siteOrigin) {
+export function classifyResourceReference(reference, siteOrigin, allowedOrigins = []) {
 	const { url } = reference;
 
 	if (url.startsWith("data:")) {
@@ -205,11 +212,17 @@ export function classifyResourceReference(reference, siteOrigin) {
 
 	try {
 		const origin = new URL(url, siteOrigin ?? "https://invalid.local").origin;
+		const isAllowedOrigin = origin === siteOrigin || allowedOrigins.includes(origin);
 
 		return {
 			...reference,
-			scope: origin === siteOrigin ? "same-origin" : "third-party",
-			isThirdParty: origin !== siteOrigin,
+			scope:
+				origin === siteOrigin
+					? "same-origin"
+					: isAllowedOrigin
+						? "first-party"
+						: "third-party",
+			isThirdParty: !isAllowedOrigin,
 		};
 	} catch {
 		return { ...reference, scope: "unsupported", isThirdParty: true };
@@ -254,10 +267,18 @@ function getInlineMeasurement(source) {
 	return { rawBytes: bytes.byteLength, gzipBytes: gzipBytes(bytes), source };
 }
 
-export async function measureProductionOutput({ outputDirectory = defaultOutputDirectory } = {}) {
+export async function measureProductionOutput({
+	outputDirectory = defaultOutputDirectory,
+	mediaSourceDirectory = path.resolve(outputDirectory) === defaultOutputDirectory
+		? defaultMediaSourceDirectory
+		: outputDirectory,
+	allowedRuntimeOrigins = performanceBudget.architecture.allowedRuntimeOrigins,
+} = {}) {
 	const resolvedOutputDirectory = path.resolve(outputDirectory);
+	const resolvedMediaSourceDirectory = path.resolve(mediaSourceDirectory);
 	const outputExists = await pathExists(resolvedOutputDirectory);
 	const files = await listFiles(resolvedOutputDirectory);
+	const mediaSourceFiles = await listFiles(resolvedMediaSourceDirectory);
 	const relativeFiles = files.map((filePath) => path.relative(resolvedOutputDirectory, filePath));
 	const javascriptFiles = files.filter((filePath) => filePath.endsWith(".js"));
 	const cssFiles = files.filter((filePath) => filePath.endsWith(".css"));
@@ -265,10 +286,11 @@ export async function measureProductionOutput({ outputDirectory = defaultOutputD
 	const previewPaths = files
 		.filter((filePath) => /\/videos\/timelapse\/previews\/[^/]+\.jpg$/u.test(filePath))
 		.sort();
-	const videoPaths = files
+	const videoPaths = mediaSourceFiles
 		.filter((filePath) => /\/videos\/timelapse\/[^/]+\.mp4$/u.test(filePath))
 		.sort();
 	const socialImagePath = path.join(resolvedOutputDirectory, "og-image.jpg");
+
 	const [javascript, css, previews, videos, html] = await Promise.all([
 		Promise.all(javascriptFiles.map(measureFile)),
 		Promise.all(cssFiles.map(measureFile)),
@@ -297,6 +319,7 @@ export async function measureProductionOutput({ outputDirectory = defaultOutputD
 			}),
 		),
 	]);
+
 	const rootPage = html.find((page) => page.relativePath === "index.html");
 	const themeBootstrap = getInlineMeasurement(rootPage?.inlineScripts.themeBootstrap ?? null);
 	const localeRedirect = getInlineMeasurement(rootPage?.inlineScripts.localeRedirect ?? null);
@@ -305,13 +328,15 @@ export async function measureProductionOutput({ outputDirectory = defaultOutputD
 		? await measureFile(socialImagePath)
 		: null;
 	const siteOrigin = rootPage ? getCanonicalOrigin(rootPage.source) : null;
+
 	const resourceReferences = [
 		...html.flatMap((page) => page.resourceReferences),
 		...css.flatMap((file) => getCssResourceReferences(file.source.toString("utf8"))),
 		...javascript.flatMap((file) =>
 			getJavaScriptResourceReferences(file.source.toString("utf8")),
 		),
-	].map((reference) => classifyResourceReference(reference, siteOrigin));
+	].map((reference) => classifyResourceReference(reference, siteOrigin, allowedRuntimeOrigins));
+
 	const reactRuntimeFiles = javascript.filter((file) => reactRuntimePattern.test(file.source));
 	const hydrationFiles = javascript.filter((file) => hydrationPattern.test(file.source));
 	const clientI18nFiles = javascript.filter((file) => clientI18nPattern.test(file.source));

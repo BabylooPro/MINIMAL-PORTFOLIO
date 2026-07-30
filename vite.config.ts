@@ -1,9 +1,12 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+
 import { defineConfig, type Plugin } from "vite";
+import { mediaOrigin } from "./src/lib/media-origin.js";
 
 const themeBootstrapPath = fileURLToPath(
 	new URL("./src/features/themes/theme-bootstrap.js", import.meta.url),
@@ -30,7 +33,10 @@ type InlineScriptDefinition = {
 	path: string;
 };
 
-function createContentSecurityPolicy(inlineScriptSources: readonly string[]): string {
+function createContentSecurityPolicy(
+	inlineScriptSources: readonly string[],
+	mediaOrigin: string,
+): string {
 	const scriptHashes = inlineScriptSources.map(
 		(source) => `'sha256-${createHash("sha256").update(source).digest("base64")}'`,
 	);
@@ -41,7 +47,7 @@ function createContentSecurityPolicy(inlineScriptSources: readonly string[]): st
 		"object-src 'none'",
 		"frame-src 'none'",
 		"img-src 'self'",
-		"media-src 'self'",
+		`media-src 'self' ${mediaOrigin}`,
 		"font-src 'self'",
 		"style-src 'self'",
 		`script-src 'self' ${scriptHashes.join(" ")}`,
@@ -50,7 +56,10 @@ function createContentSecurityPolicy(inlineScriptSources: readonly string[]): st
 	].join("; ");
 }
 
-function inlineHeadScripts(definitions: readonly InlineScriptDefinition[]): Plugin {
+function inlineHeadScripts(
+	definitions: readonly InlineScriptDefinition[],
+	mediaOrigin: string,
+): Plugin {
 	let isClientProductionBuild = false;
 
 	return {
@@ -77,7 +86,10 @@ function inlineHeadScripts(definitions: readonly InlineScriptDefinition[]): Plug
 			transformedHtml = transformedHtml.replace(
 				contentSecurityPolicyMarker,
 				isClientProductionBuild
-					? `<meta http-equiv="Content-Security-Policy" content="${createContentSecurityPolicy(scripts.map(({ source }) => source))}" />`
+					? `<meta http-equiv="Content-Security-Policy" content="${createContentSecurityPolicy(
+						scripts.map(({ source }) => source),
+						mediaOrigin,
+					)}" />`
 					: "",
 			);
 
@@ -96,19 +108,6 @@ function inlineHeadScripts(definitions: readonly InlineScriptDefinition[]): Plug
 		},
 	};
 }
-
-const inlineScriptsPlugin = inlineHeadScripts([
-	{
-		marker: "<!--theme-bootstrap-->",
-		attribute: "data-theme-bootstrap",
-		path: themeBootstrapPath,
-	},
-	{
-		marker: "<!--locale-redirect-->",
-		attribute: "data-locale-redirect",
-		path: localeRedirectPath,
-	},
-]);
 
 function separateSiteController(): Plugin {
 	let isClientProductionBuild = false;
@@ -194,6 +193,22 @@ function injectSiteController(): Plugin {
 		},
 	};
 }
+
+const inlineScriptsPlugin = inlineHeadScripts(
+	[
+		{
+			marker: "<!--theme-bootstrap-->",
+			attribute: "data-theme-bootstrap",
+			path: themeBootstrapPath,
+		},
+		{
+			marker: "<!--locale-redirect-->",
+			attribute: "data-locale-redirect",
+			path: localeRedirectPath,
+		},
+	],
+	mediaOrigin,
+);
 
 export default defineConfig({
 	resolve: {

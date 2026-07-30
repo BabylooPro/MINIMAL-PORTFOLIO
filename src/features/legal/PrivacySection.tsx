@@ -1,7 +1,7 @@
 import { Section, SectionHeading } from "@/components/ui/Section";
 import type { Messages } from "@/lib/i18n/messages/types";
 
-const hostingerPrivacyPolicyUrl = "https://www.hostinger.com/legal/privacy-policy";
+const cloudflarePrivacyPolicyUrl = "https://www.cloudflare.com/privacypolicy/";
 const googlePrivacyPolicyUrl = "https://policies.google.com/privacy";
 
 type PrivacySectionProps = {
@@ -37,7 +37,7 @@ export function PrivacySection({ content, email }: PrivacySectionProps) {
 
 				<a
 					className="mt-1 inline-flex underline underline-offset-2"
-					href={hostingerPrivacyPolicyUrl}
+					href={cloudflarePrivacyPolicyUrl}
 					rel="noopener noreferrer"
 					target="_blank"
 				>

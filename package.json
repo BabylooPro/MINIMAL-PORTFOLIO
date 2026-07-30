@@ -3,6 +3,7 @@
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
+	"packageManager": "pnpm@11.13.1",
 	"scripts": {
 		"dev": "vite",
 		"build": "pnpm refresh && pnpm build:static",
@@ -16,6 +17,7 @@
 		"check:production-budget": "node scripts/production-budget.mjs",
 		"report:production-budget": "pnpm build && node scripts/production-budget.mjs --write-report",
 		"verify:production": "pnpm validate && pnpm test:browser && pnpm check:production-budget",
+		"verify:cloudflare": "node scripts/verify-cloudflare-deployment.mjs",
 		"preview": "vite preview",
 		"typecheck": "tsc -b --pretty false",
 		"lint": "biome lint .",

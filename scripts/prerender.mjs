@@ -1,4 +1,4 @@
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -32,7 +32,7 @@ const assetsDirectory = path.join(distDirectory, "assets");
 const indexPath = path.join(distDirectory, "index.html");
 const sitemapPath = path.join(distDirectory, "sitemap.xml");
 const socialImagePath = path.join(distDirectory, "og-image.jpg");
-const hostingerConfigPath = path.join(distDirectory, ".htaccess");
+const cloudflareHeadersPath = path.join(distDirectory, "_headers");
 const serverDirectory = path.join(distDirectory, "server");
 const serverEntryPath = path.join(serverDirectory, "entry.js");
 const manifestDirectory = path.join(distDirectory, ".vite");
@@ -169,20 +169,6 @@ const renderedPages = await Promise.all(
 	}),
 );
 
-const localizedNotFoundConfigs = routes
-	.filter((route) => route.kind === "not-found" && !route.rootFallback)
-	.map((route) => ({
-		content: `ErrorDocument 404 /${route.locale}/404.html\n`,
-		locale: route.locale,
-		path: path.join(distDirectory, route.locale, ".htaccess"),
-	}));
-
-await Promise.all(
-	localizedNotFoundConfigs.map(async ({ content, path: configPath }) => {
-		await writeFile(configPath, content, "utf8");
-	}),
-);
-
 const sitemap = renderSitemap(renderedPages);
 await writeFile(sitemapPath, sitemap, "utf8");
 
@@ -199,6 +185,11 @@ await removeUnusedJavaScriptFiles({
 	allowedFiles: siteControllerAssets,
 });
 
+const externalVideoFiles = (
+	await listFiles(path.join(distDirectory, "videos", "timelapse"))
+).filter((filePath) => filePath.endsWith(".mp4"));
+await Promise.all(externalVideoFiles.map((filePath) => unlink(filePath)));
+
 const outputFiles = await listFiles(distDirectory);
 await validateStaticOutput({
 	renderedPages,
@@ -207,9 +198,8 @@ await validateStaticOutput({
 	allowedJavaScriptFiles: siteControllerAssets,
 	paths: {
 		assetsDirectory,
-		hostingerConfigPath,
+		cloudflareHeadersPath,
 		indexPath,
-		localizedNotFoundConfigs,
 		sitemapPath,
 		socialImagePath,
 	},

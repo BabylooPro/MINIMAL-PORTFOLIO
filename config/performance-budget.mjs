@@ -52,5 +52,6 @@ export const performanceBudget = {
 		expectedExternalFonts: 0,
 		expectedClientHydration: false,
 		expectedClientI18nRuntime: false,
+		allowedRuntimeOrigins: ["https://media.maxremy.dev"],
 	},
 };

@@ -35,7 +35,7 @@ export const enMessages = {
 		backToTop: "Back to top",
 	},
 	legalPages: {
-		lastUpdated: "Last updated: 23 July 2026",
+		lastUpdated: "Last updated: 30 July 2026",
 		privacy: {
 			title: "Privacy",
 			description: "How this portfolio handles technical preferences and contact details.",
@@ -51,8 +51,8 @@ export const enMessages = {
 				"The Download CV link provides a static PDF file. This portfolio uses no form or analytics tool to identify downloads.",
 			hostingTitle: "Hosting",
 			hostingDescription:
-				"This site and its static files, including the CV, are hosted by Hostinger, which acts as the hosting data processor. As part of the hosting service, Hostinger may process technical connection data, including the IP address, browser information, the date and time of the request, and the requested resource. Hostinger states that this data may be processed in the United Kingdom, the Netherlands, Lithuania, and Cyprus, as well as in other jurisdictions depending on the service.",
-			hostingPrivacyPolicyLabel: "Hostinger privacy policy",
+				"This site and its static files, including the CV, are hosted on Cloudflare Pages. Cloudflare acts as the data processor for hosting and content delivery. In providing these services, Cloudflare may process technical connection data, including the IP address, browser information, the date and time of the request, and the requested resource. Depending on the service and its configuration, this data may be processed in the United States and other countries.",
+			hostingPrivacyPolicyLabel: "Cloudflare privacy policy",
 			externalLinksTitle: "External links",
 			externalLinksDescription:
 				"Links to external services open only when you select them. Those services process data under their own privacy policies.",
@@ -65,7 +65,7 @@ export const enMessages = {
 				"You may request access to, correction, or deletion of your personal data, or object to its processing, by writing to the email address above.",
 			retentionTitle: "Retention period",
 			retentionDescription:
-				"Email messages and contact details are deleted no later than 24 months after the last exchange, unless retention is necessary to perform a contractual relationship, defend legal claims, or comply with a legal obligation. Accounting records are retained for ten years from the end of the relevant financial year. Technical connection data processed by Hostinger follows the retention period defined in its privacy policy.",
+				"Email messages and contact details are deleted no later than 24 months after the last exchange, unless retention is necessary to perform a contractual relationship, defend legal claims, or comply with a legal obligation. Accounting records are retained for ten years from the end of the relevant financial year. Technical connection data processed by Cloudflare follows the retention period defined in its privacy policy.",
 			updatesTitle: "Updates",
 			updatesDescription:
 				"This page will be updated before a new feature introduces additional personal-data processing or a third-party service.",

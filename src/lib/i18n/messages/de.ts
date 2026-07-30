@@ -35,7 +35,7 @@ export const deMessages = {
 		backToTop: "Nach oben",
 	},
 	legalPages: {
-		lastUpdated: "Letzte Aktualisierung: 23. Juli 2026",
+		lastUpdated: "Letzte Aktualisierung: 30. Juli 2026",
 		privacy: {
 			title: "Datenschutz",
 			description:
@@ -52,8 +52,8 @@ export const deMessages = {
 				"Der Link zum Herunterladen des Lebenslaufs stellt eine statische PDF-Datei bereit. Dieses Portfolio verwendet weder ein Formular noch ein Analyse-Tool, um Downloads zu identifizieren.",
 			hostingTitle: "Hosting",
 			hostingDescription:
-				"Diese Website und ihre statischen Dateien, einschliesslich des Lebenslaufs, werden von Hostinger gehostet, das als Auftragsverarbeiter für das Hosting tätig ist. Im Rahmen des Hostings kann Hostinger technische Verbindungsdaten verarbeiten, darunter die IP-Adresse, Browserinformationen, Datum und Uhrzeit der Anfrage sowie die angeforderte Ressource. Hostinger gibt an, dass diese Daten im Vereinigten Königreich, in den Niederlanden, Litauen und Zypern sowie je nach Dienst in anderen Rechtsräumen verarbeitet werden können.",
-			hostingPrivacyPolicyLabel: "Datenschutzerklärung von Hostinger",
+				"Diese Website und ihre statischen Dateien, einschliesslich des Lebenslaufs, werden auf Cloudflare Pages gehostet. Cloudflare handelt als Auftragsverarbeiter für das Hosting und die Bereitstellung der Inhalte. Im Rahmen dieser Dienste kann Cloudflare technische Verbindungsdaten verarbeiten, darunter die IP-Adresse, Browserinformationen, Datum und Uhrzeit der Anfrage sowie die angeforderte Ressource. Je nach Dienst und Konfiguration können diese Daten in den USA und anderen Ländern verarbeitet werden.",
+			hostingPrivacyPolicyLabel: "Datenschutzerklärung von Cloudflare",
 			externalLinksTitle: "Externe Links",
 			externalLinksDescription:
 				"Links zu externen Diensten öffnen sich nur, wenn Sie sie auswählen. Diese Dienste verarbeiten Daten gemäss ihren eigenen Datenschutzbestimmungen.",
@@ -66,7 +66,7 @@ export const deMessages = {
 				"Sie können Auskunft, Berichtigung oder Löschung Ihrer personenbezogenen Daten verlangen oder deren Bearbeitung widersprechen, indem Sie an die oben genannte E-Mail-Adresse schreiben.",
 			retentionTitle: "Aufbewahrungsdauer",
 			retentionDescription:
-				"E-Mails und Kontaktdaten werden spätestens 24 Monate nach dem letzten Austausch gelöscht, ausser ihre Aufbewahrung ist zur Erfüllung eines Vertragsverhältnisses, zur Abwehr von Rechtsansprüchen oder zur Einhaltung einer gesetzlichen Verpflichtung erforderlich. Buchungsbelege werden ab Ende des betreffenden Geschäftsjahres zehn Jahre aufbewahrt. Von Hostinger verarbeitete technische Verbindungsdaten unterliegen der in dessen Datenschutzerklärung festgelegten Aufbewahrungsdauer.",
+				"E-Mails und Kontaktdaten werden spätestens 24 Monate nach dem letzten Austausch gelöscht, ausser ihre Aufbewahrung ist zur Erfüllung eines Vertragsverhältnisses, zur Abwehr von Rechtsansprüchen oder zur Einhaltung einer gesetzlichen Verpflichtung erforderlich. Buchungsbelege werden ab Ende des betreffenden Geschäftsjahres zehn Jahre aufbewahrt. Von Cloudflare verarbeitete technische Verbindungsdaten unterliegen der in dessen Datenschutzerklärung festgelegten Aufbewahrungsdauer.",
 			updatesTitle: "Aktualisierungen",
 			updatesDescription:
 				"Diese Seite wird aktualisiert, bevor eine neue Funktion eine zusätzliche Bearbeitung personenbezogener Daten oder einen Drittanbieter-Dienst einführt.",

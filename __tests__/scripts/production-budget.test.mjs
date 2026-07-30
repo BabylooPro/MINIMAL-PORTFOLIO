@@ -44,9 +44,13 @@ async function writeFixtureFile(outputDirectory, relativePath, source) {
 
 async function createCompleteOutput(t, options = {}) {
 	const outputDirectory = await mkdtemp(path.join(projectDirectory, ".test-production-budget-"));
+	const mediaSourceDirectory = await mkdtemp(
+		path.join(projectDirectory, ".test-production-budget-media-"),
+	);
 
 	t.after(async () => {
 		await rm(outputDirectory, { force: true, recursive: true });
+		await rm(mediaSourceDirectory, { force: true, recursive: true });
 	});
 
 	for (const relativePath of performanceBudget.html.expectedOutputPaths) {
@@ -61,7 +65,7 @@ async function createCompleteOutput(t, options = {}) {
 	}
 
 	await Promise.all([
-		writeFixtureFile(outputDirectory, ".htaccess", "RewriteEngine On\n"),
+		writeFixtureFile(outputDirectory, "_headers", "/*\n  X-Frame-Options: DENY\n"),
 		writeFixtureFile(outputDirectory, "sitemap.xml", "<urlset />"),
 		writeFixtureFile(outputDirectory, "og-image.jpg", Buffer.alloc(1_000)),
 		writeFixtureFile(
@@ -86,7 +90,7 @@ async function createCompleteOutput(t, options = {}) {
 
 	for (let index = 1; index <= performanceBudget.media.expectedVideoCount; index += 1) {
 		await writeFixtureFile(
-			outputDirectory,
+			mediaSourceDirectory,
 			`videos/timelapse/${index}.mp4`,
 			Buffer.alloc(options.videoBytes ?? 1_000),
 		);
@@ -96,13 +100,13 @@ async function createCompleteOutput(t, options = {}) {
 		await writeFixtureFile(outputDirectory, "assets/extra.js", "console.log('extra');");
 	}
 
-	return outputDirectory;
+	return { outputDirectory, mediaSourceDirectory };
 }
 
 test("measures gzip data and extracts exact inline scripts", async (t) => {
 	const source = "(() => { document.documentElement.dataset.theme = 'dark'; })();";
-	const outputDirectory = await createCompleteOutput(t);
-	const measurement = await measureProductionOutput({ outputDirectory });
+	const output = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput(output);
 
 	assert.ok(gzipBytes(Buffer.from(source, "utf8")) > 0);
 	assert.equal(
@@ -123,8 +127,8 @@ test("measures gzip data and extracts exact inline scripts", async (t) => {
 });
 
 test("calculates root and localized executable JavaScript separately", async (t) => {
-	const outputDirectory = await createCompleteOutput(t);
-	const measurement = await measureProductionOutput({ outputDirectory });
+	const output = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput(output);
 
 	assert.equal(
 		measurement.executableJavascript.rootGzipBytes,
@@ -144,8 +148,8 @@ test("calculates root and localized executable JavaScript separately", async (t)
 });
 
 test("discovers every expected generated HTML page and applies its individual budget", async (t) => {
-	const outputDirectory = await createCompleteOutput(t);
-	const measurement = await measureProductionOutput({ outputDirectory });
+	const output = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput(output);
 	const validation = validatePerformanceBudget(measurement);
 
 	assert.equal(measurement.html.length, performanceBudget.html.expectedOutputPaths.length);
@@ -159,8 +163,8 @@ test("discovers every expected generated HTML page and applies its individual bu
 });
 
 test("fails a metric that exceeds its configured budget", async (t) => {
-	const outputDirectory = await createCompleteOutput(t);
-	const measurement = await measureProductionOutput({ outputDirectory });
+	const output = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput(output);
 	const validation = validatePerformanceBudget(measurement, {
 		...performanceBudget,
 		css: { ...performanceBudget.css, maximumGzipBytes: 0 },
@@ -171,13 +175,11 @@ test("fails a metric that exceeds its configured budget", async (t) => {
 });
 
 test("rejects an unexpected JavaScript file and a React runtime", async (t) => {
-	const outputDirectory = await createCompleteOutput(t, {
+	const output = await createCompleteOutput(t, {
 		controllerSource: "const runtime = 'react-dom';",
 		extraJavaScript: true,
 	});
-	const validation = validatePerformanceBudget(
-		await measureProductionOutput({ outputDirectory }),
-	);
+	const validation = validatePerformanceBudget(await measureProductionOutput(output));
 
 	assert.equal(
 		validation.checks.find((check) => check.id === "javascript-file-count")?.status,
@@ -187,30 +189,39 @@ test("rejects an unexpected JavaScript file and a React runtime", async (t) => {
 });
 
 test("rejects previews and videos that exceed their individual limits", async (t) => {
-	const outputDirectory = await createCompleteOutput(t, {
+	const output = await createCompleteOutput(t, {
 		previewBytes: performanceBudget.media.maximumPreviewFileBytes + 1,
 		videoBytes: performanceBudget.media.maximumVideoFileBytes + 1,
 	});
-	const validation = validatePerformanceBudget(
-		await measureProductionOutput({ outputDirectory }),
-	);
+	const validation = validatePerformanceBudget(await measureProductionOutput(output));
 
 	assert.equal(validation.checks.find((check) => check.id === "preview-1.jpg")?.status, "FAIL");
 	assert.equal(validation.checks.find((check) => check.id === "video-1.mp4")?.status, "FAIL");
 });
 
+test("rejects MP4 files in the Cloudflare Pages output", async (t) => {
+	const output = await createCompleteOutput(t);
+
+	await writeFixtureFile(output.outputDirectory, "videos/timelapse/1.mp4", Buffer.alloc(1_000));
+
+	const validation = validatePerformanceBudget(await measureProductionOutput(output));
+
+	assert.equal(
+		validation.integrityFailures.includes(
+			"Cloudflare Pages output must not contain MP4 files.",
+		),
+		true,
+	);
+});
+
 test("detects third-party runtime resources but ignores external anchors", async (t) => {
-	const localOutputDirectory = await createCompleteOutput(t);
-	const localMeasurement = await measureProductionOutput({
-		outputDirectory: localOutputDirectory,
-	});
+	const localOutput = await createCompleteOutput(t);
+	const localMeasurement = await measureProductionOutput(localOutput);
 
 	assert.equal(localMeasurement.resources.thirdParty.length, 0);
 
-	const thirdPartyOutputDirectory = await createCompleteOutput(t, { thirdPartyImage: true });
-	const thirdPartyMeasurement = await measureProductionOutput({
-		outputDirectory: thirdPartyOutputDirectory,
-	});
+	const thirdPartyOutput = await createCompleteOutput(t, { thirdPartyImage: true });
+	const thirdPartyMeasurement = await measureProductionOutput(thirdPartyOutput);
 
 	assert.equal(thirdPartyMeasurement.resources.thirdParty.length, 1);
 	assert.equal(
@@ -222,8 +233,8 @@ test("detects third-party runtime resources but ignores external anchors", async
 });
 
 test("renders deterministic Markdown and writes it atomically", async (t) => {
-	const outputDirectory = await createCompleteOutput(t);
-	const measurement = await measureProductionOutput({ outputDirectory });
+	const output = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput(output);
 	const validation = validatePerformanceBudget(measurement);
 	const failingValidation = validatePerformanceBudget(measurement, {
 		...performanceBudget,

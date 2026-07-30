@@ -36,7 +36,7 @@ export const frMessages = {
 		backToTop: "Retour en haut",
 	},
 	legalPages: {
-		lastUpdated: "Dernière mise à jour : 23 juillet 2026",
+		lastUpdated: "Dernière mise à jour : 30 juillet 2026",
 		privacy: {
 			title: "Confidentialité",
 			description:
@@ -53,8 +53,8 @@ export const frMessages = {
 				"Le lien « Télécharger le CV » met à disposition un fichier PDF statique. Le portfolio n’utilise ni formulaire, ni outil de mesure pour identifier les téléchargements.",
 			hostingTitle: "Hébergement",
 			hostingDescription:
-				"Ce site et ses fichiers statiques, y compris le CV, sont hébergés par Hostinger, qui agit comme sous-traitant de l’hébergement. Dans ce cadre, Hostinger peut traiter des données techniques de connexion, notamment l’adresse IP, les informations du navigateur, la date et l’heure de la requête ainsi que la ressource demandée. Hostinger indique que ces données peuvent notamment être traitées au Royaume-Uni, aux Pays-Bas, en Lituanie et à Chypre, et dans d’autres juridictions selon le service.",
-			hostingPrivacyPolicyLabel: "Politique de confidentialité de Hostinger",
+				"Ce site et ses fichiers statiques, y compris le CV, sont hébergés sur Cloudflare Pages. Cloudflare agit comme sous-traitant pour l’hébergement et la diffusion du contenu. Dans le cadre de ces services, Cloudflare peut traiter des données techniques de connexion, notamment l’adresse IP, les informations du navigateur, la date et l’heure de la requête ainsi que la ressource demandée. Selon le service et sa configuration, ces données peuvent être traitées aux États-Unis et dans d’autres pays.",
+			hostingPrivacyPolicyLabel: "Politique de confidentialité de Cloudflare",
 			externalLinksTitle: "Liens externes",
 			externalLinksDescription:
 				"Les liens vers des services externes ne s’ouvrent que lorsque vous les sélectionnez. Ces services traitent les données selon leurs propres politiques de confidentialité.",
@@ -67,7 +67,7 @@ export const frMessages = {
 				"Vous pouvez demander l’accès, la rectification ou l’effacement de vos données personnelles, ainsi que vous opposer à leur traitement, en écrivant à l’adresse e-mail indiquée ci-dessus.",
 			retentionTitle: "Durée de conservation",
 			retentionDescription:
-				"Les e-mails et coordonnées de contact sont supprimés au plus tard 24 mois après le dernier échange, sauf si leur conservation est nécessaire à l’exécution d’une relation contractuelle, à la défense de droits ou au respect d’une obligation légale. Les pièces comptables sont conservées pendant dix ans à compter de la fin de l’exercice concerné. Les données techniques de connexion traitées par Hostinger suivent la durée définie dans sa politique de confidentialité.",
+				"Les e-mails et coordonnées de contact sont supprimés au plus tard 24 mois après le dernier échange, sauf si leur conservation est nécessaire à l’exécution d’une relation contractuelle, à la défense de droits ou au respect d’une obligation légale. Les pièces comptables sont conservées pendant dix ans à compter de la fin de l’exercice concerné. Les données techniques de connexion traitées par Cloudflare suivent la durée définie dans sa politique de confidentialité.",
 			updatesTitle: "Mises à jour",
 			updatesDescription:
 				"Cette page sera mise à jour avant qu’une nouvelle fonctionnalité n’introduise un traitement supplémentaire de données personnelles ou un service tiers.",

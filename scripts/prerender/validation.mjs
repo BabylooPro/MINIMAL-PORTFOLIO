@@ -211,14 +211,8 @@ export async function validateStaticOutput({
 	markers,
 	siteName,
 }) {
-	const {
-		assetsDirectory,
-		hostingerConfigPath,
-		indexPath,
-		localizedNotFoundConfigs,
-		sitemapPath,
-		socialImagePath,
-	} = paths;
+	const { assetsDirectory, cloudflareHeadersPath, indexPath, sitemapPath, socialImagePath } =
+		paths;
 
 	if (!files.includes(indexPath)) {
 		throw new Error("The production index file was not generated.");
@@ -228,18 +222,12 @@ export async function validateStaticOutput({
 		throw new Error("The production sitemap file was not generated.");
 	}
 
-	if (!files.includes(hostingerConfigPath)) {
-		throw new Error("The Hostinger .htaccess configuration was not generated.");
+	if (!files.includes(cloudflareHeadersPath)) {
+		throw new Error("The Cloudflare Pages _headers configuration was not generated.");
 	}
 
-	for (const { content, locale, path: configPath } of localizedNotFoundConfigs) {
-		if (!files.includes(configPath)) {
-			throw new Error(`The ${locale} localized 404 configuration was not generated.`);
-		}
-
-		if ((await readFile(configPath, "utf8")) !== content) {
-			throw new Error(`The ${locale} localized 404 configuration is invalid.`);
-		}
+	if (files.some((filePath) => filePath.endsWith(".mp4"))) {
+		throw new Error("Cloudflare Pages output must not contain MP4 files.");
 	}
 
 	for (const {

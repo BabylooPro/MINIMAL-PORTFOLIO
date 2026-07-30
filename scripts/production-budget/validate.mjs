@@ -73,10 +73,14 @@ function getOutputIntegrityFailures(measurement, budget) {
 		failures.push(`Unexpected generated HTML pages: ${unexpectedHtmlPaths.join(", ")}.`);
 	}
 
-	for (const requiredPath of [".htaccess", "sitemap.xml", "og-image.jpg"]) {
+	for (const requiredPath of ["_headers", "sitemap.xml", "og-image.jpg"]) {
 		if (!measurement.files.includes(requiredPath)) {
 			failures.push(`Missing required production output: ${requiredPath}.`);
 		}
+	}
+
+	if (measurement.files.some((filePath) => filePath.endsWith(".mp4"))) {
+		failures.push("Cloudflare Pages output must not contain MP4 files.");
 	}
 
 	for (const artifactDirectory of [".vite/", "server/"]) {

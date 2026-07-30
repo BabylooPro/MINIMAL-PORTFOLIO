@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import { localeConfigs } from "../../src/lib/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
+const mediaOrigin = "https://media.maxremy.dev";
+
 const localizedNotFoundPages = [
 	{ locale: "en", title: "Page not found", backToPortfolio: "Back to portfolio" },
 	{ locale: "fr", title: "Page introuvable", backToPortfolio: "Retour au portfolio" },
@@ -41,7 +43,7 @@ test("keeps the back-to-top link usable without JavaScript", async ({ browser })
 	await context.close();
 });
 
-test("keeps runtime resources on the site origin", async ({ browser }) => {
+test("keeps runtime resources on first-party origins", async ({ browser }) => {
 	const context = await browser.newContext({ locale: "en-CH" });
 	const page = await context.newPage();
 	const siteOrigin = "http://127.0.0.1:4174";
@@ -63,7 +65,7 @@ test("keeps runtime resources on the site origin", async ({ browser }) => {
 	await page.locator('[data-proof-work-direction="next"]').click();
 	await expect(page.locator("[data-proof-work-player] source")).toHaveAttribute(
 		"src",
-		"/videos/timelapse/2.mp4",
+		`${mediaOrigin}/videos/timelapse/2.mp4`,
 	);
 
 	const carouselResourceOrigins = await carousel.evaluate((element) => {
@@ -112,8 +114,10 @@ test("keeps runtime resources on the site origin", async ({ browser }) => {
 		return urls.filter(Boolean).map((url) => new URL(url).origin);
 	});
 
-	expect(carouselResourceOrigins).toEqual(expect.arrayContaining([siteOrigin]));
-	expect(carouselResourceOrigins.every((origin) => origin === siteOrigin)).toBe(true);
+	expect(carouselResourceOrigins).toEqual(expect.arrayContaining([siteOrigin, mediaOrigin]));
+	expect(
+		carouselResourceOrigins.every((origin) => [siteOrigin, mediaOrigin].includes(origin)),
+	).toBe(true);
 	await expect(page.locator('[data-proof-work-preview="previous"]')).toHaveAttribute(
 		"loading",
 		"lazy",
@@ -125,7 +129,7 @@ test("keeps runtime resources on the site origin", async ({ browser }) => {
 	expect(
 		[...requestedUrls]
 			.filter((url) => !url.startsWith("data:"))
-			.every((url) => new URL(url).origin === siteOrigin),
+			.every((url) => [siteOrigin, mediaOrigin].includes(new URL(url).origin)),
 	).toBe(true);
 
 	await context.close();
@@ -182,13 +186,19 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	await expect(player).toHaveJSProperty("controls", true);
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
-	await expect(player.locator("source")).toHaveAttribute("src", "/videos/timelapse/1.mp4");
+	await expect(player.locator("source")).toHaveAttribute(
+		"src",
+		`${mediaOrigin}/videos/timelapse/1.mp4`,
+	);
 	await expect(player).toHaveClass(/object-\[50%_67%\]/);
 
 	await page.locator('[data-proof-work-direction="next"]').click();
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
-	await expect(player.locator("source")).toHaveAttribute("src", "/videos/timelapse/2.mp4");
+	await expect(player.locator("source")).toHaveAttribute(
+		"src",
+		`${mediaOrigin}/videos/timelapse/2.mp4`,
+	);
 	await expect(player).toHaveClass(/object-\[50%_72%\]/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
