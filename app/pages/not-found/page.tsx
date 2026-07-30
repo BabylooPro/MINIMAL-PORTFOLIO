@@ -36,7 +36,7 @@ export function NotFoundPage({ dictionary, locale }: NotFoundPageProps) {
 							// EFFECTS
 							"transition-[background-color,color,transform] hover:bg-(--foreground-color) hover:text-(--background-color)! active:translate-y-px",
 							// FOCUS
-							"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2"
+							"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
 						].join(" ")}
 						href={getLocalePath(locale)}
 					>
