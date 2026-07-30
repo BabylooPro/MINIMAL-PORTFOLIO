@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PageRenderer } from "@/app/routing/page-renderer";
-import type { AppRoute } from "@/app/routing/routes";
+import { type AppRoute, getRouteTitle } from "@/app/routing/routes";
 import { defaultLocale, getLegalPageAbsoluteUrl, localeConfigs, rootUrl } from "@/lib/i18n/config";
 import { getDictionary } from "@/lib/i18n/dictionaries";
 import { validateDictionaries } from "@/lib/i18n/validate";
 import { socialImage } from "@/lib/seo/social-image";
-import { createLegalPageStructuredData, createStructuredData } from "@/lib/seo/structured-data";
+import { createStructuredData, createWebPageStructuredData } from "@/lib/seo/structured-data";
 
 export type { AppRoute as StaticRoute } from "@/app/routing/routes";
 
@@ -49,7 +49,7 @@ export function renderPage(route: AppRoute): RenderedPage {
 			lang: localeConfigs[defaultLocale].htmlLang,
 			indexable: false,
 			pathname: "/",
-			title: dictionary.messages.meta.title,
+			title: getRouteTitle(route, dictionary),
 			description: dictionary.messages.meta.description,
 			ogDescription: dictionary.messages.meta.ogDescription,
 			canonical: rootUrl,
@@ -66,10 +66,39 @@ export function renderPage(route: AppRoute): RenderedPage {
 	const dictionary = getDictionary(route.locale);
 	const localeConfig = localeConfigs[route.locale];
 
+	if (route.kind === "not-found") {
+		const canonical = new URL("404.html", rootUrl).href;
+		const title = getRouteTitle(route, dictionary);
+		const description = dictionary.messages.notFound.description;
+
+		return {
+			appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
+			lang: localeConfig.htmlLang,
+			indexable: false,
+			pathname: "/404.html",
+			title,
+			description,
+			ogDescription: description,
+			canonical,
+			ogLocale: localeConfig.ogLocale,
+			ogType: "website",
+			socialImage: {
+				...socialImage,
+				alt: dictionary.messages.meta.socialImageAlt,
+			},
+			structuredData: createWebPageStructuredData(
+				route.locale,
+				canonical,
+				title,
+				description,
+			),
+		};
+	}
+
 	if (route.kind === "legal") {
 		const content = dictionary.messages.legalPages[route.page];
 		const canonical = getLegalPageAbsoluteUrl(route.locale, route.page);
-		const title = `${content.title} | ${dictionary.portfolio.name}`;
+		const title = getRouteTitle(route, dictionary);
 
 		return {
 			appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
@@ -86,7 +115,7 @@ export function renderPage(route: AppRoute): RenderedPage {
 				...socialImage,
 				alt: dictionary.messages.meta.socialImageAlt,
 			},
-			structuredData: createLegalPageStructuredData(
+			structuredData: createWebPageStructuredData(
 				route.locale,
 				canonical,
 				title,
@@ -100,7 +129,7 @@ export function renderPage(route: AppRoute): RenderedPage {
 		lang: localeConfig.htmlLang,
 		indexable: true,
 		pathname: localeConfig.pathname,
-		title: dictionary.messages.meta.title,
+		title: getRouteTitle(route, dictionary),
 		description: dictionary.messages.meta.description,
 		ogDescription: dictionary.messages.meta.ogDescription,
 		canonical: localeConfig.absoluteUrl,

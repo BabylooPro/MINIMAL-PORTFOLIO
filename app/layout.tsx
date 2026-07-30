@@ -11,9 +11,16 @@ type RootLayoutProps = {
 	dictionary: Dictionary;
 	locale: Locale;
 	page?: LegalPageId;
+	usePageHeading?: boolean;
 };
 
-export default function RootLayout({ children, dictionary, locale, page }: RootLayoutProps) {
+export default function RootLayout({
+	children,
+	dictionary,
+	locale,
+	page,
+	usePageHeading = page === undefined,
+}: RootLayoutProps) {
 	const { messages, portfolio } = dictionary;
 
 	return (
@@ -25,7 +32,7 @@ export default function RootLayout({ children, dictionary, locale, page }: RootL
 				languageSwitcherLabel={messages.labels.languageSwitcher}
 				phoneLabel={messages.labels.phone}
 				portfolio={portfolio}
-				usePageHeading={page === undefined}
+				usePageHeading={usePageHeading}
 				{...(page ? { page } : {})}
 			/>
 

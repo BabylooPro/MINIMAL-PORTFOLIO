@@ -1,4 +1,5 @@
 import { LegalPage } from "@/app/pages/legal/page";
+import { NotFoundPage } from "@/app/pages/not-found/page";
 import PortfolioPage from "@/app/pages/portfolio/page";
 
 import { type AppRoute, getRouteLocale } from "@/app/routing/routes";
@@ -11,6 +12,10 @@ type PageRendererProps = {
 
 export function PageRenderer({ dictionary, route }: PageRendererProps) {
 	const locale = getRouteLocale(route);
+
+	if (route.kind === "not-found") {
+		return <NotFoundPage dictionary={dictionary} locale={locale} />;
+	}
 
 	if (route.kind === "legal") {
 		return <LegalPage dictionary={dictionary} locale={locale} page={route.page} />;

@@ -47,12 +47,20 @@ const siteName = "Max Remy";
 
 const routes = [
 	{ kind: "root" },
+
+	{ kind: "not-found", locale: "en", rootFallback: true },
+	{ kind: "not-found", locale: "en" },
+	{ kind: "not-found", locale: "fr" },
+	{ kind: "not-found", locale: "de" },
+
 	{ kind: "locale", locale: "en" },
 	{ kind: "locale", locale: "fr" },
 	{ kind: "locale", locale: "de" },
+
 	{ kind: "legal", locale: "en", page: "privacy" },
 	{ kind: "legal", locale: "fr", page: "privacy" },
 	{ kind: "legal", locale: "de", page: "privacy" },
+
 	{ kind: "legal", locale: "en", page: "legal" },
 	{ kind: "legal", locale: "fr", page: "legal" },
 	{ kind: "legal", locale: "de", page: "legal" },
@@ -161,6 +169,20 @@ const renderedPages = await Promise.all(
 	}),
 );
 
+const localizedNotFoundConfigs = routes
+	.filter((route) => route.kind === "not-found" && !route.rootFallback)
+	.map((route) => ({
+		content: `ErrorDocument 404 /${route.locale}/404.html\n`,
+		locale: route.locale,
+		path: path.join(distDirectory, route.locale, ".htaccess"),
+	}));
+
+await Promise.all(
+	localizedNotFoundConfigs.map(async ({ content, path: configPath }) => {
+		await writeFile(configPath, content, "utf8");
+	}),
+);
+
 const sitemap = renderSitemap(renderedPages);
 await writeFile(sitemapPath, sitemap, "utf8");
 
@@ -187,6 +209,7 @@ await validateStaticOutput({
 		assetsDirectory,
 		hostingerConfigPath,
 		indexPath,
+		localizedNotFoundConfigs,
 		sitemapPath,
 		socialImagePath,
 	},

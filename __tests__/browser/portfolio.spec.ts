@@ -2,6 +2,11 @@ import { expect, test } from "@playwright/test";
 import { localeConfigs } from "../../src/lib/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
+const localizedNotFoundPages = [
+	{ locale: "en", title: "Page not found", backToPortfolio: "Back to portfolio" },
+	{ locale: "fr", title: "Page introuvable", backToPortfolio: "Retour au portfolio" },
+	{ locale: "de", title: "Seite nicht gefunden", backToPortfolio: "Zurück zum Portfolio" },
+] as const;
 
 test("keeps English at the root and redirects French browser language", async ({ browser }) => {
 	const englishContext = await browser.newContext({ locale: "en-CH" });
@@ -34,6 +39,46 @@ test("keeps the back-to-top link usable without JavaScript", async ({ browser })
 	await page.goto("http://127.0.0.1:4174/en/");
 	await expect(page.locator("[data-back-to-top]")).toBeVisible();
 	await context.close();
+});
+
+test("renders the static not-found page", async ({ page }) => {
+	await page.emulateMedia({ colorScheme: "light" });
+	await page.goto("/404.html");
+
+	await expect(page).toHaveTitle("Page not found | Max Remy");
+	await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
+	await expect(page.locator("main")).toHaveClass(/justify-center/);
+	const backToPortfolio = page.getByRole("link", { name: "Back to portfolio" });
+
+	await expect(backToPortfolio).toHaveAttribute("href", "/en/");
+	await expect(backToPortfolio).toHaveCSS("background-color", "rgb(255, 255, 255)");
+	await expect(backToPortfolio).toHaveCSS("color", "rgb(0, 0, 0)");
+
+	await backToPortfolio.hover();
+	await expect(backToPortfolio).toHaveCSS("background-color", "rgb(0, 0, 0)");
+	await expect(backToPortfolio).toHaveCSS("color", "rgb(255, 255, 255)");
+
+	await page.locator("html").evaluate((element) => element.setAttribute("data-theme", "dark"));
+	await page.mouse.move(0, 0);
+	await expect(backToPortfolio).toHaveCSS("background-color", "rgb(0, 0, 0)");
+	await expect(backToPortfolio).toHaveCSS("color", "rgb(255, 255, 255)");
+
+	await backToPortfolio.hover();
+	await expect(backToPortfolio).toHaveCSS("background-color", "rgb(255, 255, 255)");
+	await expect(backToPortfolio).toHaveCSS("color", "rgb(0, 0, 0)");
+});
+
+test("renders a localized static not-found page for every locale", async ({ page }) => {
+	for (const { locale, title, backToPortfolio } of localizedNotFoundPages) {
+		await page.goto(`/${locale}/404.html`);
+
+		await expect(page.locator("html")).toHaveAttribute("lang", localeConfigs[locale].htmlLang);
+		await expect(page.getByRole("heading", { name: title })).toBeVisible();
+		await expect(page.getByRole("link", { name: backToPortfolio })).toHaveAttribute(
+			"href",
+			`/${locale}/`,
+		);
+	}
 });
 
 test("updates the Proof Work carousel without autoplaying for reduced motion", async ({ page }) => {

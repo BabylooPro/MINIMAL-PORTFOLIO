@@ -8,6 +8,10 @@ export const deMessages = {
 			"Autodidaktischer freiberuflicher Entwickler in Waadt, Schweiz, mit 10 Jahren Erfahrung.",
 		socialImageAlt: "Porträt von Max Remy mit Schwimmbrille und erhobenem Daumen.",
 	},
+	notFound: {
+		title: "Seite nicht gefunden",
+		description: "Die angeforderte Seite existiert nicht oder wurde verschoben.",
+	},
 	sections: {
 		profile: "Profil",
 		skills: "Kompetenzen",

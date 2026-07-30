@@ -5,6 +5,10 @@ export type Messages = {
 		ogDescription: string;
 		socialImageAlt: string;
 	};
+	notFound: {
+		title: string;
+		description: string;
+	};
 	sections: {
 		profile: string;
 		skills: string;

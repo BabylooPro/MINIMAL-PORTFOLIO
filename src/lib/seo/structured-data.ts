@@ -49,7 +49,7 @@ export function createStructuredData(
 	};
 }
 
-export function createLegalPageStructuredData(
+export function createWebPageStructuredData(
 	locale: Locale,
 	pageUrl: string,
 	title: string,

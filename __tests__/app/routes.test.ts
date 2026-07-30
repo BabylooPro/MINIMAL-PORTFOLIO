@@ -18,6 +18,13 @@ test("resolves localized legal routes", () => {
 	});
 });
 
-test("falls back to the root route for unknown paths", () => {
-	assert.deepEqual(getRouteFromPathname("/unknown/"), { kind: "root" });
+test("rejects unknown paths", () => {
+	assert.deepEqual(getRouteFromPathname("/unknown/"), {
+		kind: "not-found",
+		locale: "en",
+	});
+	assert.deepEqual(getRouteFromPathname("/fr/unknown/"), {
+		kind: "not-found",
+		locale: "fr",
+	});
 });

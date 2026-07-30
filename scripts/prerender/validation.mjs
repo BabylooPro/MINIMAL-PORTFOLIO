@@ -211,7 +211,14 @@ export async function validateStaticOutput({
 	markers,
 	siteName,
 }) {
-	const { assetsDirectory, hostingerConfigPath, indexPath, sitemapPath, socialImagePath } = paths;
+	const {
+		assetsDirectory,
+		hostingerConfigPath,
+		indexPath,
+		localizedNotFoundConfigs,
+		sitemapPath,
+		socialImagePath,
+	} = paths;
 
 	if (!files.includes(indexPath)) {
 		throw new Error("The production index file was not generated.");
@@ -223,6 +230,16 @@ export async function validateStaticOutput({
 
 	if (!files.includes(hostingerConfigPath)) {
 		throw new Error("The Hostinger .htaccess configuration was not generated.");
+	}
+
+	for (const { content, locale, path: configPath } of localizedNotFoundConfigs) {
+		if (!files.includes(configPath)) {
+			throw new Error(`The ${locale} localized 404 configuration was not generated.`);
+		}
+
+		if ((await readFile(configPath, "utf8")) !== content) {
+			throw new Error(`The ${locale} localized 404 configuration is invalid.`);
+		}
 	}
 
 	for (const {

@@ -8,6 +8,10 @@ export const enMessages = {
 			"Self-taught freelance developer based in Vaud, Switzerland, with 10 years of experience.",
 		socialImageAlt: "Portrait of Max Remy wearing swim goggles and giving a thumbs-up.",
 	},
+	notFound: {
+		title: "Page not found",
+		description: "The page you requested does not exist or has moved.",
+	},
 	sections: {
 		profile: "Profile",
 		skills: "Skills",

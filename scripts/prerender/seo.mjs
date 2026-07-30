@@ -92,6 +92,12 @@ export function routeOutputPath(route, { distDirectory, indexPath }) {
 		return indexPath;
 	}
 
+	if (route.kind === "not-found") {
+		return route.rootFallback
+			? path.join(distDirectory, "404.html")
+			: path.join(distDirectory, route.locale, "404.html");
+	}
+
 	return route.kind === "legal"
 		? path.join(distDirectory, route.locale, route.page, "index.html")
 		: path.join(distDirectory, route.locale, "index.html");

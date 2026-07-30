@@ -9,6 +9,10 @@ export const frMessages = {
 		socialImageAlt:
 			"Portrait de Max Remy portant des lunettes de natation et faisant un pouce levé.",
 	},
+	notFound: {
+		title: "Page introuvable",
+		description: "La page demandée n’existe pas ou a été déplacée.",
+	},
 	sections: {
 		profile: "Profil",
 		skills: "Compétences",
