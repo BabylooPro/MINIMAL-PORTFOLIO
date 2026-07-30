@@ -69,7 +69,7 @@ export function Tooltip({
 				className={[
 					// RESPONSIVE PANEL POSITION
 					mobilePlacement === "anchored"
-						? "absolute left-1/2 top-full z-50 mt-2 max-h-[calc(100dvh-2rem)] w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-y-auto max-sm:[position-anchor:--tooltip-trigger] max-sm:[left:anchor(center)] max-sm:[top:anchor(bottom)] max-sm:supports-[position-anchor:--tooltip-trigger]:fixed max-sm:data-[mobile-tooltip-placement=above]:top-[anchor(top)] max-sm:data-[mobile-tooltip-placement=above]:mt-0 max-sm:data-[mobile-tooltip-placement=above]:[translate:-50%_calc(-100%_-_0.5rem)]"
+						? "absolute left-1/2 top-full z-50 mt-2 max-h-[calc(100dvh-2rem)] w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-y-auto max-sm:[position-anchor:--tooltip-trigger] max-sm:left-[anchor(center)] max-sm:top-[anchor(bottom)] max-sm:supports-[position-anchor:--tooltip-trigger]:fixed max-sm:data-[mobile-tooltip-placement=above]:top-[anchor(top)] max-sm:data-[mobile-tooltip-placement=above]:mt-0 max-sm:data-[mobile-tooltip-placement=above]:[translate:-50%_calc(-100%-0.5rem)]"
 						: "fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
 					"sm:absolute sm:top-full sm:mt-2 sm:max-h-none sm:max-w-96 sm:translate-y-0",
 					// PANEL SURFACE & CONTENT STYLE
