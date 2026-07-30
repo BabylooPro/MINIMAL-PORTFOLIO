@@ -1,0 +1,248 @@
+import assert from "node:assert/strict";
+import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import path from "node:path";
+import test from "node:test";
+import { fileURLToPath } from "node:url";
+import { performanceBudget } from "../../config/performance-budget.mjs";
+import {
+	extractInlineScript,
+	gzipBytes,
+	measureProductionOutput,
+	projectDirectory,
+} from "../../scripts/production-budget/measure.mjs";
+import {
+	renderMarkdownReport,
+	writeMarkdownReport,
+} from "../../scripts/production-budget/report.mjs";
+import { validatePerformanceBudget } from "../../scripts/production-budget/validate.mjs";
+
+const testDirectory = path.dirname(fileURLToPath(import.meta.url));
+
+function html({ root = false, thirdPartyImage = false } = {}) {
+	return `<!doctype html>
+<html lang="en">
+<head>
+<link rel="canonical" href="https://example.test/" />
+<link rel="stylesheet" href="/assets/site.css" />
+<script data-theme-bootstrap>(() => {})()</script>
+${root ? "<script data-locale-redirect>(() => {})()</script>" : ""}
+</head>
+<body>
+<img src="${thirdPartyImage ? "https://cdn.example.test/preview.jpg" : "/preview.jpg"}" />
+<a href="https://github.com/example/project">External link</a>
+<script type="module" src="/assets/site-controller-test.js" data-site-controller></script>
+</body>
+</html>`;
+}
+
+async function writeFixtureFile(outputDirectory, relativePath, source) {
+	const filePath = path.join(outputDirectory, relativePath);
+
+	await mkdir(path.dirname(filePath), { recursive: true });
+	await writeFile(filePath, source);
+}
+
+async function createCompleteOutput(t, options = {}) {
+	const outputDirectory = await mkdtemp(path.join(projectDirectory, ".test-production-budget-"));
+
+	t.after(async () => {
+		await rm(outputDirectory, { force: true, recursive: true });
+	});
+
+	for (const relativePath of performanceBudget.html.expectedOutputPaths) {
+		await writeFixtureFile(
+			outputDirectory,
+			relativePath,
+			html({
+				root: relativePath === "index.html",
+				thirdPartyImage: options.thirdPartyImage && relativePath === "index.html",
+			}),
+		);
+	}
+
+	await Promise.all([
+		writeFixtureFile(outputDirectory, ".htaccess", "RewriteEngine On\n"),
+		writeFixtureFile(outputDirectory, "sitemap.xml", "<urlset />"),
+		writeFixtureFile(outputDirectory, "og-image.jpg", Buffer.alloc(1_000)),
+		writeFixtureFile(
+			outputDirectory,
+			"assets/site-controller-test.js",
+			options.controllerSource ?? "console.log('site controller');",
+		),
+		writeFixtureFile(
+			outputDirectory,
+			"assets/site.css",
+			options.cssSource ?? "body { color: black; }",
+		),
+	]);
+
+	for (let index = 1; index <= performanceBudget.media.expectedPreviewCount; index += 1) {
+		await writeFixtureFile(
+			outputDirectory,
+			`videos/timelapse/previews/${index}.jpg`,
+			Buffer.alloc(options.previewBytes ?? 1_000),
+		);
+	}
+
+	for (let index = 1; index <= performanceBudget.media.expectedVideoCount; index += 1) {
+		await writeFixtureFile(
+			outputDirectory,
+			`videos/timelapse/${index}.mp4`,
+			Buffer.alloc(options.videoBytes ?? 1_000),
+		);
+	}
+
+	if (options.extraJavaScript) {
+		await writeFixtureFile(outputDirectory, "assets/extra.js", "console.log('extra');");
+	}
+
+	return outputDirectory;
+}
+
+test("measures gzip data and extracts exact inline scripts", async (t) => {
+	const source = "(() => { document.documentElement.dataset.theme = 'dark'; })();";
+	const outputDirectory = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput({ outputDirectory });
+
+	assert.ok(gzipBytes(Buffer.from(source, "utf8")) > 0);
+	assert.equal(
+		extractInlineScript(
+			`<script data-theme-bootstrap>${source}</script>`,
+			"data-theme-bootstrap",
+		),
+		source,
+	);
+	assert.equal(
+		measurement.inlineScripts.themeBootstrap.rawBytes,
+		Buffer.byteLength("(() => {})()"),
+	);
+	assert.equal(
+		measurement.inlineScripts.localeRedirect.gzipBytes,
+		gzipBytes(Buffer.from("(() => {})()")),
+	);
+});
+
+test("calculates root and localized executable JavaScript separately", async (t) => {
+	const outputDirectory = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput({ outputDirectory });
+
+	assert.equal(
+		measurement.executableJavascript.rootGzipBytes,
+		measurement.inlineScripts.themeBootstrap.gzipBytes +
+			measurement.inlineScripts.localeRedirect.gzipBytes +
+			measurement.javascript.controller.gzipBytes,
+	);
+	assert.equal(
+		measurement.executableJavascript.localizedGzipBytes,
+		measurement.inlineScripts.themeBootstrap.gzipBytes +
+			measurement.javascript.controller.gzipBytes,
+	);
+	assert.ok(
+		measurement.executableJavascript.rootGzipBytes >
+			measurement.executableJavascript.localizedGzipBytes,
+	);
+});
+
+test("discovers every expected generated HTML page and applies its individual budget", async (t) => {
+	const outputDirectory = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput({ outputDirectory });
+	const validation = validatePerformanceBudget(measurement);
+
+	assert.equal(measurement.html.length, performanceBudget.html.expectedOutputPaths.length);
+	assert.equal(validation.isComplete, true);
+	assert.equal(
+		validation.checks.filter(
+			(check) => check.section === "HTML" || check.section === "Secondary HTML",
+		).length,
+		performanceBudget.html.expectedOutputPaths.length,
+	);
+});
+
+test("fails a metric that exceeds its configured budget", async (t) => {
+	const outputDirectory = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput({ outputDirectory });
+	const validation = validatePerformanceBudget(measurement, {
+		...performanceBudget,
+		css: { ...performanceBudget.css, maximumGzipBytes: 0 },
+	});
+
+	assert.equal(validation.passed, false);
+	assert.equal(validation.checks.find((check) => check.id === "css-gzip")?.status, "FAIL");
+});
+
+test("rejects an unexpected JavaScript file and a React runtime", async (t) => {
+	const outputDirectory = await createCompleteOutput(t, {
+		controllerSource: "const runtime = 'react-dom';",
+		extraJavaScript: true,
+	});
+	const validation = validatePerformanceBudget(
+		await measureProductionOutput({ outputDirectory }),
+	);
+
+	assert.equal(
+		validation.checks.find((check) => check.id === "javascript-file-count")?.status,
+		"FAIL",
+	);
+	assert.equal(validation.checks.find((check) => check.id === "react-runtime")?.status, "FAIL");
+});
+
+test("rejects previews and videos that exceed their individual limits", async (t) => {
+	const outputDirectory = await createCompleteOutput(t, {
+		previewBytes: performanceBudget.media.maximumPreviewFileBytes + 1,
+		videoBytes: performanceBudget.media.maximumVideoFileBytes + 1,
+	});
+	const validation = validatePerformanceBudget(
+		await measureProductionOutput({ outputDirectory }),
+	);
+
+	assert.equal(validation.checks.find((check) => check.id === "preview-1.jpg")?.status, "FAIL");
+	assert.equal(validation.checks.find((check) => check.id === "video-1.mp4")?.status, "FAIL");
+});
+
+test("detects third-party runtime resources but ignores external anchors", async (t) => {
+	const localOutputDirectory = await createCompleteOutput(t);
+	const localMeasurement = await measureProductionOutput({
+		outputDirectory: localOutputDirectory,
+	});
+
+	assert.equal(localMeasurement.resources.thirdParty.length, 0);
+
+	const thirdPartyOutputDirectory = await createCompleteOutput(t, { thirdPartyImage: true });
+	const thirdPartyMeasurement = await measureProductionOutput({
+		outputDirectory: thirdPartyOutputDirectory,
+	});
+
+	assert.equal(thirdPartyMeasurement.resources.thirdParty.length, 1);
+	assert.equal(
+		validatePerformanceBudget(thirdPartyMeasurement).checks.find(
+			(check) => check.id === "third-party-runtime-requests",
+		)?.status,
+		"FAIL",
+	);
+});
+
+test("renders deterministic Markdown and writes it atomically", async (t) => {
+	const outputDirectory = await createCompleteOutput(t);
+	const measurement = await measureProductionOutput({ outputDirectory });
+	const validation = validatePerformanceBudget(measurement);
+	const failingValidation = validatePerformanceBudget(measurement, {
+		...performanceBudget,
+		css: { ...performanceBudget.css, maximumGzipBytes: 0 },
+	});
+	const firstRender = renderMarkdownReport(measurement, validation);
+	const secondRender = renderMarkdownReport(measurement, validation);
+	const failingReport = renderMarkdownReport(measurement, failingValidation);
+	const reportPath = path.join(testDirectory, ".test-PERFORMANCE.md");
+
+	t.after(async () => {
+		await rm(reportPath, { force: true });
+		await rm(`${reportPath}.tmp`, { force: true });
+	});
+
+	assert.equal(firstRender, secondRender);
+	assert.match(failingReport, /\| CSS gzip \| .* \| ❌ FAIL \|/u);
+	await writeFile(reportPath, "stale report", "utf8");
+	await writeMarkdownReport({ reportPath, content: failingReport });
+	assert.equal(await readFile(reportPath, "utf8"), failingReport);
+	await assert.rejects(stat(`${reportPath}.tmp`));
+});

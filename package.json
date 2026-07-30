@@ -14,6 +14,7 @@
 		"test": "node --import ./scripts/register-aliases.mjs --experimental-strip-types --test",
 		"test:browser": "playwright test",
 		"check:production-budget": "node scripts/production-budget.mjs",
+		"report:production-budget": "pnpm build && node scripts/production-budget.mjs --write-report",
 		"verify:production": "pnpm validate && pnpm test:browser && pnpm check:production-budget",
 		"preview": "vite preview",
 		"typecheck": "tsc -b --pretty false",

@@ -1,101 +1,43 @@
-import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { gzipSync } from "node:zlib";
+import { performanceBudget } from "../config/performance-budget.mjs";
+import {
+	defaultOutputDirectory,
+	measureProductionOutput,
+	projectDirectory,
+} from "./production-budget/measure.mjs";
+import {
+	renderMarkdownReport,
+	renderTerminalReport,
+	writeMarkdownReport,
+} from "./production-budget/report.mjs";
+import { validatePerformanceBudget } from "./production-budget/validate.mjs";
 
-const projectDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const outputDirectory = path.join(projectDirectory, "dist");
-const assetsDirectory = path.join(outputDirectory, "assets");
-const previewDirectory = path.join(outputDirectory, "videos", "timelapse", "previews");
-const socialImagePath = path.join(outputDirectory, "og-image.jpg");
+const arguments_ = process.argv.slice(2);
+const writeReport = arguments_.includes("--write-report");
+const unsupportedArguments = arguments_.filter((argument) => argument !== "--write-report");
 
-const budgets = {
-	maximumControllerGzipBytes: 3_500,
-	maximumCssGzipBytes: 8_000,
-	expectedJavascriptFileCount: 1,
-	expectedPreviewCount: 6,
-	maximumPreviewFileBytes: 25_000,
-	maximumPreviewBytes: 120_000,
-	maximumSocialImageBytes: 250_000,
-};
-
-async function listFiles(directory) {
-	const entries = await readdir(directory, { withFileTypes: true });
-	const files = await Promise.all(
-		entries.map(async (entry) => {
-			const entryPath = path.join(directory, entry.name);
-
-			return entry.isDirectory() ? listFiles(entryPath) : [entryPath];
-		}),
-	);
-
-	return files.flat();
+if (unsupportedArguments.length > 0) {
+	throw new Error(`Unsupported production budget arguments: ${unsupportedArguments.join(", ")}`);
 }
 
-function assertWithinBudget(description, actual, maximum) {
-	if (actual > maximum) {
-		throw new Error(`${description}: ${actual} exceeds the ${maximum} byte budget.`);
+const measurement = await measureProductionOutput({ outputDirectory: defaultOutputDirectory });
+const validation = validatePerformanceBudget(measurement, performanceBudget);
+
+process.stdout.write(renderTerminalReport(measurement, validation));
+
+if (writeReport) {
+	if (!validation.isComplete) {
+		process.stderr.write("PERFORMANCE.md was not written because dist/ is incomplete.\n");
+	} else {
+		const reportPath = await writeMarkdownReport({
+			reportPath: path.join(projectDirectory, "PERFORMANCE.md"),
+			content: renderMarkdownReport(measurement, validation),
+		});
+
+		process.stdout.write(`Wrote ${reportPath}.\n`);
 	}
 }
 
-function assertEqual(description, actual, expected) {
-	if (actual !== expected) {
-		throw new Error(`${description}: expected ${expected}, received ${actual}.`);
-	}
+if (!validation.passed) {
+	process.exitCode = 1;
 }
-
-async function gzipSize(file) {
-	return gzipSync(await readFile(file), { level: 9 }).byteLength;
-}
-
-async function totalSize(files) {
-	const sizes = await Promise.all(files.map(async (file) => (await stat(file)).size));
-
-	return sizes.reduce((total, size) => total + size, 0);
-}
-
-const assetFiles = await listFiles(assetsDirectory);
-const javascriptFiles = assetFiles.filter((file) => file.endsWith(".js"));
-const cssFiles = assetFiles.filter((file) => file.endsWith(".css"));
-const previewFiles = (await listFiles(previewDirectory)).filter((file) => file.endsWith(".jpg"));
-const socialImageBytes = (await stat(socialImagePath)).size;
-
-assertEqual("JavaScript file count", javascriptFiles.length, budgets.expectedJavascriptFileCount);
-assertEqual("CSS file count", cssFiles.length, 1);
-assertEqual("Preview image count", previewFiles.length, budgets.expectedPreviewCount);
-
-const controllerFile = javascriptFiles.find((file) =>
-	path.basename(file).startsWith("site-controller-"),
-);
-
-if (!controllerFile) {
-	throw new Error("Missing site controller bundle.");
-}
-
-const controllerGzipBytes = await gzipSize(controllerFile);
-const cssGzipBytes = await gzipSize(cssFiles[0]);
-const previewBytes = await totalSize(previewFiles);
-
-assertWithinBudget(
-	"Site controller gzip size",
-	controllerGzipBytes,
-	budgets.maximumControllerGzipBytes,
-);
-assertWithinBudget("CSS gzip size", cssGzipBytes, budgets.maximumCssGzipBytes);
-
-for (const previewFile of previewFiles) {
-	const previewBytes = (await stat(previewFile)).size;
-
-	assertWithinBudget(
-		`Preview image ${path.basename(previewFile)} size`,
-		previewBytes,
-		budgets.maximumPreviewFileBytes,
-	);
-}
-
-assertWithinBudget("Preview image size", previewBytes, budgets.maximumPreviewBytes);
-assertWithinBudget("Social image", socialImageBytes, budgets.maximumSocialImageBytes);
-
-console.log(
-	`Production budget passed: controller ${controllerGzipBytes} B gzip, CSS ${cssGzipBytes} B gzip, ${previewFiles.length} previews ${previewBytes} B, social image ${socialImageBytes} B.`,
-);

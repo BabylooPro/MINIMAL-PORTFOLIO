@@ -41,6 +41,96 @@ test("keeps the back-to-top link usable without JavaScript", async ({ browser })
 	await context.close();
 });
 
+test("keeps runtime resources on the site origin", async ({ browser }) => {
+	const context = await browser.newContext({ locale: "en-CH" });
+	const page = await context.newPage();
+	const siteOrigin = "http://127.0.0.1:4174";
+	const requestedUrls = new Set<string>();
+
+	page.on("request", (request) => {
+		requestedUrls.add(request.url());
+	});
+
+	for (const route of ["/", "/en/", "/fr/", "/de/"]) {
+		await page.goto(`${siteOrigin}${route}`, { waitUntil: "domcontentloaded" });
+		await expect(page.locator("main")).toBeVisible();
+	}
+
+	await page.goto(`${siteOrigin}/en/`, { waitUntil: "domcontentloaded" });
+	const carousel = page.locator("[data-proof-work-carousel]");
+
+	await carousel.scrollIntoViewIfNeeded();
+	await page.locator('[data-proof-work-direction="next"]').click();
+	await expect(page.locator("[data-proof-work-player] source")).toHaveAttribute(
+		"src",
+		"/videos/timelapse/2.mp4",
+	);
+
+	const carouselResourceOrigins = await carousel.evaluate((element) => {
+		const urls = [
+			...Array.from(element.querySelectorAll<HTMLImageElement>("img")).map(
+				(image) => image.src,
+			),
+			...Array.from(element.querySelectorAll<HTMLVideoElement>("video")).flatMap((video) => [
+				video.poster,
+				...Array.from(video.querySelectorAll<HTMLSourceElement>("source")).map(
+					(source) => source.src,
+				),
+			]),
+		];
+		const serializedVideos = element.getAttribute("data-videos");
+
+		if (!serializedVideos) {
+			throw new Error("Proof Work carousel must declare its video sources.");
+		}
+
+		const videos: unknown = JSON.parse(serializedVideos);
+
+		if (!Array.isArray(videos)) {
+			throw new Error("Proof Work carousel video data must be an array.");
+		}
+
+		for (const video of videos) {
+			if (!video || typeof video !== "object") {
+				throw new Error("Proof Work carousel video data must contain objects.");
+			}
+
+			const { preview, source } = video as Record<string, unknown>;
+
+			if (typeof preview !== "string" || typeof source !== "string") {
+				throw new Error(
+					"Proof Work carousel video data must contain source and preview URLs.",
+				);
+			}
+
+			urls.push(
+				new URL(preview, window.location.href).href,
+				new URL(source, window.location.href).href,
+			);
+		}
+
+		return urls.filter(Boolean).map((url) => new URL(url).origin);
+	});
+
+	expect(carouselResourceOrigins).toEqual(expect.arrayContaining([siteOrigin]));
+	expect(carouselResourceOrigins.every((origin) => origin === siteOrigin)).toBe(true);
+	await expect(page.locator('[data-proof-work-preview="previous"]')).toHaveAttribute(
+		"loading",
+		"lazy",
+	);
+	await expect(page.locator('[data-proof-work-preview="next"]')).toHaveAttribute(
+		"loading",
+		"lazy",
+	);
+	expect(
+		[...requestedUrls]
+			.filter((url) => !url.startsWith("data:"))
+			.every((url) => new URL(url).origin === siteOrigin),
+	).toBe(true);
+
+	await context.close();
+});
+
 test("renders the static not-found page", async ({ page }) => {
 	await page.emulateMedia({ colorScheme: "light" });
 	await page.goto("/404.html");

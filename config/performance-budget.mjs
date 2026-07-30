@@ -1,0 +1,56 @@
+export const performanceBudget = {
+	javascript: {
+		maximumControllerGzipBytes: 3_900,
+		maximumRootExecutableGzipBytes: 4_600,
+		maximumLocalizedExecutableGzipBytes: 4_300,
+		expectedFileCount: 1,
+	},
+
+	css: {
+		maximumGzipBytes: 7_700,
+		expectedFileCount: 1,
+	},
+
+	html: {
+		maximumGzipBytesPerPage: 10_000,
+		expectedOutputPaths: [
+			"404.html",
+			"de/404.html",
+			"de/index.html",
+			"de/legal/index.html",
+			"de/privacy/index.html",
+			"en/404.html",
+			"en/index.html",
+			"en/legal/index.html",
+			"en/privacy/index.html",
+			"fr/404.html",
+			"fr/index.html",
+			"fr/legal/index.html",
+			"fr/privacy/index.html",
+			"index.html",
+		],
+	},
+
+	inlineScripts: {
+		maximumThemeBootstrapGzipBytes: 1_000,
+		maximumLocaleRedirectGzipBytes: 500,
+	},
+
+	media: {
+		expectedPreviewCount: 6,
+		expectedVideoCount: 6,
+		maximumPreviewFileBytes: 25_000,
+		maximumPreviewTotalBytes: 120_000,
+		maximumVideoTotalBytes: 250_000_000,
+		maximumVideoFileBytes: 70_000_000,
+		maximumSocialImageBytes: 250_000,
+	},
+
+	architecture: {
+		expectedReactRuntimeBytes: 0,
+		expectedThirdPartyRuntimeRequests: 0,
+		expectedExternalFonts: 0,
+		expectedClientHydration: false,
+		expectedClientI18nRuntime: false,
+	},
+};
