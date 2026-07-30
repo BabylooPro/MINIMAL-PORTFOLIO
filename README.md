@@ -2,6 +2,8 @@
 
 How [maxremy.dev](https://maxremy.dev/) is built :
 
+https://github.com/user-attachments/assets/93162065-e0cf-4b74-97d1-80ae41906b07
+
 ## Stack
 
 - TypeScript
