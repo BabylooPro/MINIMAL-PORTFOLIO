@@ -1,5 +1,5 @@
 name: Release
-run-name: Release · ${{ inputs.environment }}
+run-name: Release - ${{ inputs.environment }}
 
 on:
     workflow_dispatch:
@@ -87,6 +87,8 @@ jobs:
                     comparison_url="https://github.com/$REPOSITORY/commits/$release_tag"
                   fi
 
+                  release_notes_file="$RUNNER_TEMP/release-notes.md"
+
                   {
                     printf '# %s\n\n' "$release_tag"
                     printf 'Production deployment: https://maxremy.dev\n\n'
@@ -96,11 +98,12 @@ jobs:
                       printf -- '- [%s](https://github.com/%s/commit/%s) %s\n' "$short_hash" "$REPOSITORY" "$commit_hash" "$subject"
                     done
                     printf '\n[Full comparison](%s)\n' "$comparison_url"
-                  } > release-notes.md
+                  } > "$release_notes_file"
 
                   {
                     printf 'RELEASE_TAG=%s\n' "$release_tag"
                     printf 'PREVIOUS_TAG=%s\n' "$previous_tag"
+                    printf 'RELEASE_NOTES_FILE=%s\n' "$release_notes_file"
                   } >> "$GITHUB_ENV"
 
             - name: Deploy to Cloudflare Pages
@@ -128,7 +131,7 @@ jobs:
                   gh release create "$RELEASE_TAG" \
                     --target "$GITHUB_SHA" \
                     --title "$RELEASE_TAG" \
-                    --notes-file release-notes.md \
+                    --notes-file "$RELEASE_NOTES_FILE" \
                     --latest
 
             - name: Bump the next patch version
