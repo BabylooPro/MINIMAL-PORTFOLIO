@@ -28,7 +28,7 @@ jobs:
                 shell: bash
         environment:
             name: ${{ inputs.environment }}
-            url: ${{ inputs.environment == 'production' && 'https://maxremy.dev' || 'https://staging.minimal-portfolio.pages.dev' }}
+            url: ${{ inputs.environment == 'production' && 'https://maxremy.dev' || 'https://staging.minimal-portfolio-a05.pages.dev' }}
 
         steps:
             - name: Check out the release commit
@@ -116,7 +116,7 @@ jobs:
 
             - name: Verify the deployment
               env:
-                  DEPLOYMENT_URL: ${{ inputs.environment == 'production' && 'https://maxremy.dev' || 'https://staging.minimal-portfolio.pages.dev' }}
+                  DEPLOYMENT_URL: ${{ inputs.environment == 'production' && 'https://maxremy.dev' || 'https://staging.minimal-portfolio-a05.pages.dev' }}
               run: pnpm verify:cloudflare "$DEPLOYMENT_URL"
 
             - name: Create the GitHub release
