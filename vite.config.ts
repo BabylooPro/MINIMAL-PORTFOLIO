@@ -87,9 +87,9 @@ function inlineHeadScripts(
 				contentSecurityPolicyMarker,
 				isClientProductionBuild
 					? `<meta http-equiv="Content-Security-Policy" content="${createContentSecurityPolicy(
-						scripts.map(({ source }) => source),
-						mediaOrigin,
-					)}" />`
+							scripts.map(({ source }) => source),
+							mediaOrigin,
+						)}" />`
 					: "",
 			);
 
