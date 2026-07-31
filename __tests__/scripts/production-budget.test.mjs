@@ -243,15 +243,16 @@ test("renders deterministic Markdown and writes it atomically", async (t) => {
 	const firstRender = renderMarkdownReport(measurement, validation);
 	const secondRender = renderMarkdownReport(measurement, validation);
 	const failingReport = renderMarkdownReport(measurement, failingValidation);
-	const reportPath = path.join(testDirectory, ".test-PERFORMANCE.md");
+	const reportDirectory = path.join(testDirectory, ".test-performance-report");
+	const reportPath = path.join(reportDirectory, "PERFORMANCE.md");
 
 	t.after(async () => {
-		await rm(reportPath, { force: true });
-		await rm(`${reportPath}.tmp`, { force: true });
+		await rm(reportDirectory, { force: true, recursive: true });
 	});
 
 	assert.equal(firstRender, secondRender);
 	assert.match(failingReport, /\| CSS gzip \| .* \| ❌ FAIL \|/u);
+	await writeMarkdownReport({ reportPath, content: "initial report" });
 	await writeFile(reportPath, "stale report", "utf8");
 	await writeMarkdownReport({ reportPath, content: failingReport });
 	assert.equal(await readFile(reportPath, "utf8"), failingReport);

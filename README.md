@@ -22,4 +22,4 @@ https://github.com/user-attachments/assets/93162065-e0cf-4b74-97d1-80ae41906b07
 - CSS: ≤ 7.7 kB gzip
 - Third-party runtime requests: 0
 
-See [PERFORMANCE.md](./PERFORMANCE.md) for the complete measured production budget.
+See [PERFORMANCE.md](./reports/PERFORMANCE.md) for the complete measured production budget.

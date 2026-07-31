@@ -30,7 +30,7 @@ if (writeReport) {
 		process.stderr.write("PERFORMANCE.md was not written because dist/ is incomplete.\n");
 	} else {
 		const reportPath = await writeMarkdownReport({
-			reportPath: path.join(projectDirectory, "PERFORMANCE.md"),
+			reportPath: path.join(projectDirectory, "reports", "PERFORMANCE.md"),
 			content: renderMarkdownReport(measurement, validation),
 		});
 

@@ -1,4 +1,4 @@
-import { rename, writeFile } from "node:fs/promises";
+import { mkdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export function formatBytes(bytes) {
@@ -361,6 +361,7 @@ export function renderMarkdownReport(measurement, validation) {
 export async function writeMarkdownReport({ reportPath, content }) {
 	const temporaryPath = `${reportPath}.tmp`;
 
+	await mkdir(path.dirname(reportPath), { recursive: true });
 	await writeFile(temporaryPath, content, "utf8");
 	await rename(temporaryPath, reportPath);
 
