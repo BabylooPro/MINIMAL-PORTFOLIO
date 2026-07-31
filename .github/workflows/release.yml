@@ -129,3 +129,17 @@ jobs:
                     --title "$RELEASE_TAG" \
                     --notes-file release-notes.md \
                     --latest
+
+            - name: Bump the next patch version
+              if: inputs.environment == 'production'
+              run: |
+                  set -euo pipefail
+
+                  pnpm version patch --no-git-tag-version
+                  next_version="$(node --input-type=module --eval 'import packageJson from "./package.json" with { type: "json" }; process.stdout.write(packageJson.version);')"
+
+                  git config user.name "github-actions[bot]"
+                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                  git add package.json
+                  git commit -m "updated(release): bump version to $next_version"
+                  git push origin HEAD:main
