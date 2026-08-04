@@ -1,9 +1,10 @@
 import { Section, SectionHeading } from "@/components/ui/Section";
 import type { Messages } from "@/lib/i18n/messages/types";
 
-// TODO: MAKE A LIST URL
-const commercialRegisterUrl = "https://www.zefix.ch/fr/search/entity/list/firm/1580533";
-const sourceRepositoryLicenseUrl = "https://github.com/BabylooPro/MINIMAL-PORTFOLIO/blob/main/LICENSE";
+const legalNoticeUrls = {
+	commercialRegister: "https://www.zefix.ch/fr/search/entity/list/firm/1580533",
+	sourceRepositoryLicense: "https://github.com/BabylooPro/MINIMAL-PORTFOLIO/blob/main/LICENSE",
+} as const;
 
 type LegalNoticeSectionProps = { content: Messages["legalPages"]["legal"]; email: string | null };
 
@@ -37,7 +38,7 @@ export function LegalNoticeSection({ content, email }: LegalNoticeSectionProps) 
 					/>
 					<LegalInformationItem
 						label={content.businessInformation.commercialRegisterLabel}
-						href={commercialRegisterUrl}
+						href={legalNoticeUrls.commercialRegister}
 						value={content.businessInformation.commercialRegisterValue}
 					/>
 				</dl>
@@ -63,7 +64,12 @@ export function LegalNoticeSection({ content, email }: LegalNoticeSectionProps) 
 				<SectionHeading id="legal-intellectual-property-title">{content.intellectualPropertyTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.intellectualPropertyDescription}</p>
 
-				<a className="mt-1 inline-flex underline underline-offset-2" href={sourceRepositoryLicenseUrl} rel="noopener noreferrer" target="_blank">
+				<a
+					className="mt-1 inline-flex underline underline-offset-2"
+					href={legalNoticeUrls.sourceRepositoryLicense}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
 					{content.sourceCodeLicenseLabel}
 					<span aria-hidden="true">&nbsp;↗</span>
 				</a>

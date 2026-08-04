@@ -1,9 +1,10 @@
 import { Section, SectionHeading } from "@/components/ui/Section";
 import type { Messages } from "@/lib/i18n/messages/types";
 
-// TODO: MAKE A LIST URL
-const cloudflarePrivacyPolicyUrl = "https://www.cloudflare.com/privacypolicy/";
-const googlePrivacyPolicyUrl = "https://policies.google.com/privacy";
+const privacyPolicyUrls = {
+	cloudflare: "https://www.cloudflare.com/privacypolicy/",
+	google: "https://policies.google.com/privacy",
+} as const;
 
 type PrivacySectionProps = {
 	content: Messages["legalPages"]["privacy"];
@@ -34,7 +35,12 @@ export function PrivacySection({ content, email }: PrivacySectionProps) {
 				<SectionHeading id="privacy-hosting-title">{content.hostingTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.hostingDescription}</p>
 
-				<a className="mt-1 inline-flex underline underline-offset-2" href={cloudflarePrivacyPolicyUrl} rel="noopener noreferrer" target="_blank">
+				<a
+					className="mt-1 inline-flex underline underline-offset-2"
+					href={privacyPolicyUrls.cloudflare}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
 					{content.hostingPrivacyPolicyLabel}
 					<span aria-hidden="true">&nbsp;↗</span>
 				</a>
@@ -55,7 +61,12 @@ export function PrivacySection({ content, email }: PrivacySectionProps) {
 					</a>
 				) : null}
 
-				<a className="mt-1 block w-fit underline underline-offset-2" href={googlePrivacyPolicyUrl} rel="noopener noreferrer" target="_blank">
+				<a
+					className="mt-1 block w-fit underline underline-offset-2"
+					href={privacyPolicyUrls.google}
+					rel="noopener noreferrer"
+					target="_blank"
+				>
 					{content.emailProviderPrivacyPolicyLabel}
 					<span aria-hidden="true">&nbsp;↗</span>
 				</a>
