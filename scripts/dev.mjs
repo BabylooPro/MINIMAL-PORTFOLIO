@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 
 const viteArguments = process.argv.slice(2);
 const typecheckStatusPattern = /^\d{1,2}:\d{2}:\d{2} (?:AM|PM) - (?:(?:Starting compilation in watch mode|File change detected\. Starting incremental compilation)\.\.\.|Found \d+ errors?\. Watching for file changes\.)$/;
-const viteProcess = spawn(process.execPath, [fileURLToPath(new URL("../node_modules/vite/bin/vite.js", import.meta.url)), "--clearScreen", "false", ...viteArguments], { stdio: "inherit" });
+const viteProcess = spawn(process.execPath, [fileURLToPath(new URL("../node_modules/vite/bin/vite.js", import.meta.url)), ...viteArguments], { stdio: "inherit" });
 const typecheckProcess = spawn(process.execPath, [fileURLToPath(new URL("../node_modules/typescript/bin/tsc", import.meta.url)), "-b", "--pretty", "false", "--watch", "--preserveWatchOutput"], { stdio: ["inherit", "pipe", "pipe"] });
 const processes = [viteProcess, typecheckProcess];
 
