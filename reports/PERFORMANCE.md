@@ -8,36 +8,36 @@ This portfolio is statically pre-rendered. React is used during the build only a
 | ------------------------------------ | ------- | --------- | ------- |
 | React shipped to browser             | 0 B     | ≤ 0 B     | ✅ PASS |
 | Client-side hydration                | None    | None      | ✅ PASS |
-| Theme bootstrap gzip                 | 425 B   | ≤ 1,000 B | ✅ PASS |
+| Theme bootstrap gzip                 | 423 B   | ≤ 1,000 B | ✅ PASS |
 | Locale redirect gzip                 | 293 B   | ≤ 500 B   | ✅ PASS |
-| Site controller gzip                 | 3,635 B | ≤ 3,900 B | ✅ PASS |
-| Root executable JavaScript gzip      | 4,353 B | ≤ 4,600 B | ✅ PASS |
-| Localized executable JavaScript gzip | 4,060 B | ≤ 4,300 B | ✅ PASS |
-| CSS gzip                             | 7,269 B | ≤ 7,700 B | ✅ PASS |
+| Site controller gzip                 | 3,829 B | ≤ 3,900 B | ✅ PASS |
+| Root executable JavaScript gzip      | 4,545 B | ≤ 4,600 B | ✅ PASS |
+| Localized executable JavaScript gzip | 4,252 B | ≤ 4,300 B | ✅ PASS |
+| CSS gzip                             | 7,503 B | ≤ 7,700 B | ✅ PASS |
 
 ## HTML
 
 | Route | Current | Budget     | Status  |
 | ----- | ------- | ---------- | ------- |
-| /     | 8,648 B | ≤ 10,000 B | ✅ PASS |
-| /en/  | 9,189 B | ≤ 10,000 B | ✅ PASS |
-| /fr/  | 9,516 B | ≤ 10,000 B | ✅ PASS |
-| /de/  | 9,462 B | ≤ 10,000 B | ✅ PASS |
+| /     | 8,888 B | ≤ 10,000 B | ✅ PASS |
+| /en/  | 9,421 B | ≤ 10,000 B | ✅ PASS |
+| /fr/  | 9,739 B | ≤ 10,000 B | ✅ PASS |
+| /de/  | 9,691 B | ≤ 10,000 B | ✅ PASS |
 
 ## Secondary HTML
 
 | Route        | Current | Budget     | Status  |
 | ------------ | ------- | ---------- | ------- |
-| /404.html    | 4,039 B | ≤ 10,000 B | ✅ PASS |
-| /de/404.html | 4,092 B | ≤ 10,000 B | ✅ PASS |
-| /de/legal/   | 4,906 B | ≤ 10,000 B | ✅ PASS |
-| /de/privacy/ | 5,685 B | ≤ 10,000 B | ✅ PASS |
-| /en/404.html | 4,039 B | ≤ 10,000 B | ✅ PASS |
-| /en/legal/   | 4,775 B | ≤ 10,000 B | ✅ PASS |
-| /en/privacy/ | 5,374 B | ≤ 10,000 B | ✅ PASS |
-| /fr/404.html | 4,126 B | ≤ 10,000 B | ✅ PASS |
-| /fr/legal/   | 4,934 B | ≤ 10,000 B | ✅ PASS |
-| /fr/privacy/ | 5,745 B | ≤ 10,000 B | ✅ PASS |
+| /404.html    | 4,056 B | ≤ 10,000 B | ✅ PASS |
+| /de/404.html | 4,111 B | ≤ 10,000 B | ✅ PASS |
+| /de/legal/   | 4,914 B | ≤ 10,000 B | ✅ PASS |
+| /de/privacy/ | 5,701 B | ≤ 10,000 B | ✅ PASS |
+| /en/404.html | 4,056 B | ≤ 10,000 B | ✅ PASS |
+| /en/legal/   | 4,788 B | ≤ 10,000 B | ✅ PASS |
+| /en/privacy/ | 5,388 B | ≤ 10,000 B | ✅ PASS |
+| /fr/404.html | 4,138 B | ≤ 10,000 B | ✅ PASS |
+| /fr/legal/   | 4,943 B | ≤ 10,000 B | ✅ PASS |
+| /fr/privacy/ | 5,756 B | ≤ 10,000 B | ✅ PASS |
 
 The HTML budget applies independently to every generated page, including legal and 404 pages.
 
