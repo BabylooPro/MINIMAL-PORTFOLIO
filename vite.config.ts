@@ -34,6 +34,29 @@ type InlineScriptDefinition = {
 	path: string;
 };
 
+function logging(): Plugin {
+	return {
+		name: "logging",
+		apply: "serve",
+		configureServer(server) {
+			server.middlewares.use((request, response, next) => {
+				const accepts = request.headers.accept;
+				const isDocumentRequest = (request.method === "GET" || request.method === "HEAD") && typeof accepts === "string" && accepts.includes("text/html");
+				if (!isDocumentRequest) return next();
+
+				const requestUrl = request.url ?? "/";
+				const startedAt = performance.now();
+				response.once("finish", () => {
+					const duration = Math.round(performance.now() - startedAt);
+					server.config.logger.info(`${request.method} ${requestUrl} ${response.statusCode} in ${duration}ms`);
+				});
+
+				next();
+			});
+		},
+	};
+}
+
 function createContentSecurityPolicy(inlineScriptSources: readonly string[], mediaOrigin: string): string {
 	const scriptHashes = inlineScriptSources.map((source) => `'sha256-${createHash("sha256").update(source).digest("base64")}'`);
 
@@ -153,6 +176,15 @@ export default defineConfig({
 	resolve: {
 		alias: aliases,
 	},
+	server: {
+		forwardConsole: {
+			unhandledErrors: true,
+			logLevels: ["warn", "error"],
+		},
+		watch: {
+			ignored: ["**/.test-production-budget-*/**", "**/.test-production-budget-media-*/**"],
+		},
+	},
 	build: {
 		manifest: true,
 		rollupOptions: {
@@ -163,6 +195,7 @@ export default defineConfig({
 		},
 	},
 	plugins: [
+		logging(),
 		separateSiteController(),
 		inlineScriptsPlugin,
 		injectSiteController(),
