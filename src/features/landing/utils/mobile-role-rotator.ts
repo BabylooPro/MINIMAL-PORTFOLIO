@@ -1,6 +1,3 @@
-// TODO: MOVE THIS FILE TO THE `/features/landing/utils/` FOLDER
-
-
 type RoleRotator = {
 	activeIndex: number;
 	element: HTMLElement;
@@ -8,9 +5,11 @@ type RoleRotator = {
 	timeout: number | undefined;
 };
 
-// TODO: MOVE IN A CONST LIST `params` OR WHATEVER BUT NO EXPOST LIKE THIS
-const roleChangeInterval = 5000;
-const roleFadeDuration = 500;
+const rotationTiming = {
+	changeInterval: 5000,
+	fadeDuration: 500,
+} as const;
+
 let isMobileRoleRotatorInitialized = false;
 
 export function initializeMobileRoleRotator(): void {
@@ -30,7 +29,7 @@ export function initializeMobileRoleRotator(): void {
 	}
 
 	function queueRoleChange(rotator: RoleRotator): void {
-		const fadeDuration = reducedMotion.matches ? 0 : roleFadeDuration;
+		const fadeDuration = reducedMotion.matches ? 0 : rotationTiming.fadeDuration;
 
 		rotator.timeout = window.setTimeout(() => {
 			rotator.element.setAttribute("data-role-fading", "");
@@ -42,7 +41,7 @@ export function initializeMobileRoleRotator(): void {
 				rotator.element.removeAttribute("data-role-fading");
 				queueRoleChange(rotator);
 			}, fadeDuration);
-		}, roleChangeInterval - fadeDuration);
+		}, rotationTiming.changeInterval - fadeDuration);
 	}
 
 	function synchronizeRoleRotators(rotators: RoleRotator[]): void {
