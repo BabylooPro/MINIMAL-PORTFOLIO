@@ -7,6 +7,7 @@ import react from "@vitejs/plugin-react";
 import { type Alias, defineConfig, type Plugin } from "vite";
 import { aliasDefinitions } from "#config/aliases.mjs";
 import { mediaOrigin } from "#src/lib/media-origin.js";
+import { getIgnoredProjectFiles } from "./scripts/ignored-project-files.mjs";
 
 const aliases: Alias[] = aliasDefinitions.map(({ prefix, target }) => ({
 	find: prefix.slice(0, -1),
@@ -15,6 +16,8 @@ const aliases: Alias[] = aliasDefinitions.map(({ prefix, target }) => ({
 
 const themeBootstrapPath = fileURLToPath(new URL("./src/features/themes/theme-bootstrap.js", import.meta.url));
 const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-redirect.js", import.meta.url));
+
+const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 
 const indexHtmlPath = fileURLToPath(new URL("./index.html", import.meta.url));
 
@@ -35,6 +38,8 @@ type InlineScriptDefinition = {
 };
 
 function logging(): Plugin {
+	const gitignoreMatches = new Map<string, boolean>();
+
 	return {
 		name: "logging",
 		apply: "serve",
@@ -54,7 +59,13 @@ function logging(): Plugin {
 				next();
 			});
 		},
-		hotUpdate({ type, file, modules, server }) {
+		async hotUpdate({ type, file, modules, server }) {
+			if (file === gitignorePath) { gitignoreMatches.clear(); return; }
+
+			const matchesGitignore = gitignoreMatches.get(file) ?? (await getIgnoredProjectFiles(server.config.root, [file])).length > 0;
+			gitignoreMatches.set(file, matchesGitignore);
+			if (matchesGitignore) return;
+
 			const changedFile = file.slice(server.config.root.length + 1);
 			const affectedModules = [...new Set(modules.map((module) => module.url))];
 			server.config.logger.info([
