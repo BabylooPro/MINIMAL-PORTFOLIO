@@ -1,3 +1,7 @@
+import { rootUrl } from "../../../config/site.mjs";
+
+export { rootUrl };
+
 export const locales = ["en", "fr", "de"] as const;
 export type Locale = (typeof locales)[number];
 
@@ -23,7 +27,7 @@ export const localeConfigs = {
 		label: "English",
 		shortLabel: "EN",
 		pathname: "/en/",
-		absoluteUrl: "https://maxremy.dev/en/",
+		absoluteUrl: new URL("/en/", rootUrl).href,
 		ogLocale: "en_CH",
 	},
 	fr: {
@@ -32,7 +36,7 @@ export const localeConfigs = {
 		label: "Français",
 		shortLabel: "FR",
 		pathname: "/fr/",
-		absoluteUrl: "https://maxremy.dev/fr/",
+		absoluteUrl: new URL("/fr/", rootUrl).href,
 		ogLocale: "fr_CH",
 	},
 	de: {
@@ -41,12 +45,10 @@ export const localeConfigs = {
 		label: "Deutsch",
 		shortLabel: "DE",
 		pathname: "/de/",
-		absoluteUrl: "https://maxremy.dev/de/",
+		absoluteUrl: new URL("/de/", rootUrl).href,
 		ogLocale: "de_CH",
 	},
 } satisfies Record<Locale, LocaleConfig>;
-
-export const rootUrl = "https://maxremy.dev/";
 
 export function isLocale(value: string): value is Locale {
 	return locales.includes(value as Locale);

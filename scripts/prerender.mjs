@@ -2,6 +2,8 @@ import { mkdir, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { rootUrl } from "../config/site.mjs";
+
 import { escapeHtml } from "./prerender/html.mjs";
 import { getSiteControllerScript } from "./prerender/page-validation.mjs";
 import { getAlternateLinks, getLanguageSwitcherLinks, renderAlternateLinks, renderMetadata, renderSitemap, routeOutputPath } from "./prerender/seo.mjs";
@@ -53,10 +55,10 @@ const routes = [
 ];
 
 const localizedAlternateLinks = [
-	{ hreflang: "en-CH", href: "https://maxremy.dev/en/" },
-	{ hreflang: "fr-CH", href: "https://maxremy.dev/fr/" },
-	{ hreflang: "de-CH", href: "https://maxremy.dev/de/" },
-	{ hreflang: "x-default", href: "https://maxremy.dev/" },
+	{ hreflang: "en-CH", href: new URL("/en/", rootUrl).href },
+	{ hreflang: "fr-CH", href: new URL("/fr/", rootUrl).href },
+	{ hreflang: "de-CH", href: new URL("/de/", rootUrl).href },
+	{ hreflang: "x-default", href: rootUrl },
 ];
 
 const serverModuleUrl = pathToFileURL(serverEntryPath);

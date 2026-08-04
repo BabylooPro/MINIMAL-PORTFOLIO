@@ -1,5 +1,7 @@
+import { rootUrl } from "../config/site.mjs";
+
 const [siteArgument, ...extraArguments] = process.argv.slice(2);
-if (!siteArgument || extraArguments.length > 0) throw new Error("Usage: pnpm verify:cloudflare <https://maxremy.dev>");
+if (!siteArgument || extraArguments.length > 0) throw new Error(`Usage: pnpm verify:cloudflare <${rootUrl}>`);
 
 const siteUrl = new URL(siteArgument);
 if (siteUrl.protocol !== "https:" || siteUrl.pathname !== "/" || siteUrl.search || siteUrl.hash) throw new TypeError("The site URL must be an HTTPS origin without a path, query, or fragment.");

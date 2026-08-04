@@ -1,4 +1,8 @@
-import { escapeHtml, getAnchorElements, getAttribute, getLinkElements, getMetaElements, getMetaHttpEquivElements, getMetaPropertyElements, getScriptElements, hasAttribute, isJsonLdScript, isModuleScript } from "./html.mjs";
+import { rootUrl } from "../../config/site.mjs";
+import { escapeHtml, getAnchorElements, getAttribute, getLinkElements,
+	getMetaElements, getMetaHttpEquivElements, getMetaPropertyElements,
+	getScriptElements, hasAttribute, isJsonLdScript, isModuleScript
+} from "./html.mjs";
 
 export function getSiteControllerScript(html) {
 	const controllerScripts = getScriptElements(html).filter((scriptElement) => hasAttribute(scriptElement, "data-site-controller"));
@@ -162,7 +166,7 @@ export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pa
 			structuredData.primaryImageOfPage?.width !== page.socialImage.width ||
 			structuredData.primaryImageOfPage?.height !== page.socialImage.height ||
 			structuredData.mainEntity?.["@type"] !== "Person" ||
-			structuredData.mainEntity?.["@id"] !== "https://maxremy.dev/#max-remy")
+		structuredData.mainEntity?.["@id"] !== `${rootUrl}#max-remy`)
 	) {
 		throw new Error(`The ${route.kind} page has incomplete profile JSON-LD data.`);
 	}

@@ -1,4 +1,6 @@
 import path from "node:path";
+
+import { rootUrl } from "../../config/site.mjs";
 import { escapeHtml } from "./html.mjs";
 
 export function renderMetadata(page, siteName) {
@@ -41,16 +43,16 @@ export function getAlternateLinks(route, localizedAlternateLinks) {
 export function getLanguageSwitcherLinks(route) {
 	if (route.kind !== "legal") {
 		return [
-			{ hreflang: "en", href: "https://maxremy.dev/en/" },
-			{ hreflang: "fr", href: "https://maxremy.dev/fr/" },
-			{ hreflang: "de", href: "https://maxremy.dev/de/" },
+			{ hreflang: "en", href: new URL("/en/", rootUrl).href },
+			{ hreflang: "fr", href: new URL("/fr/", rootUrl).href },
+			{ hreflang: "de", href: new URL("/de/", rootUrl).href },
 		];
 	}
 
 	return [
-		{ hreflang: "en", href: `https://maxremy.dev/en/${route.page}/` },
-		{ hreflang: "fr", href: `https://maxremy.dev/fr/${route.page}/` },
-		{ hreflang: "de", href: `https://maxremy.dev/de/${route.page}/` },
+		{ hreflang: "en", href: new URL(`/en/${route.page}/`, rootUrl).href },
+		{ hreflang: "fr", href: new URL(`/fr/${route.page}/`, rootUrl).href },
+		{ hreflang: "de", href: new URL(`/de/${route.page}/`, rootUrl).href },
 	];
 }
 

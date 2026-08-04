@@ -2,29 +2,27 @@ import { Container } from "@/components/ui/Container";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 import type { LegalPageId, Locale } from "@/lib/i18n/config";
+import type { Messages } from "@/lib/i18n/messages/types";
 import type { Portfolio } from "@/types/portfolio";
 
 import { isExternalHttpLink } from "@/utils/isExternalHttpLink";
 
 type HeaderProps = {
 	currentLocale: Locale;
-	downloadCvLabel: string;
-	languageSwitcherLabel: string;
-	emailLabel: string;
-	phoneLabel: string;
+	labels: Pick<Messages["labels"], "downloadCv" | "email" | "languageSwitcher" | "phone">;
 	page?: LegalPageId;
 	portfolio: Pick<Portfolio, "name" | "role" | "location" | "links">;
 	isPermanentlyCompact?: boolean;
 	usePageHeading?: boolean;
 };
 
-function getContactLinkLabel(link: Portfolio["links"][number], emailLabel: string, phoneLabel: string) {
-	if (link.href.startsWith("mailto:")) return `${emailLabel}: ${link.label}`;
-	if (link.href.startsWith("tel:")) return `${phoneLabel}: ${link.label}`;
+function getContactLinkLabel(link: Portfolio["links"][number], labels: HeaderProps["labels"]) {
+	if (link.href.startsWith("mailto:")) return `${labels.email}: ${link.label}`;
+	if (link.href.startsWith("tel:")) return `${labels.phone}: ${link.label}`;
 	return undefined;
 }
 
-export function Header({ currentLocale, downloadCvLabel, emailLabel, languageSwitcherLabel, phoneLabel, page, portfolio, isPermanentlyCompact = false, usePageHeading = true }: HeaderProps) {
+export function Header({ currentLocale, labels, page, portfolio, isPermanentlyCompact = false, usePageHeading = true }: HeaderProps) {
 	const IdentityHeading = usePageHeading ? "h1" : "p";
 	const contactLinks = portfolio.links.filter((link) => !isExternalHttpLink(link.href));
 	const mobileRoles = portfolio.role.split("|").map((role) => role.trim()).filter(Boolean);
@@ -155,7 +153,7 @@ export function Header({ currentLocale, downloadCvLabel, emailLabel, languageSwi
 
 							<LanguageSwitcher
 								currentLocale={currentLocale}
-								label={languageSwitcherLabel}
+								label={labels.languageSwitcher}
 								{...(page ? { page } : {})}
 							/>
 						</div>
@@ -186,7 +184,7 @@ export function Header({ currentLocale, downloadCvLabel, emailLabel, languageSwi
 														{index > 0 ? " - " : ""}
 
 														<a
-															aria-label={getContactLinkLabel(link, emailLabel, phoneLabel)}
+															aria-label={getContactLinkLabel(link, labels)}
 															href={link.href}
 															className="underline underline-offset-2"
 														>
@@ -223,7 +221,7 @@ export function Header({ currentLocale, downloadCvLabel, emailLabel, languageSwi
 									download="CV_Developer_Max_Remy.pdf"
 									href="/CV_Developer_Max_Remy.pdf"
 								>
-									{downloadCvLabel}
+									{labels.downloadCv}
 								</a>
 							</div>
 						</div>

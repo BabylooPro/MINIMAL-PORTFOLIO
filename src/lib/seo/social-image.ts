@@ -1,4 +1,6 @@
-const defaultSocialImageUrl = "https://maxremy.dev/og-image.jpg";
+import { rootUrl } from "@/lib/i18n/config";
+
+const defaultSocialImageUrl = new URL("/og-image.jpg", rootUrl).href;
 const configuredSocialImageUrl = import.meta.env.VITE_SOCIAL_IMAGE_URL ?? defaultSocialImageUrl;
 const socialImageUrl = new URL(configuredSocialImageUrl);
 
