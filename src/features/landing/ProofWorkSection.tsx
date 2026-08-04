@@ -1,23 +1,16 @@
 import { InfoIcon } from "@/components/icons/InfoIcon";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { Tooltip } from "@/components/ui/Tooltip";
+
+import type { Messages } from "@/lib/i18n/messages/types";
 import { getMediaUrl } from "@/lib/media-origin";
-
 import type { ExternalLink } from "@/types/portfolio";
-
 import { renderTextWithPortfolioLinks } from "@/utils/renderTextWithPortfolioLinks";
 
 type ProofWorkSectionProps = {
+	content: Messages["proofWork"];
 	title: string;
-	summary: string;
-	description: string;
 	links: readonly ExternalLink[];
-	postscript: string;
-	tooltipLabel: string;
-	previousVideoLabel: string;
-	nextVideoLabel: string;
-	videoLabel: string;
-	videoCounterTemplate: string;
 };
 
 type SquarePosition = `object-[${string}]`;
@@ -113,23 +106,11 @@ function formatVideoCounter(template: string, current: number, total: number): s
 	return template.replace("{current}", String(current)).replace("{total}", String(total));
 }
 
-export function ProofWorkSection({
-	// TODO: EXTRACT OUTSIDE OF THIS FUNCTION
-	title,
-	summary,
-	description,
-	links,
-	postscript,
-	tooltipLabel,
-	previousVideoLabel,
-	nextVideoLabel,
-	videoLabel,
-	videoCounterTemplate,
-}: ProofWorkSectionProps) {
+export function ProofWorkSection({ content, links, title }: ProofWorkSectionProps) {
 	const activeVideo = videos[0];
 	const previousVideo = videos[videos.length - 1];
 	const nextVideo = videos[1];
-	const tooltipHasLink = links.some((link) => description.includes(link.label));
+	const tooltipHasLink = links.some((link) => content.description.includes(link.label));
 
 	if (!activeVideo || !previousVideo || !nextVideo) return null;
 
@@ -137,8 +118,8 @@ export function ProofWorkSection({
 		<Section
 			className="no-print"
 			data-proof-work-carousel
-			data-counter-template={videoCounterTemplate}
-			data-video-label={videoLabel}
+			data-counter-template={content.videoCounterTemplate}
+			data-video-label={content.video}
 			data-videos={JSON.stringify(videos)}
 			labelledBy="proof-work-title"
 		>
@@ -152,21 +133,21 @@ export function ProofWorkSection({
 					{title}
 				</SectionHeading>
 
-				<Tooltip id="proof-work" interactive={tooltipHasLink} label={tooltipLabel} trigger={<InfoIcon />}>
-					<p className="whitespace-pre-line">{renderTextWithPortfolioLinks(description, links)}</p>
-					<p className="mt-2 text-(--muted-color) italic">{postscript}</p>
+				<Tooltip id="proof-work" interactive={tooltipHasLink} label={content.tooltipLabel} trigger={<InfoIcon />}>
+					<p className="whitespace-pre-line">{renderTextWithPortfolioLinks(content.description, links)}</p>
+					<p className="mt-2 text-(--muted-color) italic">{content.postscript}</p>
 				</Tooltip>
 			</div>
 
 			<p className="mt-2 text-sm leading-5">
-				{summary}
+				{content.summary}
 			</p>
 
 			<div className="mt-3">
 				<div className="relative mx-auto h-[min(56vw,17rem)] w-full max-w-2xl sm:h-[min(72vw,22rem)]">
 					<VideoPreviewButton
 						direction="previous"
-						label={previousVideoLabel}
+						label={content.previousVideo}
 						positionClassName="left-0"
 						video={previousVideo}
 					/>
@@ -181,7 +162,7 @@ export function ProofWorkSection({
 						data-proof-work-active-card
 					>
 						<video
-							aria-label={`${videoLabel} 1`}
+							aria-label={`${content.video} 1`}
 							className={[
 								// DEFAULT INLINE PLAYER
 								`block aspect-square w-full object-cover ${activeVideo.squarePosition}`,
@@ -202,14 +183,14 @@ export function ProofWorkSection({
 
 					<VideoPreviewButton
 						direction="next"
-						label={nextVideoLabel}
+						label={content.nextVideo}
 						positionClassName="right-0"
 						video={nextVideo}
 					/>
 				</div>
 
 				<p aria-live="polite" className="mt-3 text-center text-sm text-(--muted-color)" data-proof-work-counter>
-					{formatVideoCounter(videoCounterTemplate, 1, videos.length)}
+					{formatVideoCounter(content.videoCounterTemplate, 1, videos.length)}
 				</p>
 			</div>
 		</Section>

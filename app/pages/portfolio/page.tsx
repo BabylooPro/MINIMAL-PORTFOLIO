@@ -28,16 +28,9 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: PortfolioPagePr
 				/>
 
 				<ProofWorkSection
-					description={messages.proofWork.description}
+					content={messages.proofWork}
 					links={portfolio.links}
-					nextVideoLabel={messages.proofWork.nextVideo}
-					postscript={messages.proofWork.postscript}
-					previousVideoLabel={messages.proofWork.previousVideo}
 					title={messages.sections.proofWork}
-					summary={messages.proofWork.summary}
-					tooltipLabel={messages.proofWork.tooltipLabel}
-					videoCounterTemplate={messages.proofWork.videoCounterTemplate}
-					videoLabel={messages.proofWork.video}
 				/>
 
 				<SkillsSection
