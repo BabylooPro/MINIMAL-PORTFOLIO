@@ -59,7 +59,8 @@ function logging(): Plugin {
 				next();
 			});
 		},
-		async hotUpdate({ type, file, modules, server }) {
+		async hotUpdate({ type, file, server, timestamp }) {
+			if (this.environment.name !== "client") return;
 			if (file === gitignorePath) { gitignoreMatches.clear(); return; }
 
 			const matchesGitignore = gitignoreMatches.get(file) ?? (await getIgnoredProjectFiles(server.config.root, [file])).length > 0;
@@ -67,12 +68,8 @@ function logging(): Plugin {
 			if (matchesGitignore) return;
 
 			const changedFile = file.slice(server.config.root.length + 1);
-			const affectedModules = [...new Set(modules.map((module) => module.url))];
-			server.config.logger.info([
-				`HMR ${type}: ${changedFile}`,
-				`  affected modules (${affectedModules.length}):`,
-				...affectedModules.map((module) => `  - ${module}`),
-			].join("\n"));
+			const duration = Math.max(0, Date.now() - timestamp);
+			server.config.logger.info(`HMR ${type}: ${changedFile} in ${duration}ms`);
 		},
 	};
 }

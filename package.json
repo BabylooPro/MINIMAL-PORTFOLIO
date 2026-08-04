@@ -9,7 +9,9 @@
 	},
 	"packageManager": "pnpm@11.13.1",
 	"scripts": {
-		"dev": "vite",
+		"dev": "node scripts/dev.mjs",
+		"dev:vite": "vite --clearScreen false",
+		"typecheck:watch": "tsc -b --pretty false --watch --preserveWatchOutput",
 		"preview": "vite preview",
 
 		"build": "pnpm refresh && pnpm build:static",
