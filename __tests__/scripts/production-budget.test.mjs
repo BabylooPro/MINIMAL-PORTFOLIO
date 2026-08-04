@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { performanceBudget } from "@/config/performance-budget.mjs";
-import { extractInlineScript, gzipBytes, measureProductionOutput, projectDirectory } from "@/scripts/production-budget/measure.mjs";
+import { extractInlineScript, gzipBytes, measureProductionOutput } from "@/scripts/production-budget/measure.mjs";
 import { renderMarkdownReport, writeMarkdownReport } from "@/scripts/production-budget/report.mjs";
 import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mjs";
 
@@ -35,8 +36,8 @@ async function writeFixtureFile(outputDirectory, relativePath, source) {
 }
 
 async function createCompleteOutput(t, options = {}) {
-	const outputDirectory = await mkdtemp(path.join(projectDirectory, ".test-production-budget-"));
-	const mediaSourceDirectory = await mkdtemp(path.join(projectDirectory, ".test-production-budget-media-"));
+	const outputDirectory = await mkdtemp(path.join(tmpdir(), "test-production-budget-"));
+	const mediaSourceDirectory = await mkdtemp(path.join(tmpdir(), "test-production-budget-media-"));
 
 	t.after(async () => {
 		await rm(outputDirectory, { force: true, recursive: true });
