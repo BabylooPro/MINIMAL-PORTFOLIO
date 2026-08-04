@@ -44,6 +44,7 @@ const skillGroupLabels = {
 	databases: "Datenbanken",
 	"devops-cloud": "DevOps & Cloud",
 	practices: "Praktiken",
+	platform: "Plattformen",
 } satisfies LocalizedSkillGroupLabels;
 
 export const portfolioDe = {

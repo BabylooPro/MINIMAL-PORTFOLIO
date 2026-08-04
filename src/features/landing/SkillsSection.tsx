@@ -17,7 +17,7 @@ export function SkillsSection({ skillGroups, title }: SkillsSectionProps) {
 				{skillGroups.map((skillGroup) => (
 					<li key={skillGroup.id} className="leading-5">
 						<h3 className="inline font-semibold text-(--foreground-color)">
-							{skillGroup.label}:
+							{skillGroup.label}:{" "}
 						</h3>
 
 						<span>{skillGroup.skills.join(", ")}</span>

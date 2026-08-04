@@ -5,10 +5,11 @@ type SkillGroupMetadata = Pick<SkillGroup, "id" | "skills">;
 const sharedSkillGroups = [
 	{ id: "programming-languages", skills: ["C#", "Python", "Swift", "JavaScript", "TypeScript"] },
 	{ id: "backend", skills: [".NET", "ASP.NET Core", "Django", "Node.js", "Express.js"] },
-	{ id: "frontend", skills: ["React.js", "Next.js", "HTML", "CSS", "Tailwind CSS"] },
+	{ id: "frontend", skills: ["React.js", "Next.js", "HTML", "CSS", "Tailwind CSS", "SwiftUI", "Flutter"] },
 	{ id: "databases", skills: ["MySQL", "NoSQL", "SQLite", "PostgreSQL"] },
 	{ id: "devops-cloud", skills: ["Docker", "GitHub Actions", "AWS", "GCP", "Azure", "Kubernetes"] },
 	{ id: "practices", skills: ["REST APIs", "CI/CD", "TDD", "BDD", "Agile/Scrum", "HERMES"] },
+	{ id: "platform", skills: ["Windows", "MacOS", "Linux"] },
 ] as const satisfies readonly SkillGroupMetadata[];
 
 type SkillGroupId = (typeof sharedSkillGroups)[number]["id"];
