@@ -54,6 +54,15 @@ function logging(): Plugin {
 				next();
 			});
 		},
+		hotUpdate({ type, file, modules, server }) {
+			const changedFile = file.slice(server.config.root.length + 1);
+			const affectedModules = [...new Set(modules.map((module) => module.url))];
+			server.config.logger.info([
+				`HMR ${type}: ${changedFile}`,
+				`  affected modules (${affectedModules.length}):`,
+				...affectedModules.map((module) => `  - ${module}`),
+			].join("\n"));
+		},
 	};
 }
 
@@ -177,9 +186,13 @@ export default defineConfig({
 		alias: aliases,
 	},
 	server: {
+		strictPort: true,
 		forwardConsole: {
 			unhandledErrors: true,
 			logLevels: ["warn", "error"],
+		},
+		warmup: {
+			clientFiles: ["./app/client/entry.tsx", "./app/client/site-controller.ts"],
 		},
 		watch: {
 			ignored: ["**/.test-production-budget-*/**", "**/.test-production-budget-media-*/**"],
