@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import type { ExternalLink } from "@/types/portfolio";
+import type { ExternalLink } from "@/src/types/portfolio";
 
-import { isExternalHttpLink } from "@/utils/isExternalHttpLink";
+import { isExternalHttpLink } from "@/src/utils/isExternalHttpLink";
 
 export function renderTextWithPortfolioLinks(text: string, links: readonly ExternalLink[]): ReactNode[] {
 	const content: ReactNode[] = [];

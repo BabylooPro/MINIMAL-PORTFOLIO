@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import test from "node:test";
 
-import { createGeneratedSideProject, refreshSideProjects } from "../../scripts/refresh/side-projects.mjs";
+import { createGeneratedSideProject, refreshSideProjects } from "@/scripts/refresh/side-projects.mjs";
 
 const configuration = {
 	repositories: [

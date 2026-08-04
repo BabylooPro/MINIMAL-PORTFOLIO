@@ -3,7 +3,7 @@ import { NotFoundPage } from "@/app/pages/not-found/page";
 import PortfolioPage from "@/app/pages/portfolio/page";
 import { type AppRoute, getRouteLocale } from "@/app/routing/routes";
 
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 type PageRendererProps = { dictionary: Dictionary; route: AppRoute };
 

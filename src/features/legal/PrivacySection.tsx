@@ -1,5 +1,5 @@
-import { Section, SectionHeading } from "@/components/ui/Section";
-import type { Messages } from "@/lib/i18n/messages/types";
+import { Section, SectionHeading } from "@/src/components/ui/Section";
+import type { Messages } from "@/src/lib/i18n/messages/types";
 
 const privacyPolicyUrls = {
 	cloudflare: "https://www.cloudflare.com/privacypolicy/",

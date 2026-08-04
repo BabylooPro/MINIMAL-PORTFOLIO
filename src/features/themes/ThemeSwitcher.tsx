@@ -1,9 +1,9 @@
-import { MoonIcon } from "@/components/icons/MoonIcon";
-import { SunIcon } from "@/components/icons/SunIcon";
-import { SystemIcon } from "@/components/icons/SystemIcon";
-import { ChoiceSwitcher } from "@/components/ui/ChoiceSwitcher";
+import { MoonIcon } from "@/src/components/icons/MoonIcon";
+import { SunIcon } from "@/src/components/icons/SunIcon";
+import { SystemIcon } from "@/src/components/icons/SystemIcon";
+import { ChoiceSwitcher } from "@/src/components/ui/ChoiceSwitcher";
 
-import type { Messages } from "@/lib/i18n/messages/types";
+import type { Messages } from "@/src/lib/i18n/messages/types";
 
 type ThemePreference = "light" | "dark" | "system";
 

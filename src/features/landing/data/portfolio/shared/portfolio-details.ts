@@ -1,4 +1,4 @@
-import type { Portfolio } from "@/types/portfolio";
+import type { Portfolio } from "@/src/types/portfolio";
 
 export const sharedPortfolioDetails = {
 	name: "Max Remy",

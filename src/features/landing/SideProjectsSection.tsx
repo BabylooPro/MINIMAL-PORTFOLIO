@@ -1,12 +1,12 @@
-import { Section, SectionHeading } from "@/components/ui/Section";
-import sideProjects from "@/features/landing/generated/side-projects.json";
+import { Section, SectionHeading } from "@/src/components/ui/Section";
+import sideProjects from "@/src/features/landing/generated/side-projects.json";
 
-import type { Locale } from "@/lib/i18n/config";
+import type { Locale } from "@/src/lib/i18n/config";
 
-import { formatSideProjectDate } from "@/lib/i18n/format";
+import { formatSideProjectDate } from "@/src/lib/i18n/format";
 
-import type { Messages } from "@/lib/i18n/messages/types";
-import type { GeneratedSideProject } from "@/types/side-projects";
+import type { Messages } from "@/src/lib/i18n/messages/types";
+import type { GeneratedSideProject } from "@/src/types/side-projects";
 
 type SideProjectsSectionProps = { locale: Locale; content: Messages["sideProjects"]; title: Messages["sections"]["sideProjects"] };
 

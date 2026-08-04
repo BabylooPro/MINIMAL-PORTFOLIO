@@ -1,16 +1,16 @@
 import path from "node:path";
 
-import { readCache, writeCache } from "./side-projects/cache.mjs";
-import { SideProjectsError } from "./side-projects/errors.mjs";
-import { fetchRepositories } from "./side-projects/github-client.mjs";
-import { buildSnapshot, readConfiguration, readSnapshot, writeSnapshot } from "./side-projects/snapshot.mjs";
-import { snapshotMatchesConfiguration } from "./side-projects/validation.mjs";
+import { readCache, writeCache } from "@/scripts/refresh/side-projects/cache.mjs";
+import { SideProjectsError } from "@/scripts/refresh/side-projects/errors.mjs";
+import { fetchRepositories } from "@/scripts/refresh/side-projects/github-client.mjs";
+import { buildSnapshot, readConfiguration, readSnapshot, writeSnapshot } from "@/scripts/refresh/side-projects/snapshot.mjs";
+import { snapshotMatchesConfiguration } from "@/scripts/refresh/side-projects/validation.mjs";
 
 const REQUEST_TIMEOUT_MS = 10_000;
 
-export { SideProjectsError } from "./side-projects/errors.mjs";
-export { buildSnapshot } from "./side-projects/snapshot.mjs";
-export { createGeneratedSideProject, isGitHubRepository } from "./side-projects/validation.mjs";
+export { SideProjectsError } from "@/scripts/refresh/side-projects/errors.mjs";
+export { buildSnapshot } from "@/scripts/refresh/side-projects/snapshot.mjs";
+export { createGeneratedSideProject, isGitHubRepository } from "@/scripts/refresh/side-projects/validation.mjs";
 
 function githubUsersFor(configuration) {
 	return [...new Map(configuration.repositories.map((repository) => [repository.githubUser.toLowerCase(), repository.githubUser])).values()];

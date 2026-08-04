@@ -1,4 +1,4 @@
-import { createPermanentError } from "./errors.mjs";
+import { createPermanentError } from "@/scripts/refresh/side-projects/errors.mjs";
 
 export const MAXIMUM_PROJECTS = 6;
 

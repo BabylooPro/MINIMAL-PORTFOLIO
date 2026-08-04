@@ -3,8 +3,14 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const projectDirectory = fileURLToPath(new URL("..", import.meta.url));
-const aliases = [{ prefix: "@/app/", directory: "app" }, { prefix: "@/", directory: "src" }];
-const extensions = ["", ".ts", ".tsx", ".js", ".json"];
+const aliases = [
+	{ prefix: "@/app/", directory: "app" },
+	{ prefix: "@/src/", directory: "src" },
+	{ prefix: "@/config/", directory: "config" },
+	{ prefix: "@/scripts/", directory: "scripts" },
+	{ prefix: "@/tests/", directory: "__tests__" },
+];
+const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".json"];
 
 function resolveAlias(specifier) {
 	const alias = aliases.find(({ prefix }) => specifier.startsWith(prefix));

@@ -1,7 +1,7 @@
 import RootLayout from "@/app/layout";
-import { getLocalePath, type Locale } from "@/lib/i18n/config";
+import { getLocalePath, type Locale } from "@/src/lib/i18n/config";
 
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 type NotFoundPageProps = { dictionary: Dictionary; locale: Locale };
 

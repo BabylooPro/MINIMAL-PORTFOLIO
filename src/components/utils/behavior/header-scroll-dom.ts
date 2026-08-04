@@ -1,4 +1,7 @@
-import { getDesktopHeaderPadding, getHeaderIdentityProgress, type HeaderPadding, headerScrollConfig, interpolate, isMobileDetailsCollapsed } from "@/components/utils/behavior/header-scroll-state";
+import {
+	getDesktopHeaderPadding, getHeaderIdentityProgress, type HeaderPadding,
+	headerScrollConfig, interpolate, isMobileDetailsCollapsed
+} from "@/src/components/utils/behavior/header-scroll-state";
 
 export type CollapsibleElement = {
 	content: HTMLElement | null;

@@ -1,10 +1,10 @@
-import { EarIcon } from "@/components/icons/EarIcon";
-import { MessageIcon } from "@/components/icons/MessageIcon";
-import { PersonVoiceIcon } from "@/components/icons/PersonVoiceIcon";
-import { Section, SectionHeading } from "@/components/ui/Section";
-import { Tooltip } from "@/components/ui/Tooltip";
+import { EarIcon } from "@/src/components/icons/EarIcon";
+import { MessageIcon } from "@/src/components/icons/MessageIcon";
+import { PersonVoiceIcon } from "@/src/components/icons/PersonVoiceIcon";
+import { Section, SectionHeading } from "@/src/components/ui/Section";
+import { Tooltip } from "@/src/components/ui/Tooltip";
 
-import type { Language } from "@/types/portfolio";
+import type { Language } from "@/src/types/portfolio";
 
 type LanguagesSectionProps = {
 	title: string;

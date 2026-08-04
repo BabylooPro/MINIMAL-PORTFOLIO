@@ -1,9 +1,9 @@
-import { ArrowUpIcon } from "@/components/icons/ArrowUpIcon";
-import { Container } from "@/components/ui/Container";
-import { ThemeSwitcher } from "@/features/themes/ThemeSwitcher";
-import { getLegalPagePath, type LegalPageId, type Locale } from "@/lib/i18n/config";
+import { ArrowUpIcon } from "@/src/components/icons/ArrowUpIcon";
+import { Container } from "@/src/components/ui/Container";
+import { ThemeSwitcher } from "@/src/features/themes/ThemeSwitcher";
+import { getLegalPagePath, type LegalPageId, type Locale } from "@/src/lib/i18n/config";
 
-import type { Messages } from "@/lib/i18n/messages/types";
+import type { Messages } from "@/src/lib/i18n/messages/types";
 
 type FooterProps = {
 	company: string;

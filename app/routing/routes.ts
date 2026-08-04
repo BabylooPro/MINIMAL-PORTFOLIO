@@ -1,5 +1,8 @@
-import { defaultLocale, getLegalPageFromPathname, getLocaleFromPathname, type LegalPageId, type Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import {
+	defaultLocale, getLegalPageFromPathname, getLocaleFromPathname,
+	type LegalPageId, type Locale
+} from "@/src/lib/i18n/config";
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 export type AppRoute =
 	| { kind: "root" }

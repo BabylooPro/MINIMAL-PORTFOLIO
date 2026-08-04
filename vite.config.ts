@@ -6,7 +6,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 
 import { defineConfig, type Plugin } from "vite";
-import { mediaOrigin } from "./src/lib/media-origin.js";
+import { mediaOrigin } from "#src/lib/media-origin.js";
 
 const themeBootstrapPath = fileURLToPath(new URL("./src/features/themes/theme-bootstrap.js", import.meta.url));
 const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-redirect.js", import.meta.url));
@@ -152,8 +152,20 @@ export default defineConfig({
 				replacement: fileURLToPath(new URL("./app", import.meta.url)),
 			},
 			{
-				find: "@",
+				find: "@/src",
 				replacement: fileURLToPath(new URL("./src", import.meta.url)),
+			},
+			{
+				find: "@/config",
+				replacement: fileURLToPath(new URL("./config", import.meta.url)),
+			},
+			{
+				find: "@/scripts",
+				replacement: fileURLToPath(new URL("./scripts", import.meta.url)),
+			},
+			{
+				find: "@/tests",
+				replacement: fileURLToPath(new URL("./__tests__", import.meta.url)),
 			},
 		],
 	},

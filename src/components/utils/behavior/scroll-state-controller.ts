@@ -1,24 +1,10 @@
 import {
-	getScrollStateElements,
-	type HeaderIdentityHeights,
-	markCollapsibleElementsReady,
-	measureCollapsibleElements,
-	measureHeaderIdentity,
-	prepareForPrint,
-	readInitialHeaderPadding,
-	resetCollapsibleElements,
-	resetHeaderIdentityStyles,
-	returnFocusToPageTop,
-	updateBackToTopVisibility,
-	updateCollapsibleElements,
-	updateDesktopScrollState,
-	updateForcedCompactDesktopHeader,
-	updateForcedCompactMobileHeader,
-	updateHeaderIdentity,
-	updateMobileScrollState,
-} from "@/components/utils/behavior/header-scroll-dom";
-
-import { getDesktopScrollProgress, type HeaderPadding, isAtPageBottom } from "@/components/utils/behavior/header-scroll-state";
+	getScrollStateElements, type HeaderIdentityHeights, markCollapsibleElementsReady, measureCollapsibleElements, measureHeaderIdentity,
+	prepareForPrint, readInitialHeaderPadding, resetCollapsibleElements, resetHeaderIdentityStyles, returnFocusToPageTop,
+	updateBackToTopVisibility, updateCollapsibleElements, updateDesktopScrollState, updateForcedCompactDesktopHeader,
+	updateForcedCompactMobileHeader, updateHeaderIdentity, updateMobileScrollState,
+} from "@/src/components/utils/behavior/header-scroll-dom";
+import { getDesktopScrollProgress, type HeaderPadding, isAtPageBottom } from "@/src/components/utils/behavior/header-scroll-state";
 
 let isScrollStateControllerInitialized = false;
 

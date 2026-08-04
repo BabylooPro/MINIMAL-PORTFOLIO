@@ -1,11 +1,11 @@
-import { Container } from "@/components/ui/Container";
-import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { Container } from "@/src/components/ui/Container";
+import { LanguageSwitcher } from "@/src/components/ui/LanguageSwitcher";
 
-import type { LegalPageId, Locale } from "@/lib/i18n/config";
-import type { Messages } from "@/lib/i18n/messages/types";
-import type { Portfolio } from "@/types/portfolio";
+import type { LegalPageId, Locale } from "@/src/lib/i18n/config";
+import type { Messages } from "@/src/lib/i18n/messages/types";
+import type { Portfolio } from "@/src/types/portfolio";
 
-import { isExternalHttpLink } from "@/utils/isExternalHttpLink";
+import { isExternalHttpLink } from "@/src/utils/isExternalHttpLink";
 
 type HeaderProps = {
 	currentLocale: Locale;

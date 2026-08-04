@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 
-import { performanceBudget } from "../../config/performance-budget.mjs";
+import { performanceBudget } from "@/config/performance-budget.mjs";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 

@@ -1,4 +1,4 @@
-import { rootUrl } from "../config/site.mjs";
+import { rootUrl } from "@/config/site.mjs";
 
 const [siteArgument, ...extraArguments] = process.argv.slice(2);
 if (!siteArgument || extraArguments.length > 0) throw new Error(`Usage: pnpm verify:cloudflare <${rootUrl}>`);

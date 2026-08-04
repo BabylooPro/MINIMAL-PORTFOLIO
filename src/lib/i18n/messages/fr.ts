@@ -1,4 +1,4 @@
-import type { Messages } from "@/lib/i18n/messages/types";
+import type { Messages } from "@/src/lib/i18n/messages/types";
 
 export const frMessages = {
 	meta: {

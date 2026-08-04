@@ -1,9 +1,9 @@
-import { type Locale, localeConfigs, rootUrl } from "@/lib/i18n/config";
+import { type Locale, localeConfigs, rootUrl } from "@/src/lib/i18n/config";
 
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
-import { socialImage } from "@/lib/seo/social-image";
-import { isExternalHttpLink } from "@/utils/isExternalHttpLink";
+import { socialImage } from "@/src/lib/seo/social-image";
+import { isExternalHttpLink } from "@/src/utils/isExternalHttpLink";
 
 export function createStructuredData(locale: Locale, dictionary: Dictionary, pageUrl = localeConfigs[locale].absoluteUrl): object {
 	const email = dictionary.portfolio.links.find((link) => link.href.startsWith("mailto:"));

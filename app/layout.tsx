@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
-import { Container } from "@/components/ui/Container";
-import { Header } from "@/components/ui/Header";
-import { Footer } from "@/features/landing/Footer";
+import { Container } from "@/src/components/ui/Container";
+import { Header } from "@/src/components/ui/Header";
+import { Footer } from "@/src/features/landing/Footer";
 
-import type { LegalPageId, Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { LegalPageId, Locale } from "@/src/lib/i18n/config";
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 import "@/app/styles/global.css";
 

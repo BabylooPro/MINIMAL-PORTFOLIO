@@ -2,12 +2,17 @@ import { mkdir, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { rootUrl } from "../config/site.mjs";
+import { rootUrl } from "@/config/site.mjs";
 
-import { escapeHtml } from "./prerender/html.mjs";
-import { getSiteControllerScript } from "./prerender/page-validation.mjs";
-import { getAlternateLinks, getLanguageSwitcherLinks, renderAlternateLinks, renderMetadata, renderSitemap, routeOutputPath } from "./prerender/seo.mjs";
-import { getLocaleRedirectScript, getReactEntryScript, listFiles, readSiteControllerAssets, removeLocaleRedirect, removeReactAndUnusedModules, removeUnusedJavaScriptFiles, validatePublicAssets, validateStaticOutput } from "./prerender/validation.mjs";
+import { escapeHtml } from "@/scripts/prerender/html.mjs";
+import { getSiteControllerScript } from "@/scripts/prerender/page-validation.mjs";
+import { getAlternateLinks, getLanguageSwitcherLinks, renderAlternateLinks,
+	renderMetadata, renderSitemap, routeOutputPath
+} from "@/scripts/prerender/seo.mjs";
+import { getLocaleRedirectScript, getReactEntryScript, listFiles, readSiteControllerAssets,
+	removeLocaleRedirect, removeReactAndUnusedModules, removeUnusedJavaScriptFiles,
+	validatePublicAssets, validateStaticOutput
+} from "@/scripts/prerender/validation.mjs";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectDirectory = path.resolve(scriptDirectory, "..");

@@ -1,7 +1,7 @@
-import { Section, SectionHeading } from "@/components/ui/Section";
-import type { Locale } from "@/lib/i18n/config";
-import { formatPortfolioDate } from "@/lib/i18n/format";
-import type { Experience } from "@/types/portfolio";
+import { Section, SectionHeading } from "@/src/components/ui/Section";
+import type { Locale } from "@/src/lib/i18n/config";
+import { formatPortfolioDate } from "@/src/lib/i18n/format";
+import type { Experience } from "@/src/types/portfolio";
 
 type ExperienceSectionProps = {
 	locale: Locale;

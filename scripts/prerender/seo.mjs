@@ -1,7 +1,7 @@
 import path from "node:path";
 
-import { rootUrl } from "../../config/site.mjs";
-import { escapeHtml } from "./html.mjs";
+import { rootUrl } from "@/config/site.mjs";
+import { escapeHtml } from "@/scripts/prerender/html.mjs";
 
 export function renderMetadata(page, siteName) {
 	const escapedTitle = escapeHtml(page.title);

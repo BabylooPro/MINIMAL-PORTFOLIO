@@ -1,14 +1,14 @@
 import RootLayout from "@/app/layout";
 
-import { ExperienceSection } from "@/features/landing/ExperienceSection";
-import { LanguagesSection } from "@/features/landing/LanguagesSection";
-import { ProfileSection } from "@/features/landing/ProfileSection";
-import { ProofWorkSection } from "@/features/landing/ProofWorkSection";
-import { SideProjectsSection } from "@/features/landing/SideProjectsSection";
-import { SkillsSection } from "@/features/landing/SkillsSection";
+import { ExperienceSection } from "@/src/features/landing/ExperienceSection";
+import { LanguagesSection } from "@/src/features/landing/LanguagesSection";
+import { ProfileSection } from "@/src/features/landing/ProfileSection";
+import { ProofWorkSection } from "@/src/features/landing/ProofWorkSection";
+import { SideProjectsSection } from "@/src/features/landing/SideProjectsSection";
+import { SkillsSection } from "@/src/features/landing/SkillsSection";
 
-import type { Locale } from "@/lib/i18n/config";
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Locale } from "@/src/lib/i18n/config";
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 type PortfolioPageProps = {
 	locale: Locale;

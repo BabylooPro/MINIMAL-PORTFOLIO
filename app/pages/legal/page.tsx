@@ -1,10 +1,10 @@
 import RootLayout from "@/app/layout";
 
-import { LegalNoticeSection } from "@/features/legal/LegalNoticeSection";
-import { PrivacySection } from "@/features/legal/PrivacySection";
-import { getLocalePath, type LegalPageId, type Locale } from "@/lib/i18n/config";
+import { LegalNoticeSection } from "@/src/features/legal/LegalNoticeSection";
+import { PrivacySection } from "@/src/features/legal/PrivacySection";
+import { getLocalePath, type LegalPageId, type Locale } from "@/src/lib/i18n/config";
 
-import type { Dictionary } from "@/lib/i18n/dictionaries";
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 type LegalPageProps = { dictionary: Dictionary; locale: Locale; page: LegalPageId };
 

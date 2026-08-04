@@ -1,6 +1,6 @@
-import type { Locale } from "@/lib/i18n/config";
-import { localeConfigs } from "@/lib/i18n/config";
-import type { DatePrecision } from "@/types/portfolio";
+import type { Locale } from "@/src/lib/i18n/config";
+import { localeConfigs } from "@/src/lib/i18n/config";
+import type { DatePrecision } from "@/src/types/portfolio";
 
 function parsePortfolioDate(value: string): Date {
 	if (/^\d{4}$/.test(value)) return new Date(`${value}-01-01T00:00:00Z`);

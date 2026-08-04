@@ -3,6 +3,9 @@
 	"private": true,
 	"version": "1.0.1",
 	"type": "module",
+	"imports": {
+		"#src/*": "./src/*"
+	},
 	"packageManager": "pnpm@11.13.1",
 	"scripts": {
 		"dev": "vite",
@@ -13,8 +16,8 @@
 		"build:client": "vite build",
 		"build:server": "vite build --ssr app/server/entry.tsx --outDir dist/server",
 
-		"prerender": "node scripts/prerender.mjs",
-		"refresh": "node scripts/refresh.mjs",
+		"prerender": "node --import ./scripts/register-aliases.mjs scripts/prerender.mjs",
+		"refresh": "node --import ./scripts/register-aliases.mjs scripts/refresh.mjs",
 
 		"test": "node --import ./scripts/register-aliases.mjs --experimental-strip-types --test",
 		"test:browser": "playwright test",
@@ -25,13 +28,13 @@
 		"format": "biome format --write .",
 		"typecheck": "tsc -b --pretty false",
 
-		"check:production-budget": "node scripts/production-budget.mjs",
-		"report:production-budget": "pnpm build && node scripts/production-budget.mjs --write-report",
+		"check:production-budget": "node --import ./scripts/register-aliases.mjs scripts/production-budget.mjs",
+		"report:production-budget": "pnpm build && node --import ./scripts/register-aliases.mjs scripts/production-budget.mjs --write-report",
 
 		"validate": "pnpm typecheck && pnpm check && pnpm test && pnpm build",
 
 		"verify:production": "pnpm validate && pnpm test:browser && pnpm check:production-budget",
-		"verify:cloudflare": "node scripts/verify-cloudflare-deployment.mjs"
+		"verify:cloudflare": "node --import ./scripts/register-aliases.mjs scripts/verify-cloudflare-deployment.mjs"
 	},
 	"dependencies": {
 		"react": "^19.2.7",

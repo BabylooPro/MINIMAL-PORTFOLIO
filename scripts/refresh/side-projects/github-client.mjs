@@ -1,4 +1,4 @@
-import { createPermanentError, createTemporaryError, SideProjectsError } from "./errors.mjs";
+import { createPermanentError, createTemporaryError, SideProjectsError } from "@/scripts/refresh/side-projects/errors.mjs";
 
 function isTemporaryStatus(response) {
 	return (

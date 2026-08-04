@@ -1,8 +1,8 @@
-import { createLocalizedExperiences, type LocalizedExperienceContent } from "@/features/landing/data/portfolio/shared/experiences";
-import { sharedPortfolioDetails } from "@/features/landing/data/portfolio/shared/portfolio-details";
-import { createSkillGroups, type LocalizedSkillGroupLabels } from "@/features/landing/data/portfolio/shared/skill-groups";
+import { createLocalizedExperiences, type LocalizedExperienceContent } from "@/src/features/landing/data/portfolio/shared/experiences";
+import { sharedPortfolioDetails } from "@/src/features/landing/data/portfolio/shared/portfolio-details";
+import { createSkillGroups, type LocalizedSkillGroupLabels } from "@/src/features/landing/data/portfolio/shared/skill-groups";
 
-import type { Portfolio } from "@/types/portfolio";
+import type { Portfolio } from "@/src/types/portfolio";
 
 const experienceContent = {
 	"muum-software-engineer": {

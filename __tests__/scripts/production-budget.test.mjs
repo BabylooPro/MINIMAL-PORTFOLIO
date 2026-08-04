@@ -4,10 +4,10 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { performanceBudget } from "../../config/performance-budget.mjs";
-import { extractInlineScript, gzipBytes, measureProductionOutput, projectDirectory } from "../../scripts/production-budget/measure.mjs";
-import { renderMarkdownReport, writeMarkdownReport } from "../../scripts/production-budget/report.mjs";
-import { validatePerformanceBudget } from "../../scripts/production-budget/validate.mjs";
+import { performanceBudget } from "@/config/performance-budget.mjs";
+import { extractInlineScript, gzipBytes, measureProductionOutput, projectDirectory } from "@/scripts/production-budget/measure.mjs";
+import { renderMarkdownReport, writeMarkdownReport } from "@/scripts/production-budget/report.mjs";
+import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mjs";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 

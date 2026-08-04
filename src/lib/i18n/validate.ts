@@ -1,9 +1,9 @@
-import sideProjects from "@/features/landing/generated/side-projects.json";
-import { dictionaries } from "@/lib/i18n/dictionaries";
-import { isValidPortfolioDate } from "@/lib/i18n/format";
-import { validateSideProjectTranslations } from "@/lib/i18n/side-projects-validation";
+import sideProjects from "@/src/features/landing/generated/side-projects.json";
+import { dictionaries } from "@/src/lib/i18n/dictionaries";
+import { isValidPortfolioDate } from "@/src/lib/i18n/format";
+import { validateSideProjectTranslations } from "@/src/lib/i18n/side-projects-validation";
 
-import type { Portfolio } from "@/types/portfolio";
+import type { Portfolio } from "@/src/types/portfolio";
 
 type Scalar = string | number | boolean | null | undefined;
 

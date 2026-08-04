@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
-import { createPermanentError } from "./errors.mjs";
-import { createGeneratedSideProject, isGitHubRepository, slugForSelection, validateConfiguration, validateSnapshot } from "./validation.mjs";
+import { createPermanentError } from "@/scripts/refresh/side-projects/errors.mjs";
+import { createGeneratedSideProject, isGitHubRepository, slugForSelection, validateConfiguration, validateSnapshot } from "@/scripts/refresh/side-projects/validation.mjs";
 
 export async function readJsonFile(filePath, label, required) {
 	let serialized;

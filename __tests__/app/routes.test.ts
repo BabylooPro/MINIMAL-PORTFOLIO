@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getRouteFromPathname } from "../../app/routing/routes.ts";
+import { getRouteFromPathname } from "@/app/routing/routes.ts";
 
 test("resolves the root portfolio route", () => {
 	assert.deepEqual(getRouteFromPathname("/"), { kind: "root" });

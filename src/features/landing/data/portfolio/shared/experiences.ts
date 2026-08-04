@@ -1,4 +1,4 @@
-import type { Experience } from "@/types/portfolio";
+import type { Experience } from "@/src/types/portfolio";
 
 type ExperienceMetadata = Omit<
 	Pick<Experience, "id" | "company" | "startDate" | "endDate" | "datePrecision">,

@@ -1,4 +1,4 @@
-import type { SkillGroup } from "@/types/portfolio";
+import type { SkillGroup } from "@/src/types/portfolio";
 
 type SkillGroupMetadata = Pick<SkillGroup, "id" | "skills">;
 

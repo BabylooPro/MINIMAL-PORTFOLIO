@@ -1,11 +1,11 @@
-import { InfoIcon } from "@/components/icons/InfoIcon";
-import { Section, SectionHeading } from "@/components/ui/Section";
-import { Tooltip } from "@/components/ui/Tooltip";
+import { InfoIcon } from "@/src/components/icons/InfoIcon";
+import { Section, SectionHeading } from "@/src/components/ui/Section";
+import { Tooltip } from "@/src/components/ui/Tooltip";
 
-import type { Messages } from "@/lib/i18n/messages/types";
-import { getMediaUrl } from "@/lib/media-origin";
-import type { ExternalLink } from "@/types/portfolio";
-import { renderTextWithPortfolioLinks } from "@/utils/renderTextWithPortfolioLinks";
+import type { Messages } from "@/src/lib/i18n/messages/types";
+import { getMediaUrl } from "@/src/lib/media-origin";
+import type { ExternalLink } from "@/src/types/portfolio";
+import { renderTextWithPortfolioLinks } from "@/src/utils/renderTextWithPortfolioLinks";
 
 type ProofWorkSectionProps = {
 	content: Messages["proofWork"];

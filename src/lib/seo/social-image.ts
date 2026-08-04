@@ -1,4 +1,4 @@
-import { rootUrl } from "@/lib/i18n/config";
+import { rootUrl } from "@/src/lib/i18n/config";
 
 const defaultSocialImageUrl = new URL("/og-image.jpg", rootUrl).href;
 const configuredSocialImageUrl = import.meta.env.VITE_SOCIAL_IMAGE_URL ?? defaultSocialImageUrl;

@@ -1,8 +1,8 @@
-import { rootUrl } from "../../config/site.mjs";
+import { rootUrl } from "@/config/site.mjs";
 import { escapeHtml, getAnchorElements, getAttribute, getLinkElements,
 	getMetaElements, getMetaHttpEquivElements, getMetaPropertyElements,
 	getScriptElements, hasAttribute, isJsonLdScript, isModuleScript
-} from "./html.mjs";
+} from "@/scripts/prerender/html.mjs";
 
 export function getSiteControllerScript(html) {
 	const controllerScripts = getScriptElements(html).filter((scriptElement) => hasAttribute(scriptElement, "data-site-controller"));
@@ -16,9 +16,8 @@ export function getSiteControllerScript(html) {
 }
 
 function assertSingleMetadata(elements, content, description) {
-	if (elements.length !== 1 || getAttribute(elements[0], "content") !== escapeHtml(content)) {
+	if (elements.length !== 1 || getAttribute(elements[0], "content") !== escapeHtml(content))
 		throw new Error(`The production HTML has an invalid ${description}.`);
-	}
 }
 
 function parseStructuredData(indexHtml, route) {

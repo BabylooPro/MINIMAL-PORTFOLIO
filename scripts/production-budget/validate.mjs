@@ -1,4 +1,4 @@
-import { performanceBudget } from "../../config/performance-budget.mjs";
+import { performanceBudget } from "@/config/performance-budget.mjs";
 
 function createCheck({ id, section, label, current, maximum, passed, detail = null }) {
 	return { id, section, label, current, maximum, status: passed ? "PASS" : "FAIL", detail };

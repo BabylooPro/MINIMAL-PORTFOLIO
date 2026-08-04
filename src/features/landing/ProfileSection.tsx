@@ -1,4 +1,4 @@
-import { Section, SectionHeading } from "@/components/ui/Section";
+import { Section, SectionHeading } from "@/src/components/ui/Section";
 
 type ProfileSectionProps = {
 	title: string;

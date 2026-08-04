@@ -1,5 +1,5 @@
-import { Section, SectionHeading } from "@/components/ui/Section";
-import type { SkillGroup } from "@/types/portfolio";
+import { Section, SectionHeading } from "@/src/components/ui/Section";
+import type { SkillGroup } from "@/src/types/portfolio";
 
 type SkillsSectionProps = {
 	title: string;
