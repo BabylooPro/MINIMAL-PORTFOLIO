@@ -38,43 +38,47 @@ export function initializeProofWorkController(): void {
 		const videos = parseVideos(carousel.dataset.videos);
 		const counterTemplate = carousel.dataset.counterTemplate;
 		const videoLabel = carousel.dataset.videoLabel;
+
 		const previousButton = carousel.querySelector<HTMLButtonElement>('[data-proof-work-direction="previous"]');
 		const nextButton = carousel.querySelector<HTMLButtonElement>('[data-proof-work-direction="next"]');
 		const previousPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-preview="previous"]');
 		const nextPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-preview="next"]');
+
+		const transitionPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-transition-preview]');
+		const transitionLoader = carousel.querySelector<HTMLElement>('[data-proof-work-transition-loader]');
+
 		const player = carousel.querySelector<HTMLVideoElement>("[data-proof-work-player]");
 		const source = player?.querySelector<HTMLSourceElement>("source");
 		const counter = carousel.querySelector<HTMLElement>("[data-proof-work-counter]");
 
 		if (
-			videos.length === 0 ||
-			!counterTemplate ||
-			!videoLabel ||
-			!previousButton ||
-			!nextButton ||
-			!previousPreview ||
-			!nextPreview ||
-			!player ||
-			!source ||
-			!counter
+			videos.length === 0 || !counterTemplate || !videoLabel ||
+			!previousButton || !nextButton || !previousPreview || !nextPreview ||
+			!transitionPreview || !transitionLoader ||
+			!player || !source || !counter
 		) return;
 
 		carousel.dataset.proofWorkInitialized = "true";
 
 		const videoPlayer = player;
 		const videoSource = source;
+
 		const previousPreviewImage = previousPreview;
 		const nextPreviewImage = nextPreview;
+		const transitionPreviewImage = transitionPreview;
+		const transitionLoaderElement = transitionLoader;
 		const counterElement = counter;
 		const previousControl = previousButton;
 		const nextControl = nextButton;
 		const counterTextTemplate = counterTemplate;
 		const playerLabel = videoLabel;
+
 		const squarePositionClasses = [...new Set(videos.map((video) => video.squarePosition))];
 
 		let activeIndex = 0;
 		let isPlayerVisible = false;
 		let playbackRequest = 0;
+		let transitionSource: string | null = null;
 
 		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -92,6 +96,32 @@ export function initializeProofWorkController(): void {
 		function setPreview(preview: HTMLImageElement, video: VideoDefinition): void {
 			preview.src = video.preview;
 			setSquarePosition(preview, video.squarePosition);
+		}
+
+		function showTransitionPreview(video: VideoDefinition): void {
+			setPreview(transitionPreviewImage, video);
+			transitionPreviewImage.hidden = false;
+			transitionLoaderElement.hidden = false;
+			videoPlayer.dataset.loading = "true";
+			transitionSource = new URL(video.source, document.baseURI).href;
+		}
+
+		function isCurrentTransition(): boolean {
+			return transitionSource !== null && transitionSource === videoPlayer.currentSrc;
+		}
+
+		function hideTransitionPreview(): void {
+			if (!isCurrentTransition()) return;
+
+			transitionPreviewImage.hidden = true;
+			transitionLoaderElement.hidden = true;
+			delete videoPlayer.dataset.loading;
+			transitionSource = null;
+		}
+
+		function hideTransitionLoader(): void {
+			if (!isCurrentTransition()) return;
+			transitionLoaderElement.hidden = true;
 		}
 
 		function shouldPlay(): boolean {
@@ -137,6 +167,7 @@ export function initializeProofWorkController(): void {
 
 		function switchVideo(offset: number): void {
 			activeIndex = (activeIndex + offset + videos.length) % videos.length;
+			showTransitionPreview(videoAt(activeIndex));
 			renderActiveVideo(true);
 		}
 
@@ -162,9 +193,13 @@ export function initializeProofWorkController(): void {
 
 		previousControl.addEventListener("click", () => switchVideo(-1));
 		nextControl.addEventListener("click", () => switchVideo(1));
+
 		videoPlayer.addEventListener("pointerenter", enablePlayerControls);
 		videoPlayer.addEventListener("pointerdown", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
+		videoPlayer.addEventListener("loadeddata", hideTransitionLoader);
+		videoPlayer.addEventListener("playing", hideTransitionPreview);
+		videoPlayer.addEventListener("error", hideTransitionLoader);
 		videoPlayer.addEventListener("ended", () => { if (isPlayerVisible && !document.hidden) switchVideo(1) });
 
 		document.addEventListener("visibilitychange", handleDocumentVisibility);

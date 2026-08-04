@@ -163,11 +163,32 @@ export function ProofWorkSection({ content, links, title }: ProofWorkSectionProp
 						data-proof-work-active-card
 					>
 						<div className="absolute -inset-px overflow-hidden rounded-lg bg-black">
+							<img
+								alt=""
+								aria-hidden="true"
+								className={`pointer-events-none absolute inset-0 z-10 size-full object-cover ${activeVideo.squarePosition}`}
+								data-proof-work-transition-preview
+								hidden
+								src={activeVideo.preview}
+							/>
+
+							<div
+								aria-hidden="true"
+								className="pointer-events-none absolute inset-0 z-20 grid place-items-center"
+								data-proof-work-transition-loader
+								hidden
+							>
+								<span className="size-20 animate-spin rounded-full border-[3px] border-white border-t-transparent motion-reduce:animate-none" />
+							</div>
+
 							<video
 								aria-label={`${content.video} 1`}
 								className={[
+									// NATIVE PLAYER UI
+									"scheme-dark",
 									// DEFAULT INLINE PLAYER
 									`block aspect-square w-full object-cover ${activeVideo.squarePosition}`,
+									"data-[loading=true]:opacity-0",
 									// FULLSCREEN PLAYER
 									"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
 									"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",

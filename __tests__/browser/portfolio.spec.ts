@@ -136,6 +136,8 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	await page.goto("/en/");
 
 	const player = page.locator("[data-proof-work-player]");
+	const transitionPreview = page.locator("[data-proof-work-transition-preview]");
+	const transitionLoader = page.locator("[data-proof-work-transition-loader]");
 
 	await expect(player).not.toHaveAttribute("controls");
 	await player.hover();
@@ -144,12 +146,18 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/1.mp4`);
 	await expect(player).toHaveClass(/object-\[50%_67%\]/);
+	await expect(player).toHaveCSS("color-scheme", "dark");
+	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/1\.jpg$/);
+	await expect(transitionLoader).toBeHidden();
+	await expect(transitionLoader.locator("span")).toHaveClass(/size-20/);
 
 	await page.locator('[data-proof-work-direction="next"]').click();
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
 	await expect(player).toHaveClass(/object-\[50%_72%\]/);
+	await expect(player).toHaveAttribute("data-loading", "true");
+	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/2\.jpg$/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
 	expect(
