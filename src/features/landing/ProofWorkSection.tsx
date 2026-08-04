@@ -155,30 +155,33 @@ export function ProofWorkSection({ content, links, title }: ProofWorkSectionProp
 					<div
 						className={[
 							// CENTERED ACTIVE CARD
-							"absolute left-1/2 top-1/2 z-10 w-[min(56vw,17rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden sm:w-[min(72vw,22rem)]",
+							"absolute left-1/2 top-1/2 z-10 w-[min(56vw,17rem)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(72vw,22rem)]",
 							// CARD SURFACE
-							"rounded-lg border border-(--border-color) bg-black",
+							"relative aspect-square rounded-lg border border-transparent",
+							"after:pointer-events-none after:absolute after:-inset-px after:z-10 after:rounded-[inherit] after:border after:border-(--border-color)",
 						].join(" ")}
 						data-proof-work-active-card
 					>
-						<video
-							aria-label={`${content.video} 1`}
-							className={[
-								// DEFAULT INLINE PLAYER
-								`block aspect-square w-full object-cover ${activeVideo.squarePosition}`,
-								// FULLSCREEN PLAYER
-								"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
-								"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",
-							].join(" ")}
-							data-proof-work-player
-							muted
-							playsInline
-							poster={activeVideo.preview}
-							preload="metadata" // DNC: REQUIRED FOR FAST INITIAL LOAD
-							tabIndex={0}
-						>
-							<source src={activeVideo.source} type="video/mp4" />
-						</video>
+						<div className="absolute -inset-px overflow-hidden rounded-lg bg-black">
+							<video
+								aria-label={`${content.video} 1`}
+								className={[
+									// DEFAULT INLINE PLAYER
+									`block aspect-square w-full object-cover ${activeVideo.squarePosition}`,
+									// FULLSCREEN PLAYER
+									"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
+									"[&:-webkit-full-screen]:aspect-auto [&:-webkit-full-screen]:object-contain",
+								].join(" ")}
+								data-proof-work-player
+								muted
+								playsInline
+								poster={activeVideo.preview}
+								preload="metadata" // NOTE: REQUIRED FOR FAST INITIAL LOAD
+								tabIndex={0}
+							>
+								<source src={activeVideo.source} type="video/mp4" />
+							</video>
+						</div>
 					</div>
 
 					<VideoPreviewButton
