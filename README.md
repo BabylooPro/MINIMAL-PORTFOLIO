@@ -1,25 +1,26 @@
 # MAX REMY DEV - MINIMAL PORTFOLIO
 
-How [maxremy.dev](https://maxremy.dev/) is built :
+The source code behind [maxremy.dev](https://maxremy.dev/).
 
 https://github.com/user-attachments/assets/93162065-e0cf-4b74-97d1-80ae41906b07
 
-## Stack
+## Built with
 
-- TypeScript
-- Vite.js
-- React 19 (static pre-rendering only)
-- Tailwind CSS 4
-- Biome
-- Node.js (static prerendering)
-- Deployment: Cloudflare Pages
+- TypeScript, ViteJS, ReactJS and Tailwind CSS
+- Deployed on Cloudflare Pages
 
-## Performance
+## Lightweight by design
 
-- React runtime: 0 B
-- Client-side hydration: none
-- Total executable JavaScript: ≤ 4.6 kB gzip
-- CSS: ≤ 7.7 kB gzip
-- Third-party runtime requests: 0
+- Static pages, pre-rendered at build time
+- No client-side hydration
+- No third-party runtime requests
+  \-\-\-\-
+- **HTML:** ≤ 10.0 kB gzip
+- **JavaScript:** ≤ 4.6 kB gzip
+- **CSS:** ≤ 7.7 kB gzip
 
-See [PERFORMANCE.md](./reports/PERFORMANCE.md) for the complete measured production budget.
+[Performance budget →](./reports/PERFORMANCE.md)
+
+## License
+
+This project is licensed under the MIT [LICENSE](LICENSE).
