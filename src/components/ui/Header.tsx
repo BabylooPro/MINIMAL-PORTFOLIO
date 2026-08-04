@@ -1,7 +1,7 @@
 import { Container } from "@/src/components/ui/Container";
 import { LanguageSwitcher } from "@/src/components/ui/LanguageSwitcher";
 
-import type { LegalPageId, Locale } from "@/src/lib/i18n/config";
+import { getLocalePath, type LegalPageId, type Locale } from "@/src/lib/i18n/config";
 import type { Messages } from "@/src/lib/i18n/messages/types";
 import type { Portfolio } from "@/src/types/portfolio";
 
@@ -75,12 +75,16 @@ export function Header({ currentLocale, labels, page, portfolio, isPermanentlyCo
 											"max-sm:contents",
 										].join(" ")}
 									>
-										<img
-											src="/myface.jpg"
-											alt="My Face"
-											aria-hidden="true"
-											className="size-10 rounded-md object-cover max-sm:col-start-1 max-sm:row-span-2"
-										/>
+										<a href={getLocalePath(currentLocale)} className="size-10 rounded-md max-sm:col-start-1 max-sm:row-span-2">
+											<span className="sr-only">{portfolio.name}</span>
+
+											<img
+												src="/myface.jpg"
+												alt="My Face"
+												aria-hidden="true"
+												className="size-full rounded-md object-cover"
+											/>
+										</a>
 
 										<span className="max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none">
 											{portfolio.name}
@@ -133,11 +137,16 @@ export function Header({ currentLocale, labels, page, portfolio, isPermanentlyCo
 									].join(" ")}
 									data-header-compact-identity
 								>
-									<img
-										src="/myface.jpg"
-										alt=""
-										className="size-10 rounded-md object-cover sm:col-start-1 sm:row-span-2"
-									/>
+									<a href={getLocalePath(currentLocale)} className="size-10 rounded-md sm:col-start-1 sm:row-span-2" >
+										<span className="sr-only">{portfolio.name}</span>
+
+										<img
+											src="/myface.jpg"
+											alt="My Face"
+											aria-hidden="true"
+											className="size-full rounded-md object-cover"
+										/>
+									</a>
 
 									<div className="sm:col-start-2 sm:row-span-2 sm:grid sm:min-w-0 sm:grid-rows-2">
 										<p className="text-(--foreground-color) sm:self-start sm:text-xl sm:font-semibold sm:tracking-tight sm:leading-none">
@@ -227,7 +236,7 @@ export function Header({ currentLocale, labels, page, portfolio, isPermanentlyCo
 						</div>
 					</div>
 				</Container>
-			</header>
+			</header >
 		</>
 	);
 }
