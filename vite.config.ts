@@ -4,9 +4,14 @@ import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-
-import { defineConfig, type Plugin } from "vite";
+import { type Alias, defineConfig, type Plugin } from "vite";
+import { aliasDefinitions } from "#config/aliases.mjs";
 import { mediaOrigin } from "#src/lib/media-origin.js";
+
+const aliases: Alias[] = aliasDefinitions.map(({ prefix, target }) => ({
+	find: prefix.slice(0, -1),
+	replacement: fileURLToPath(new URL(target, import.meta.url)),
+}));
 
 const themeBootstrapPath = fileURLToPath(new URL("./src/features/themes/theme-bootstrap.js", import.meta.url));
 const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-redirect.js", import.meta.url));
@@ -146,28 +151,7 @@ const inlineScriptsPlugin = inlineHeadScripts([
 
 export default defineConfig({
 	resolve: {
-		alias: [
-			{
-				find: "@/app",
-				replacement: fileURLToPath(new URL("./app", import.meta.url)),
-			},
-			{
-				find: "@/src",
-				replacement: fileURLToPath(new URL("./src", import.meta.url)),
-			},
-			{
-				find: "@/config",
-				replacement: fileURLToPath(new URL("./config", import.meta.url)),
-			},
-			{
-				find: "@/scripts",
-				replacement: fileURLToPath(new URL("./scripts", import.meta.url)),
-			},
-			{
-				find: "@/tests",
-				replacement: fileURLToPath(new URL("./__tests__", import.meta.url)),
-			},
-		],
+		alias: aliases,
 	},
 	build: {
 		manifest: true,

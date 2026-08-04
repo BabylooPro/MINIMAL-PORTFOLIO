@@ -4,6 +4,7 @@
 	"version": "1.0.1",
 	"type": "module",
 	"imports": {
+		"#config/*": "./config/*",
 		"#src/*": "./src/*"
 	},
 	"packageManager": "pnpm@11.13.1",

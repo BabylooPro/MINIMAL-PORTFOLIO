@@ -2,21 +2,20 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-const projectDirectory = fileURLToPath(new URL("..", import.meta.url));
-const aliases = [
-	{ prefix: "@/app/", directory: "app" },
-	{ prefix: "@/src/", directory: "src" },
-	{ prefix: "@/config/", directory: "config" },
-	{ prefix: "@/scripts/", directory: "scripts" },
-	{ prefix: "@/tests/", directory: "__tests__" },
-];
+import { aliasDefinitions } from "#config/aliases.mjs";
+
+const projectDirectoryUrl = new URL("..", import.meta.url);
+const aliases = aliasDefinitions.map(({ prefix, target }) => ({
+	prefix,
+	directory: fileURLToPath(new URL(target, projectDirectoryUrl)),
+}));
 const extensions = ["", ".ts", ".tsx", ".js", ".mjs", ".json"];
 
 function resolveAlias(specifier) {
 	const alias = aliases.find(({ prefix }) => specifier.startsWith(prefix));
 	if (!alias) return null;
 
-	const target = path.resolve(projectDirectory, alias.directory, specifier.slice(alias.prefix.length));
+	const target = path.resolve(alias.directory, specifier.slice(alias.prefix.length));
 
 	for (const extension of extensions) {
 		const candidate = target + extension;

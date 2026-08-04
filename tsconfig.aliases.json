@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"paths": {
+			"@/app/*": ["./app/*"],
+			"@/src/*": ["./src/*"],
+			"@/config/*": ["./config/*"],
+			"@/scripts/*": ["./scripts/*"],
+			"@/tests/*": ["./__tests__/*"]
+		}
+	}
+}
