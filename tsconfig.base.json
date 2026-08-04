@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		"target": "ES2023",
+		"paths": {
+			"@/app/*": ["./app/*"],
+			"@/src/*": ["./src/*"],
+			"@/config/*": ["./config/*"],
+			"@/scripts/*": ["./scripts/*"],
+			"@/tests/*": ["./__tests__/*"]
+		},
+		"allowImportingTsExtensions": true,
+		"verbatimModuleSyntax": true,
+		"moduleDetection": "force",
+		"noEmit": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"erasableSyntaxOnly": true,
+		"noFallthroughCasesInSwitch": true,
+		"skipLibCheck": true
+	}
+}

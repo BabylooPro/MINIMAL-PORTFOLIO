@@ -1,13 +1,13 @@
 import { readFileSync } from "node:fs";
 
 const projectDirectoryUrl = new URL("..", import.meta.url);
-const aliasConfigUrl = new URL("tsconfig.aliases.json", projectDirectoryUrl);
+const aliasConfigUrl = new URL("tsconfig.base.json", projectDirectoryUrl);
 
 function readAliasDefinitions() {
 	const configuration = JSON.parse(readFileSync(aliasConfigUrl, "utf8"));
 	const paths = configuration.compilerOptions?.paths;
 
-	if (!paths || typeof paths !== "object") throw new Error("Missing compilerOptions.paths in tsconfig.aliases.json.");
+	if (!paths || typeof paths !== "object") throw new Error("Missing compilerOptions.paths in tsconfig.base.json.");
 
 	return Object.entries(paths).map(([pattern, targets]) => {
 		const [target] = Array.isArray(targets) ? targets : [];
