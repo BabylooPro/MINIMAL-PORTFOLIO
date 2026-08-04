@@ -1,11 +1,5 @@
 import { ChoiceSwitcher } from "@/components/ui/ChoiceSwitcher";
-import {
-	getLegalPagePath,
-	type LegalPageId,
-	type Locale,
-	localeConfigs,
-	locales,
-} from "@/lib/i18n/config";
+import { getLegalPagePath, type LegalPageId, type Locale, localeConfigs, locales } from "@/lib/i18n/config";
 
 type LanguageSwitcherProps = {
 	currentLocale: Locale;
@@ -16,7 +10,6 @@ type LanguageSwitcherProps = {
 export function LanguageSwitcher({ currentLocale, label, page }: LanguageSwitcherProps) {
 	const choices = locales.map((locale) => {
 		const config = localeConfigs[locale];
-
 		return {
 			id: locale,
 			isSelected: locale === currentLocale,
@@ -24,8 +17,8 @@ export function LanguageSwitcher({ currentLocale, label, page }: LanguageSwitche
 			linkProps: {
 				href: page ? getLegalPagePath(locale, page) : config.pathname,
 				hrefLang: config.htmlLang,
-				lang: config.htmlLang,
-			},
+				lang: config.htmlLang
+			}
 		};
 	});
 

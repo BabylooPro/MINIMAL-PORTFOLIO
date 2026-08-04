@@ -1,12 +1,7 @@
-import {
-	createLocalizedExperiences,
-	type LocalizedExperienceContent,
-} from "@/features/landing/data/portfolio/shared/experiences";
+import { createLocalizedExperiences, type LocalizedExperienceContent } from "@/features/landing/data/portfolio/shared/experiences";
 import { sharedPortfolioDetails } from "@/features/landing/data/portfolio/shared/portfolio-details";
-import {
-	createSkillGroups,
-	type LocalizedSkillGroupLabels,
-} from "@/features/landing/data/portfolio/shared/skill-groups";
+import { createSkillGroups, type LocalizedSkillGroupLabels } from "@/features/landing/data/portfolio/shared/skill-groups";
+
 import type { Portfolio } from "@/types/portfolio";
 
 const experienceContent = {
@@ -14,23 +9,20 @@ const experienceContent = {
 		role: "Software Engineer",
 		employmentType: "Freelance",
 		location: "Remote, On-site",
-		description:
-			"Built a Swift/SwiftUI breathwork app for iOS and watchOS, integrating Apple Watch, Garmin, HealthKit, and real-time HR/HRV biofeedback.",
+		description: "Built a Swift/SwiftUI breathwork app for iOS and watchOS, integrating Apple Watch, Garmin, HealthKit, and real-time HR/HRV biofeedback.",
 	},
 	"confidential-client-software-engineer": {
 		company: "Confidential Client",
 		role: "Software Engineer",
 		employmentType: "Freelance",
 		location: "Fully remote",
-		description:
-			"Designed and built a distributed cryptocurrency arbitrage platform using C#, ASP.NET Core, MAUI, Docker, Grafana, and Prometheus.",
+		description: "Designed and built a distributed cryptocurrency arbitrage platform using C#, ASP.NET Core, MAUI, Docker, Grafana, and Prometheus.",
 	},
 	"new-tells-studio-frontend-developer": {
 		role: "Frontend Developer",
 		employmentType: "Freelance",
 		location: "Fully remote",
-		description:
-			"Built a responsive Next.js portfolio from Figma, with Rive animations for a motion design company.",
+		description: "Built a responsive Next.js portfolio from Figma, with Rive animations for a motion design company.",
 	},
 	"max-remy-dev-founder": {
 		role: "Founder",
@@ -41,8 +33,7 @@ const experienceContent = {
 		company: "Various Clients via Agency",
 		role: "Freelance Developer",
 		location: "Switzerland - Remote, On-site",
-		description:
-			"Delivered backend, automation, web, mobile, and game development solutions for various clients.",
+		description: "Delivered backend, automation, web, mobile, and game development solutions for various clients.",
 	},
 } satisfies LocalizedExperienceContent;
 
@@ -59,8 +50,7 @@ export const portfolioEn = {
 	...sharedPortfolioDetails,
 	role: "Software Engineer | Full-Stack Developer",
 	location: "Moudon, Vaud, Switzerland",
-	summary:
-		"A Swiss Army knife developer with 10 years of freelance experience.\nEntirely self-taught, with no formal degree.",
+	summary: "A Swiss Army knife developer with 10 years of freelance experience.\nEntirely self-taught, with no formal degree.",
 	languages: [
 		{
 			label: "French - Native (C2)",

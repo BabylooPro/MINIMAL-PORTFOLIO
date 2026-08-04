@@ -4,14 +4,11 @@ const storageKey = "theme-preference";
 let isThemeControllerInitialized = false;
 
 export function initializeThemeController(): void {
-	if (isThemeControllerInitialized) {
-		return;
-	}
+	if (isThemeControllerInitialized) return;
 
 	isThemeControllerInitialized = true;
 
 	const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
-
 	const themeColor = document.querySelector<HTMLMetaElement>("meta[data-theme-color]");
 
 	function isThemePreference(value: unknown): value is ThemePreference {
@@ -21,7 +18,6 @@ export function initializeThemeController(): void {
 	function readStoredPreference(): ThemePreference {
 		try {
 			const value = window.localStorage.getItem(storageKey);
-
 			return isThemePreference(value) ? value : "system";
 		} catch {
 			return "system";
@@ -43,15 +39,10 @@ export function initializeThemeController(): void {
 	}
 
 	function updateThemeControls(preference: ThemePreference): void {
-		const controls = document.querySelectorAll<HTMLButtonElement>(
-			"button[data-theme-preference]",
-		);
+		const controls = document.querySelectorAll<HTMLButtonElement>("button[data-theme-preference]");
 
 		for (const control of controls) {
-			control.setAttribute(
-				"aria-pressed",
-				String(control.dataset.themePreference === preference),
-			);
+			control.setAttribute("aria-pressed", String(control.dataset.themePreference === preference));
 		}
 	}
 
@@ -72,16 +63,11 @@ export function initializeThemeController(): void {
 	}
 
 	document.addEventListener("click", (event) => {
-		if (!(event.target instanceof Element)) {
-			return;
-		}
+		if (!(event.target instanceof Element)) return;
 
 		const control = event.target.closest<HTMLButtonElement>("button[data-theme-preference]");
 		const preference = control?.dataset.themePreference;
-
-		if (!isThemePreference(preference)) {
-			return;
-		}
+		if (!isThemePreference(preference)) return;
 
 		savePreference(preference);
 		currentPreference = preference;
@@ -89,9 +75,7 @@ export function initializeThemeController(): void {
 	});
 
 	systemTheme.addEventListener("change", () => {
-		if (currentPreference === "system") {
-			applyPreference(currentPreference);
-		}
+		if (currentPreference === "system") applyPreference(currentPreference);
 	});
 
 	applyPreference(currentPreference);

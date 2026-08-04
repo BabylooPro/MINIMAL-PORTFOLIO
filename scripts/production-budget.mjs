@@ -1,24 +1,15 @@
 import path from "node:path";
+
 import { performanceBudget } from "../config/performance-budget.mjs";
-import {
-	defaultOutputDirectory,
-	measureProductionOutput,
-	projectDirectory,
-} from "./production-budget/measure.mjs";
-import {
-	renderMarkdownReport,
-	renderTerminalReport,
-	writeMarkdownReport,
-} from "./production-budget/report.mjs";
+import { defaultOutputDirectory, measureProductionOutput, projectDirectory } from "./production-budget/measure.mjs";
+import { renderMarkdownReport, renderTerminalReport, writeMarkdownReport } from "./production-budget/report.mjs";
 import { validatePerformanceBudget } from "./production-budget/validate.mjs";
 
 const arguments_ = process.argv.slice(2);
 const writeReport = arguments_.includes("--write-report");
-const unsupportedArguments = arguments_.filter((argument) => argument !== "--write-report");
 
-if (unsupportedArguments.length > 0) {
-	throw new Error(`Unsupported production budget arguments: ${unsupportedArguments.join(", ")}`);
-}
+const unsupportedArguments = arguments_.filter((argument) => argument !== "--write-report");
+if (unsupportedArguments.length > 0) throw new Error(`Unsupported production budget arguments: ${unsupportedArguments.join(", ")}`);
 
 const measurement = await measureProductionOutput({ outputDirectory: defaultOutputDirectory });
 const validation = validatePerformanceBudget(measurement, performanceBudget);
@@ -38,6 +29,4 @@ if (writeReport) {
 	}
 }
 
-if (!validation.passed) {
-	process.exitCode = 1;
-}
+if (!validation.passed) process.exitCode = 1;

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+
 import { renderToStaticMarkup } from "react-dom/server";
 import { PageRenderer } from "@/app/routing/page-renderer";
 import { type AppRoute, getRouteTitle } from "@/app/routing/routes";
@@ -55,10 +56,7 @@ export function renderPage(route: AppRoute): RenderedPage {
 			canonical: rootUrl,
 			ogLocale: "en_CH",
 			ogType: "website",
-			socialImage: {
-				...socialImage,
-				alt: dictionary.messages.meta.socialImageAlt,
-			},
+			socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
 			structuredData: createStructuredData(defaultLocale, dictionary, rootUrl),
 		};
 	}
@@ -82,16 +80,8 @@ export function renderPage(route: AppRoute): RenderedPage {
 			canonical,
 			ogLocale: localeConfig.ogLocale,
 			ogType: "website",
-			socialImage: {
-				...socialImage,
-				alt: dictionary.messages.meta.socialImageAlt,
-			},
-			structuredData: createWebPageStructuredData(
-				route.locale,
-				canonical,
-				title,
-				description,
-			),
+			socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
+			structuredData: createWebPageStructuredData(route.locale, canonical, title, description),
 		};
 	}
 
@@ -111,16 +101,8 @@ export function renderPage(route: AppRoute): RenderedPage {
 			canonical,
 			ogLocale: localeConfig.ogLocale,
 			ogType: "website",
-			socialImage: {
-				...socialImage,
-				alt: dictionary.messages.meta.socialImageAlt,
-			},
-			structuredData: createWebPageStructuredData(
-				route.locale,
-				canonical,
-				title,
-				content.description,
-			),
+			socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
+			structuredData: createWebPageStructuredData(route.locale, canonical, title, content.description),
 		};
 	}
 
@@ -135,10 +117,7 @@ export function renderPage(route: AppRoute): RenderedPage {
 		canonical: localeConfig.absoluteUrl,
 		ogLocale: localeConfig.ogLocale,
 		ogType: "profile",
-		socialImage: {
-			...socialImage,
-			alt: dictionary.messages.meta.socialImageAlt,
-		},
+		socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
 		structuredData: createStructuredData(route.locale, dictionary),
 	};
 }

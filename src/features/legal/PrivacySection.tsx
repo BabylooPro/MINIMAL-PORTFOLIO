@@ -1,6 +1,7 @@
 import { Section, SectionHeading } from "@/components/ui/Section";
 import type { Messages } from "@/lib/i18n/messages/types";
 
+// TODO: MAKE A LIST URL
 const cloudflarePrivacyPolicyUrl = "https://www.cloudflare.com/privacypolicy/";
 const googlePrivacyPolicyUrl = "https://policies.google.com/privacy";
 
@@ -25,9 +26,7 @@ export function PrivacySection({ content, email }: PrivacySectionProps) {
 			</Section>
 
 			<Section labelledBy="privacy-cv-download-title">
-				<SectionHeading id="privacy-cv-download-title">
-					{content.cvDownloadTitle}
-				</SectionHeading>
+				<SectionHeading id="privacy-cv-download-title">{content.cvDownloadTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.cvDownloadDescription}</p>
 			</Section>
 
@@ -35,21 +34,14 @@ export function PrivacySection({ content, email }: PrivacySectionProps) {
 				<SectionHeading id="privacy-hosting-title">{content.hostingTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.hostingDescription}</p>
 
-				<a
-					className="mt-1 inline-flex underline underline-offset-2"
-					href={cloudflarePrivacyPolicyUrl}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
+				<a className="mt-1 inline-flex underline underline-offset-2" href={cloudflarePrivacyPolicyUrl} rel="noopener noreferrer" target="_blank">
 					{content.hostingPrivacyPolicyLabel}
 					<span aria-hidden="true">&nbsp;↗</span>
 				</a>
 			</Section>
 
 			<Section labelledBy="privacy-external-links-title">
-				<SectionHeading id="privacy-external-links-title">
-					{content.externalLinksTitle}
-				</SectionHeading>
+				<SectionHeading id="privacy-external-links-title">{content.externalLinksTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.externalLinksDescription}</p>
 			</Section>
 
@@ -58,20 +50,12 @@ export function PrivacySection({ content, email }: PrivacySectionProps) {
 				<p className="mt-1 leading-6">{content.contactDescription}</p>
 
 				{email ? (
-					<a
-						className="mt-1 inline-flex underline underline-offset-2"
-						href={`mailto:${email}`}
-					>
+					<a className="mt-1 inline-flex underline underline-offset-2" href={`mailto:${email}`}>
 						{email}
 					</a>
 				) : null}
 
-				<a
-					className="mt-1 block w-fit underline underline-offset-2"
-					href={googlePrivacyPolicyUrl}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
+				<a className="mt-1 block w-fit underline underline-offset-2" href={googlePrivacyPolicyUrl} rel="noopener noreferrer" target="_blank">
 					{content.emailProviderPrivacyPolicyLabel}
 					<span aria-hidden="true">&nbsp;↗</span>
 				</a>
@@ -83,9 +67,7 @@ export function PrivacySection({ content, email }: PrivacySectionProps) {
 			</Section>
 
 			<Section labelledBy="privacy-retention-title">
-				<SectionHeading id="privacy-retention-title">
-					{content.retentionTitle}
-				</SectionHeading>
+				<SectionHeading id="privacy-retention-title">{content.retentionTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.retentionDescription}</p>
 			</Section>
 

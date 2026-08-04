@@ -13,11 +13,7 @@ type LinkChoice = Choice & {
 };
 
 type ButtonChoice = Choice & {
-	buttonProps?: Omit<
-		ComponentPropsWithoutRef<"button">,
-		"aria-label" | "aria-pressed" | "children" | "className" | "type"
-	> &
-		Partial<Record<`data-${string}`, string>>;
+	buttonProps?: Omit<ComponentPropsWithoutRef<"button">, "aria-label" | "aria-pressed" | "children" | "className" | "type"> & Partial<Record<`data-${string}`, string>>;
 	icon?: ReactNode;
 };
 
@@ -33,13 +29,7 @@ type ButtonChoiceSwitcherProps = {
 
 type ChoiceSwitcherProps = LinkChoiceSwitcherProps | ButtonChoiceSwitcherProps;
 
-function ChoiceList<T extends Choice>({
-	choices,
-	renderChoice,
-}: {
-	choices: readonly T[];
-	renderChoice: (choice: T) => ReactNode;
-}) {
+function ChoiceList<T extends Choice>({ choices, renderChoice }: { choices: readonly T[]; renderChoice: (choice: T) => ReactNode }) {
 	return (
 		<ul className="flex items-center text-xs">
 			{choices.map((choice, index) => (
@@ -56,27 +46,24 @@ function ChoiceList<T extends Choice>({
 }
 
 export function ChoiceSwitcher(props: ChoiceSwitcherProps) {
-	if (props.action === "link") {
-		return (
-			<ChoiceList
-				choices={props.choices}
-				renderChoice={({ isSelected, label, linkProps }) => (
-					<a
-						{...linkProps}
-						aria-current={isSelected ? "page" : undefined}
-						className={[
-							"rounded-sm px-1 py-0.5",
-							isSelected
-								? "bg-(--foreground-color) font-medium text-(--background-color)! no-underline"
-								: "hover:bg-(--inactive-hover-color)",
-						].join(" ")}
-					>
-						{label}
-					</a>
-				)}
-			/>
-		);
-	}
+	if (props.action === "link") return (
+		<ChoiceList
+			choices={props.choices}
+			renderChoice={({ isSelected, label, linkProps }) => (
+				<a
+					{...linkProps} aria-current={isSelected ? "page" : undefined}
+					className={[
+						"rounded-sm px-1 py-0.5",
+						isSelected
+							? "bg-(--foreground-color) font-medium text-(--background-color)! no-underline"
+							: "hover:bg-(--inactive-hover-color)"
+					].join(" ")}
+				>
+					{label}
+				</a>
+			)}
+		/>
+	);
 
 	return (
 		<ChoiceList
@@ -93,8 +80,13 @@ export function ChoiceSwitcher(props: ChoiceSwitcherProps) {
 					].join(" ")}
 					type="button"
 				>
-					{icon ? <span className="sm:hidden">{icon}</span> : null}
-					<span className={icon ? "hidden sm:inline" : undefined}>{label}</span>
+					{icon ? (
+						<span className="sm:hidden">{icon}</span>
+					) : null}
+
+					<span className={icon ? "hidden sm:inline" : undefined}>
+						{label}
+					</span>
 				</button>
 			)}
 		/>

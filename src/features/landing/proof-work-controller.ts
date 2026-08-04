@@ -7,37 +7,22 @@ type VideoDefinition = {
 let isProofWorkControllerInitialized = false;
 
 export function initializeProofWorkController(): void {
-	if (isProofWorkControllerInitialized) {
-		return;
-	}
+	if (isProofWorkControllerInitialized) return;
 
 	isProofWorkControllerInitialized = true;
 
 	function isVideoDefinition(value: unknown): value is VideoDefinition {
-		if (!value || typeof value !== "object") {
-			return false;
-		}
-
+		if (!value || typeof value !== "object") return false;
 		const { preview, source, squarePosition } = value as Record<string, unknown>;
-
-		return (
-			typeof preview === "string" &&
-			typeof source === "string" &&
-			typeof squarePosition === "string"
-		);
+		return typeof preview === "string" && typeof source === "string" && typeof squarePosition === "string";
 	}
 
 	function parseVideos(serializedVideos: string | undefined): VideoDefinition[] {
-		if (!serializedVideos) {
-			return [];
-		}
+		if (!serializedVideos) return [];
 
 		try {
 			const parsedVideos: unknown = JSON.parse(serializedVideos);
-
-			return Array.isArray(parsedVideos) && parsedVideos.every(isVideoDefinition)
-				? parsedVideos
-				: [];
+			return Array.isArray(parsedVideos) && parsedVideos.every(isVideoDefinition) ? parsedVideos : [];
 		} catch {
 			return [];
 		}
@@ -48,25 +33,15 @@ export function initializeProofWorkController(): void {
 	}
 
 	function initializeCarousel(carousel: HTMLElement): void {
-		if (carousel.dataset.proofWorkInitialized === "true") {
-			return;
-		}
+		if (carousel.dataset.proofWorkInitialized === "true") return;
 
 		const videos = parseVideos(carousel.dataset.videos);
 		const counterTemplate = carousel.dataset.counterTemplate;
 		const videoLabel = carousel.dataset.videoLabel;
-		const previousButton = carousel.querySelector<HTMLButtonElement>(
-			'[data-proof-work-direction="previous"]',
-		);
-		const nextButton = carousel.querySelector<HTMLButtonElement>(
-			'[data-proof-work-direction="next"]',
-		);
-		const previousPreview = carousel.querySelector<HTMLImageElement>(
-			'[data-proof-work-preview="previous"]',
-		);
-		const nextPreview = carousel.querySelector<HTMLImageElement>(
-			'[data-proof-work-preview="next"]',
-		);
+		const previousButton = carousel.querySelector<HTMLButtonElement>('[data-proof-work-direction="previous"]');
+		const nextButton = carousel.querySelector<HTMLButtonElement>('[data-proof-work-direction="next"]');
+		const previousPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-preview="previous"]');
+		const nextPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-preview="next"]');
 		const player = carousel.querySelector<HTMLVideoElement>("[data-proof-work-player]");
 		const source = player?.querySelector<HTMLSourceElement>("source");
 		const counter = carousel.querySelector<HTMLElement>("[data-proof-work-counter]");
@@ -82,9 +57,7 @@ export function initializeProofWorkController(): void {
 			!player ||
 			!source ||
 			!counter
-		) {
-			return;
-		}
+		) return;
 
 		carousel.dataset.proofWorkInitialized = "true";
 
@@ -107,11 +80,7 @@ export function initializeProofWorkController(): void {
 
 		function videoAt(index: number): VideoDefinition {
 			const video = videos[(index + videos.length) % videos.length];
-
-			if (!video) {
-				throw new Error("Proof Work carousel requires at least one video.");
-			}
-
+			if (!video) throw new Error("Proof Work carousel requires at least one video.");
 			return video;
 		}
 
@@ -136,26 +105,14 @@ export function initializeProofWorkController(): void {
 		}
 
 		function syncPlayback(): void {
-			if (!shouldPlay()) {
-				stopPlayback();
-				return;
-			}
-
-			if (!videoPlayer.paused) {
-				return;
-			}
+			if (!shouldPlay()) { stopPlayback(); return; }
+			if (!videoPlayer.paused) return;
 
 			const request = ++playbackRequest;
-
 			videoPlayer.muted = true;
-			void videoPlayer.play().then(
-				() => {
-					if (request !== playbackRequest || !shouldPlay()) {
-						stopPlayback();
-					}
-				},
-				() => undefined,
-			);
+			void videoPlayer.play().then(() => {
+				if (request !== playbackRequest || !shouldPlay()) stopPlayback();
+			}, () => undefined);
 		}
 
 		function renderActiveVideo(shouldReload = true): void {
@@ -173,11 +130,7 @@ export function initializeProofWorkController(): void {
 
 			setPreview(previousPreviewImage, videoAt(activeIndex - 1));
 			setPreview(nextPreviewImage, videoAt(activeIndex + 1));
-			counterElement.textContent = formatCounter(
-				counterTextTemplate,
-				activeIndex + 1,
-				videos.length,
-			);
+			counterElement.textContent = formatCounter(counterTextTemplate, activeIndex + 1, videos.length);
 
 			syncPlayback();
 		}
@@ -212,11 +165,7 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("pointerenter", enablePlayerControls);
 		videoPlayer.addEventListener("pointerdown", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
-		videoPlayer.addEventListener("ended", () => {
-			if (isPlayerVisible && !document.hidden) {
-				switchVideo(1);
-			}
-		});
+		videoPlayer.addEventListener("ended", () => { if (isPlayerVisible && !document.hidden) switchVideo(1) });
 
 		document.addEventListener("visibilitychange", handleDocumentVisibility);
 		reducedMotion.addEventListener("change", handleReducedMotionChange);

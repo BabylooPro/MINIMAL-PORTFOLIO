@@ -57,74 +57,36 @@ export function isGitHubRepository(value) {
 }
 
 export function validateConfiguration(value) {
-	if (!isRecord(value) || !Array.isArray(value.repositories)) {
-		throw createPermanentError("Side Projects configuration has an invalid shape.");
-	}
-
-	if (value.repositories.length === 0 || value.repositories.length > MAXIMUM_PROJECTS) {
-		throw createPermanentError(
-			`Side Projects configuration must select between 1 and ${MAXIMUM_PROJECTS} repositories.`,
-		);
-	}
+	if (!isRecord(value) || !Array.isArray(value.repositories)) throw createPermanentError("Side Projects configuration has an invalid shape.");
+	if (value.repositories.length === 0 || value.repositories.length > MAXIMUM_PROJECTS) throw createPermanentError(`Side Projects configuration must select between 1 and ${MAXIMUM_PROJECTS} repositories.`);
 
 	const repositories = value.repositories.map((repository, index) => {
-		if (
-			!isRecord(repository) ||
-			!isGitHubUser(repository.githubUser) ||
-			!isGitHubRepositoryName(repository.name)
-		) {
-			throw createPermanentError(
-				`Side Projects configuration repository at index ${index} has an invalid shape.`,
-			);
+		if (!isRecord(repository) || !isGitHubUser(repository.githubUser) || !isGitHubRepositoryName(repository.name)) {
+			throw createPermanentError(`Side Projects configuration repository at index ${index} has an invalid shape.`);
 		}
-
-		return {
-			githubUser: repository.githubUser,
-			name: repository.name,
-		};
+		return { githubUser: repository.githubUser, name: repository.name };
 	});
 
 	const slugs = repositories.map(slugForSelection);
 
-	if (new Set(slugs).size !== slugs.length) {
-		throw createPermanentError(
-			"Side Projects configuration contains duplicate repository names.",
-		);
-	}
-
+	if (new Set(slugs).size !== slugs.length) throw createPermanentError("Side Projects configuration contains duplicate repository names.");
 	return { repositories };
 }
 
 function normalizeHomepageUrl(value) {
-	if (value === null || value.trim().length === 0) {
-		return null;
-	}
-
-	if (!isHttpsUrl(value)) {
-		throw createPermanentError(`Homepage URL is invalid: ${value}`);
-	}
-
+	if (value === null || value.trim().length === 0) return null;
+	if (!isHttpsUrl(value)) throw createPermanentError(`Homepage URL is invalid: ${value}`);
 	return value;
 }
 
 function validateCreatedAt(value) {
-	if (!isNonEmptyString(value) || Number.isNaN(Date.parse(value))) {
-		throw createPermanentError(`Repository created_at value is invalid: ${value}`);
-	}
-
+	if (!isNonEmptyString(value) || Number.isNaN(Date.parse(value))) throw createPermanentError(`Repository created_at value is invalid: ${value}`);
 	return value;
 }
 
 export function createGeneratedSideProject(repository, selection) {
-	if (!isGitHubRepository(repository)) {
-		throw createPermanentError(
-			`GitHub returned an incompatible repository for "${selection.name}".`,
-		);
-	}
-
-	if (!isGitHubRepositoryUrl(repository.html_url)) {
-		throw createPermanentError(`Repository URL is invalid: ${repository.html_url}`);
-	}
+	if (!isGitHubRepository(repository)) throw createPermanentError(`GitHub returned an incompatible repository for "${selection.name}".`);
+	if (!isGitHubRepositoryUrl(repository.html_url)) throw createPermanentError(`Repository URL is invalid: ${repository.html_url}`);
 
 	return {
 		slug: slugForSelection(selection),
@@ -134,25 +96,18 @@ export function createGeneratedSideProject(repository, selection) {
 		githubDescription: repository.description,
 		primaryLanguage: repository.language,
 		createdAt: validateCreatedAt(repository.created_at),
-		topics: [...repository.topics]
-			.map((topic) => topic.trim())
-			.filter(Boolean)
-			.sort()
-			.slice(0, 3),
+		topics: [...repository.topics].map((topic) => topic.trim()).filter(Boolean).sort().slice(0, 3),
 	};
 }
 
 function validateSnapshotProject(value, index) {
-	if (!isRecord(value)) {
-		throw createPermanentError(`Side Projects snapshot entry at index ${index} is invalid.`);
-	}
+	if (!isRecord(value)) throw createPermanentError(`Side Projects snapshot entry at index ${index} is invalid.`);
 
 	const valid =
 		isNonEmptyString(value.slug) &&
 		isNonEmptyString(value.name) &&
 		isGitHubRepositoryUrl(value.repositoryUrl) &&
-		(value.homepageUrl === null ||
-			(typeof value.homepageUrl === "string" && isHttpsUrl(value.homepageUrl))) &&
+		(value.homepageUrl === null || (typeof value.homepageUrl === "string" && isHttpsUrl(value.homepageUrl))) &&
 		isNullableString(value.githubDescription) &&
 		isNullableString(value.primaryLanguage) &&
 		isNonEmptyString(value.createdAt) &&
@@ -160,26 +115,18 @@ function validateSnapshotProject(value, index) {
 		value.topics.length <= 3 &&
 		value.topics.every(isNonEmptyString);
 
-	if (!valid) {
-		throw createPermanentError(`Side Projects snapshot entry at index ${index} is invalid.`);
-	}
+	if (!valid) throw createPermanentError(`Side Projects snapshot entry at index ${index} is invalid.`);
 
 	validateCreatedAt(value.createdAt);
-
 	return value;
 }
 
 export function validateSnapshot(value) {
-	if (!Array.isArray(value) || value.length === 0 || value.length > MAXIMUM_PROJECTS) {
-		throw createPermanentError("Side Projects snapshot is invalid.");
-	}
+	if (!Array.isArray(value) || value.length === 0 || value.length > MAXIMUM_PROJECTS) throw createPermanentError("Side Projects snapshot is invalid.");
 
 	const projects = value.map(validateSnapshotProject);
 	const slugs = projects.map((project) => project.slug);
-
-	if (new Set(slugs).size !== slugs.length) {
-		throw createPermanentError("Side Projects snapshot contains duplicate slugs.");
-	}
+	if (new Set(slugs).size !== slugs.length) throw createPermanentError("Side Projects snapshot contains duplicate slugs.");
 
 	return projects;
 }
@@ -190,12 +137,7 @@ export function snapshotMatchesConfiguration(snapshot, configuration) {
 		snapshot.length === configuration.repositories.length &&
 		snapshot.every((project, index) => {
 			const selection = configuration.repositories[index];
-
-			return (
-				selection !== undefined &&
-				project.slug === slugForSelection(selection) &&
-				project.name === selection.name
-			);
+			return selection !== undefined && project.slug === slugForSelection(selection) && project.name === selection.name;
 		})
 	);
 }

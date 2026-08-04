@@ -1,41 +1,29 @@
 import { Section, SectionHeading } from "@/components/ui/Section";
 import sideProjects from "@/features/landing/generated/side-projects.json";
+
 import type { Locale } from "@/lib/i18n/config";
+
 import { formatSideProjectDate } from "@/lib/i18n/format";
+
 import type { Messages } from "@/lib/i18n/messages/types";
 import type { GeneratedSideProject } from "@/types/side-projects";
 
-type SideProjectsSectionProps = {
-	locale: Locale;
-	content: Messages["sideProjects"];
-	title: Messages["sections"]["sideProjects"];
-};
+type SideProjectsSectionProps = { locale: Locale; content: Messages["sideProjects"]; title: Messages["sections"]["sideProjects"] };
 
 const generatedProjects: readonly GeneratedSideProject[] = sideProjects;
 
-type ProjectExternalLinkProps = {
-	href: string;
-	label: string;
-};
+type ProjectExternalLinkProps = { href: string; label: string };
 
 function ProjectExternalLink({ href, label }: ProjectExternalLinkProps) {
 	return (
-		<a
-			className="hover:underline focus-visible:underline"
-			href={href}
-			rel="noopener noreferrer"
-			target="_blank"
-		>
-			{label}
-			<span aria-hidden="true"> ↗</span>
+		<a className="hover:underline focus-visible:underline" href={href} rel="noopener noreferrer" target="_blank">
+			{label} <span aria-hidden="true"> ↗</span>
 		</a>
 	);
 }
 
 export function SideProjectsSection({ content, locale, title }: SideProjectsSectionProps) {
-	if (generatedProjects.length === 0) {
-		return null;
-	}
+	if (generatedProjects.length === 0) return null;
 
 	return (
 		<Section labelledBy="side-projects-title">
@@ -45,8 +33,7 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 				{generatedProjects.map((project) => {
 					const localizedProject = content.projects[project.slug];
 					const description = localizedProject?.description ?? project.githubDescription;
-					const hasTechnologies =
-						project.primaryLanguage !== null || project.topics.length > 0;
+					const hasTechnologies = project.primaryLanguage !== null || project.topics.length > 0;
 					const createdAt = formatSideProjectDate(locale, project.createdAt);
 
 					return (
@@ -69,12 +56,12 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 												{project.primaryLanguage}
 											</span>
 										) : null}
-										{project.primaryLanguage && project.topics.length > 0 ? (
-											<>
-												<span className="sr-only">, </span>
-												<span aria-hidden="true"> · </span>
-											</>
-										) : null}
+
+										{project.primaryLanguage && project.topics.length > 0 ? (<>
+											<span className="sr-only">, </span>
+											<span aria-hidden="true"> · </span>
+										</>) : null}
+
 										{project.topics.join(" · ")}
 									</p>
 								) : (
@@ -86,25 +73,15 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 								</p>
 
 								<p className="mt-3 pb-5 text-sm font-medium text-(--foreground-color)">
-									<ProjectExternalLink
-										href={project.repositoryUrl}
-										label={content.repositoryLabel}
-									/>
+									<ProjectExternalLink href={project.repositoryUrl} label={content.repositoryLabel} />
 
-									{project.homepageUrl ? (
-										<>
-											<span
-												aria-hidden="true"
-												className="text-(--muted-color)"
-											>
-												{" · "}
-											</span>
-											<ProjectExternalLink
-												href={project.homepageUrl}
-												label={content.liveDemoLabel}
-											/>
-										</>
-									) : null}
+									{project.homepageUrl ? (<>
+										<span aria-hidden="true" className="text-(--muted-color)">
+											{" · "}
+										</span>
+
+										<ProjectExternalLink href={project.homepageUrl} label={content.liveDemoLabel} />
+									</>) : null}
 								</p>
 							</article>
 						</li>

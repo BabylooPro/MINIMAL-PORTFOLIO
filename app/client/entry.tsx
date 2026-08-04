@@ -6,10 +6,7 @@ import { getRouteFromPathname, getRouteLocale, getRouteTitle } from "@/app/routi
 import { getDictionary } from "@/lib/i18n/dictionaries";
 
 const root = document.getElementById("root");
-
-if (!root) {
-	throw new Error('Root element "#root" was not found.');
-}
+if (!root) throw new Error('Root element "#root" was not found.');
 
 const route = getRouteFromPathname(window.location.pathname);
 const locale = getRouteLocale(route);

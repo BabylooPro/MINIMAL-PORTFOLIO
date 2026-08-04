@@ -27,6 +27,24 @@
 			"trailingCommas": "all"
 		}
 	},
+	"overrides": [
+		{
+			"includes": [
+				"app/**",
+				"src/**",
+				"scripts/**",
+				"public/**",
+				"__tests__/**",
+				"config/**",
+				"index.html",
+				"package.json",
+				"vite.config.ts"
+			],
+			"formatter": {
+				"enabled": false
+			}
+		}
+	],
 	"assist": {
 		"enabled": true,
 		"actions": {

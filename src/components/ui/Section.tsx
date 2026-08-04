@@ -12,17 +12,11 @@ export function Section({ children, labelledBy, ...props }: SectionProps) {
 	);
 }
 
-type SectionHeadingProps = {
-	id: string;
-	children: string;
-};
+type SectionHeadingProps = { id: string; children: string };
 
 export function SectionHeading({ id, children }: SectionHeadingProps) {
 	return (
-		<h2
-			id={id}
-			className="border-b text-sm font-medium uppercase tracking-wider text-(--muted-color)"
-		>
+		<h2 id={id} className="border-b text-sm font-medium uppercase tracking-wider text-(--muted-color)">
 			{children}
 		</h2>
 	);

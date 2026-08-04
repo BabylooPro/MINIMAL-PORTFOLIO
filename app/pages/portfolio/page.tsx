@@ -22,7 +22,10 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: PortfolioPagePr
 	return (
 		<RootLayout dictionary={dictionary} locale={locale}>
 			<main className="mt-6 space-y-7 pb-44 sm:mt-0 sm:pb-44">
-				<ProfileSection summary={portfolio.summary} title={messages.sections.profile} />
+				<ProfileSection
+					summary={portfolio.summary}
+					title={messages.sections.profile}
+				/>
 
 				<ProofWorkSection
 					description={messages.proofWork.description}

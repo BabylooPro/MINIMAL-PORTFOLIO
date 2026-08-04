@@ -7,6 +7,7 @@ type ProfileSectionProps = {
 
 export function ProfileSection({ summary, title }: ProfileSectionProps) {
 	const paragraphOccurrences = new Map<string, number>();
+
 	const paragraphs = summary.split("\n").map((content) => {
 		const occurrence = paragraphOccurrences.get(content) ?? 0;
 		paragraphOccurrences.set(content, occurrence + 1);

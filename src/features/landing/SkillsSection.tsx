@@ -7,9 +7,7 @@ type SkillsSectionProps = {
 };
 
 export function SkillsSection({ skillGroups, title }: SkillsSectionProps) {
-	if (skillGroups.length === 0) {
-		return null;
-	}
+	if (skillGroups.length === 0) return null;
 
 	return (
 		<Section labelledBy="skills-title">
@@ -20,7 +18,8 @@ export function SkillsSection({ skillGroups, title }: SkillsSectionProps) {
 					<li key={skillGroup.id} className="leading-5">
 						<h3 className="inline font-semibold text-(--foreground-color)">
 							{skillGroup.label}:
-						</h3>{" "}
+						</h3>
+
 						<span>{skillGroup.skills.join(", ")}</span>
 					</li>
 				))}

@@ -1,9 +1,7 @@
 export const locales = ["en", "fr", "de"] as const;
-
 export type Locale = (typeof locales)[number];
 
 export const legalPageIds = ["privacy", "legal"] as const;
-
 export type LegalPageId = (typeof legalPageIds)[number];
 
 export const defaultLocale: Locale = "en";
@@ -56,11 +54,7 @@ export function isLocale(value: string): value is Locale {
 
 export function getLocaleFromPathname(pathname: string): Locale | null {
 	const firstSegment = pathname.split("/").filter(Boolean).at(0);
-
-	if (!firstSegment || !isLocale(firstSegment)) {
-		return null;
-	}
-
+	if (!firstSegment || !isLocale(firstSegment)) return null;
 	return firstSegment;
 }
 
@@ -84,7 +78,5 @@ export function getLegalPageFromPathname(pathname: string): LegalPageId | null {
 	return segments.length === 2 &&
 		locale !== undefined &&
 		isLocale(locale) &&
-		legalPageIds.includes(page as LegalPageId)
-		? (page as LegalPageId)
-		: null;
+		legalPageIds.includes(page as LegalPageId) ? (page as LegalPageId) : null;
 }

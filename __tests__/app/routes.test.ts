@@ -11,20 +11,10 @@ test("resolves localized portfolio routes", () => {
 });
 
 test("resolves localized legal routes", () => {
-	assert.deepEqual(getRouteFromPathname("/de/legal/"), {
-		kind: "legal",
-		locale: "de",
-		page: "legal",
-	});
+	assert.deepEqual(getRouteFromPathname("/de/legal/"), { kind: "legal", locale: "de", page: "legal" });
 });
 
 test("rejects unknown paths", () => {
-	assert.deepEqual(getRouteFromPathname("/unknown/"), {
-		kind: "not-found",
-		locale: "en",
-	});
-	assert.deepEqual(getRouteFromPathname("/fr/unknown/"), {
-		kind: "not-found",
-		locale: "fr",
-	});
+	assert.deepEqual(getRouteFromPathname("/unknown/"), { kind: "not-found", locale: "en" });
+	assert.deepEqual(getRouteFromPathname("/fr/unknown/"), { kind: "not-found", locale: "fr" });
 });

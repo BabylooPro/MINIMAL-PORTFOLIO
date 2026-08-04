@@ -2,6 +2,7 @@ import { ArrowUpIcon } from "@/components/icons/ArrowUpIcon";
 import { Container } from "@/components/ui/Container";
 import { ThemeSwitcher } from "@/features/themes/ThemeSwitcher";
 import { getLegalPagePath, type LegalPageId, type Locale } from "@/lib/i18n/config";
+
 import type { Messages } from "@/lib/i18n/messages/types";
 
 type FooterProps = {
@@ -16,10 +17,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: F
 	const year = new Date().getFullYear();
 
 	return (
-		<footer
-			className="group/footer fixed inset-x-0 bottom-0 z-40 bg-(--background-color) pb-[env(safe-area-inset-bottom)] text-sm text-(--muted-color)"
-			data-page-footer
-		>
+		<footer className="group/footer fixed inset-x-0 bottom-0 z-40 bg-(--background-color) pb-[env(safe-area-inset-bottom)] text-sm text-(--muted-color)" data-page-footer>
 			<a
 				aria-label={footer.backToTop}
 				className="absolute bottom-full left-1/2 z-50 mb-2 flex size-9 -translate-x-1/2 items-center justify-center rounded-full border border-(--border-color) bg-(--background-color) text-(--foreground-color) shadow-sm transition-[background-color,color,transform] hover:bg-(--foreground-color) hover:text-(--background-color) focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2"
@@ -41,9 +39,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: F
 							<ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
 								<li>
 									<a
-										aria-current={
-											currentPage === "privacy" ? "page" : undefined
-										}
+										aria-current={currentPage === "privacy" ? "page" : undefined}
 										className="hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)!"
 										href={getLegalPagePath(currentLocale, "privacy")}
 									>

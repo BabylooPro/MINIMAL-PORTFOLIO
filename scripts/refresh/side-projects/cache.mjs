@@ -8,38 +8,25 @@ async function readOptionalText(filePath) {
 	try {
 		return (await fs.readFile(filePath, "utf8")).trim() || null;
 	} catch (error) {
-		if (error && typeof error === "object" && error.code === "ENOENT") {
-			return null;
-		}
-
+		if (error && typeof error === "object" && error.code === "ENOENT") return null;
 		throw error;
 	}
 }
 
 function cachePaths(cacheDirectory, githubUser) {
 	const prefix = `side-projects-${githubUser.toLowerCase()}`;
-
-	return {
-		etagPath: path.join(cacheDirectory, `${prefix}.etag`),
-		rawPath: path.join(cacheDirectory, `${prefix}.raw.json`),
-	};
+	return { etagPath: path.join(cacheDirectory, `${prefix}.etag`), rawPath: path.join(cacheDirectory, `${prefix}.raw.json`) };
 }
 
 function cacheMatchesSelections(raw, selections) {
-	const repositoriesByName = new Map(
-		raw
-			.filter(
-				(repository) => !repository.fork && !repository.archived && !repository.disabled,
-			)
-			.map((repository) => [repository.name, repository]),
+	const repositoriesByName = new Map(raw
+		.filter((repository) => !repository.fork && !repository.archived && !repository.disabled)
+		.map((repository) => [repository.name, repository]),
 	);
 
 	return selections.every((selection) => {
 		const repository = repositoriesByName.get(selection.name);
-
-		if (!repository) {
-			return false;
-		}
+		if (!repository) return false;
 
 		try {
 			createGeneratedSideProject(repository, selection);
@@ -54,23 +41,10 @@ export async function readCache(cacheDirectory, githubUser, selections, logger) 
 	const { etagPath, rawPath } = cachePaths(cacheDirectory, githubUser);
 
 	try {
-		const [etag, raw] = await Promise.all([
-			readOptionalText(etagPath),
-			readJsonFile(rawPath, "Side Projects GitHub cache", false),
-		]);
+		const [etag, raw] = await Promise.all([readOptionalText(etagPath), readJsonFile(rawPath, "Side Projects GitHub cache", false)]);
 
-		if (
-			!etag ||
-			raw === null ||
-			!Array.isArray(raw) ||
-			raw.length === 0 ||
-			!raw.every(isGitHubRepository) ||
-			!cacheMatchesSelections(raw, selections)
-		) {
-			if (etag || raw !== null) {
-				logger.warn("Ignoring an incompatible optional Side Projects cache.");
-			}
-
+		if (!etag || raw === null || !Array.isArray(raw) || raw.length === 0 || !raw.every(isGitHubRepository) || !cacheMatchesSelections(raw, selections)) {
+			if (etag || raw !== null) logger.warn("Ignoring an incompatible optional Side Projects cache.");
 			return null;
 		}
 
@@ -82,9 +56,7 @@ export async function readCache(cacheDirectory, githubUser, selections, logger) 
 }
 
 export async function writeCache(cacheDirectory, githubUser, etag, repositories, logger) {
-	if (!etag) {
-		return;
-	}
+	if (!etag) return;
 
 	try {
 		const { etagPath, rawPath } = cachePaths(cacheDirectory, githubUser);

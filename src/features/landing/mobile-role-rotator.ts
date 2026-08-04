@@ -1,6 +1,5 @@
-const roleChangeInterval = 5000;
-const roleFadeDuration = 500;
-let isMobileRoleRotatorInitialized = false;
+// TODO: MOVE THIS FILE TO THE `/features/landing/utils/` FOLDER
+
 
 type RoleRotator = {
 	activeIndex: number;
@@ -9,11 +8,13 @@ type RoleRotator = {
 	timeout: number | undefined;
 };
 
-export function initializeMobileRoleRotator(): void {
-	if (isMobileRoleRotatorInitialized) {
-		return;
-	}
+// TODO: MOVE IN A CONST LIST `params` OR WHATEVER BUT NO EXPOST LIKE THIS
+const roleChangeInterval = 5000;
+const roleFadeDuration = 500;
+let isMobileRoleRotatorInitialized = false;
 
+export function initializeMobileRoleRotator(): void {
+	if (isMobileRoleRotatorInitialized) return;
 	isMobileRoleRotatorInitialized = true;
 
 	const mobileViewport = window.matchMedia("(max-width: 39.999rem)");
@@ -47,36 +48,20 @@ export function initializeMobileRoleRotator(): void {
 	function synchronizeRoleRotators(rotators: RoleRotator[]): void {
 		for (const rotator of rotators) {
 			clearRotation(rotator);
-
-			if (mobileViewport.matches && !document.hidden && !reducedMotion.matches) {
-				queueRoleChange(rotator);
-			}
+			if (mobileViewport.matches && !document.hidden && !reducedMotion.matches) queueRoleChange(rotator);
 		}
 	}
 
-	const roleRotators = Array.from(
-		document.querySelectorAll<HTMLElement>("[data-mobile-role-rotator]"),
-	).flatMap((element) => {
+	const roleRotators = Array.from(document.querySelectorAll<HTMLElement>("[data-mobile-role-rotator]")).flatMap((element) => {
 		const roles = Array.from(element.querySelectorAll<HTMLElement>("[data-mobile-role]"));
 
-		if (roles.length < 2) {
-			return [];
-		}
+		if (roles.length < 2) return [];
 
-		return [
-			{
-				activeIndex: Math.max(
-					roles.findIndex((role) => !role.hidden),
-					0,
-				),
-				element,
-				roles,
-				timeout: undefined,
-			},
-		];
+		return [{ activeIndex: Math.max(roles.findIndex((role) => !role.hidden), 0), element, roles, timeout: undefined }];
 	});
 
 	synchronizeRoleRotators(roleRotators);
+
 	mobileViewport.addEventListener("change", () => synchronizeRoleRotators(roleRotators));
 	reducedMotion.addEventListener("change", () => synchronizeRoleRotators(roleRotators));
 	document.addEventListener("visibilitychange", () => synchronizeRoleRotators(roleRotators));

@@ -1,13 +1,11 @@
 import { type Locale, localeConfigs, rootUrl } from "@/lib/i18n/config";
+
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+
 import { socialImage } from "@/lib/seo/social-image";
 import { isExternalHttpLink } from "@/utils/isExternalHttpLink";
 
-export function createStructuredData(
-	locale: Locale,
-	dictionary: Dictionary,
-	pageUrl = localeConfigs[locale].absoluteUrl,
-): object {
+export function createStructuredData(locale: Locale, dictionary: Dictionary, pageUrl = localeConfigs[locale].absoluteUrl): object {
 	const email = dictionary.portfolio.links.find((link) => link.href.startsWith("mailto:"));
 	const telephone = dictionary.portfolio.links.find((link) => link.href.startsWith("tel:"));
 	const image = {

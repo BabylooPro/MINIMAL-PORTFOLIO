@@ -22,43 +22,21 @@ export function getDesktopScrollProgress(scrollY: number): number {
 	return Math.min(scrollY / headerScrollConfig.collapseDistance, 1);
 }
 
-export function getDesktopHeaderPadding(
-	initialPadding: HeaderPadding,
-	progress: number,
-): HeaderPadding {
+export function getDesktopHeaderPadding(initialPadding: HeaderPadding, progress: number): HeaderPadding {
 	const { compactHeaderPadding } = headerScrollConfig;
-
-	return {
-		bottom:
-			progress === 1
-				? compactHeaderPadding
-				: interpolate(initialPadding.bottom, compactHeaderPadding, progress),
-		top: interpolate(initialPadding.top, compactHeaderPadding, progress),
-	};
+	return { bottom: progress === 1 ? compactHeaderPadding : interpolate(initialPadding.bottom, compactHeaderPadding, progress), top: interpolate(initialPadding.top, compactHeaderPadding, progress) };
 }
 
 export function getHeaderIdentityProgress(progress: number) {
-	const identityProgress = progressBetween(
-		progress,
-		headerScrollConfig.headerIdentityCollapseStart,
-		1,
-	);
+	const identityProgress = progressBetween(progress, headerScrollConfig.headerIdentityCollapseStart, 1);
 	const compactIdentityStart = 0.3;
-
-	return {
-		compactIdentityProgress: progressBetween(identityProgress, compactIdentityStart, 1),
-		isCompactIdentity: identityProgress >= compactIdentityStart,
-	};
+	return { compactIdentityProgress: progressBetween(identityProgress, compactIdentityStart, 1), isCompactIdentity: identityProgress >= compactIdentityStart };
 }
 
 export function isAtPageBottom({
-	scrollY,
-	viewportHeight,
-	documentHeight,
+	scrollY, viewportHeight, documentHeight,
 }: {
-	documentHeight: number;
-	scrollY: number;
-	viewportHeight: number;
+	documentHeight: number; scrollY: number; viewportHeight: number;
 }): boolean {
 	return scrollY + viewportHeight >= documentHeight - 1;
 }

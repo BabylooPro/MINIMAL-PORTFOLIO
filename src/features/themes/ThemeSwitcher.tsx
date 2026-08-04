@@ -2,6 +2,7 @@ import { MoonIcon } from "@/components/icons/MoonIcon";
 import { SunIcon } from "@/components/icons/SunIcon";
 import { SystemIcon } from "@/components/icons/SystemIcon";
 import { ChoiceSwitcher } from "@/components/ui/ChoiceSwitcher";
+
 import type { Messages } from "@/lib/i18n/messages/types";
 
 type ThemePreference = "light" | "dark" | "system";

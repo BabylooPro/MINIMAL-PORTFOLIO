@@ -2,25 +2,16 @@ const mobileMediaQuery = window.matchMedia("(max-width: 39.999rem)");
 let isTooltipControllerInitialized = false;
 
 export function initializeTooltipController(): void {
-	if (isTooltipControllerInitialized) {
-		return;
-	}
-
+	if (isTooltipControllerInitialized) return;
 	isTooltipControllerInitialized = true;
 
 	const tooltips = [...document.querySelectorAll<HTMLDetailsElement>("[data-mobile-tooltip]")];
-
-	if (tooltips.length === 0) {
-		return;
-	}
+	if (tooltips.length === 0) return;
 
 	function updatePlacement(tooltip: HTMLDetailsElement): void {
 		const trigger = tooltip.querySelector<HTMLElement>("summary");
 		const panel = tooltip.parentElement?.querySelector<HTMLElement>("[data-tooltip-panel]");
-
-		if (!trigger || !panel) {
-			return;
-		}
+		if (!trigger || !panel) return;
 
 		if (!mobileMediaQuery.matches || !tooltip.open) {
 			delete panel.dataset.mobileTooltipPlacement;
@@ -42,18 +33,14 @@ export function initializeTooltipController(): void {
 	}
 
 	function updateOpenTooltips(): void {
-		for (const tooltip of tooltips) {
-			updatePlacement(tooltip);
-		}
+		for (const tooltip of tooltips) updatePlacement(tooltip);
 	}
 
 	for (const tooltip of tooltips) {
 		tooltip.addEventListener("toggle", () => {
 			if (tooltip.open) {
 				for (const otherTooltip of tooltips) {
-					if (otherTooltip !== tooltip) {
-						otherTooltip.open = false;
-					}
+					if (otherTooltip !== tooltip) otherTooltip.open = false;
 				}
 			}
 

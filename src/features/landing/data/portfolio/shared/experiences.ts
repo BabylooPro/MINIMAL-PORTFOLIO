@@ -46,15 +46,10 @@ const sharedExperiences = [
 ] as const satisfies readonly ExperienceMetadata[];
 
 type ExperienceId = (typeof sharedExperiences)[number]["id"];
-type LocalizedCompanyExperienceId =
-	| "confidential-client-software-engineer"
-	| "various-clients-freelance-developer";
+type LocalizedCompanyExperienceId = "confidential-client-software-engineer" | "various-clients-freelance-developer";
 
 export type LocalizedExperienceContent = {
-	[Id in ExperienceId]: LocalizedExperience &
-		(Id extends LocalizedCompanyExperienceId
-			? Pick<Experience, "company">
-			: { company?: never });
+	[Id in ExperienceId]: LocalizedExperience & (Id extends LocalizedCompanyExperienceId ? Pick<Experience, "company"> : { company?: never });
 };
 
 export function createLocalizedExperiences(content: LocalizedExperienceContent): Experience[] {
@@ -62,15 +57,7 @@ export function createLocalizedExperiences(content: LocalizedExperienceContent):
 		const localizedExperience = content[experience.id];
 		const sharedCompany = "company" in experience ? experience.company : undefined;
 		const company = localizedExperience.company ?? sharedCompany;
-
-		if (!company) {
-			throw new Error(`Missing company for ${experience.id}.`);
-		}
-
-		return {
-			...experience,
-			...localizedExperience,
-			company,
-		};
+		if (!company) throw new Error(`Missing company for ${experience.id}.`);
+		return { ...experience, ...localizedExperience, company };
 	});
 }

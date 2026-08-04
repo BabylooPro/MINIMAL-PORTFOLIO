@@ -12,13 +12,13 @@ type LanguagesSectionProps = {
 };
 
 export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
-	if (languages.length === 0) {
-		return null;
-	}
+	if (languages.length === 0) return null;
 
 	return (
 		<Section labelledBy="languages-title">
-			<SectionHeading id="languages-title">{title}</SectionHeading>
+			<SectionHeading id="languages-title">
+				{title}
+			</SectionHeading>
 
 			<ul className="mt-2 list-disc space-y-0.5 pl-5">
 				{languages.map((language, languageIndex) => (
@@ -26,7 +26,9 @@ export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
 						{language.label}
 
 						<div className="relative top-px ml-1 inline-flex items-center gap-1">
-							<span aria-hidden="true">-</span>
+							<span aria-hidden="true">
+								-
+							</span>
 
 							{language.capabilities.listening ? (
 								<div className="relative inline-flex">

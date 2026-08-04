@@ -4,28 +4,12 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { escapeHtml } from "./prerender/html.mjs";
 import { getSiteControllerScript } from "./prerender/page-validation.mjs";
-import {
-	getAlternateLinks,
-	getLanguageSwitcherLinks,
-	renderAlternateLinks,
-	renderMetadata,
-	renderSitemap,
-	routeOutputPath,
-} from "./prerender/seo.mjs";
-import {
-	getLocaleRedirectScript,
-	getReactEntryScript,
-	listFiles,
-	readSiteControllerAssets,
-	removeLocaleRedirect,
-	removeReactAndUnusedModules,
-	removeUnusedJavaScriptFiles,
-	validatePublicAssets,
-	validateStaticOutput,
-} from "./prerender/validation.mjs";
+import { getAlternateLinks, getLanguageSwitcherLinks, renderAlternateLinks, renderMetadata, renderSitemap, routeOutputPath } from "./prerender/seo.mjs";
+import { getLocaleRedirectScript, getReactEntryScript, listFiles, readSiteControllerAssets, removeLocaleRedirect, removeReactAndUnusedModules, removeUnusedJavaScriptFiles, validatePublicAssets, validateStaticOutput } from "./prerender/validation.mjs";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectDirectory = path.resolve(scriptDirectory, "..");
+
 const publicDirectory = path.join(projectDirectory, "public");
 const distDirectory = path.join(projectDirectory, "dist");
 const assetsDirectory = path.join(distDirectory, "assets");
@@ -37,11 +21,13 @@ const serverDirectory = path.join(distDirectory, "server");
 const serverEntryPath = path.join(serverDirectory, "entry.js");
 const manifestDirectory = path.join(distDirectory, ".vite");
 const manifestPath = path.join(manifestDirectory, "manifest.json");
+
 const alternateLinksMarker = "<!--alternate-links-->";
 const pageMetadataMarker = "<!--page-metadata-->";
 const structuredDataMarker = "<!--structured-data-->";
-const pageTitlePattern = /<title data-page-title>.*?<\/title>/;
 const siteControllerEntry = "app/client/site-controller.ts";
+
+const pageTitlePattern = /<title data-page-title>.*?<\/title>/;
 
 const siteName = "Max Remy";
 
@@ -75,13 +61,9 @@ const localizedAlternateLinks = [
 
 const serverModuleUrl = pathToFileURL(serverEntryPath);
 const { renderPage } = await import(serverModuleUrl.href);
-
-if (typeof renderPage !== "function") {
-	throw new TypeError('The static entry must export a "renderPage" function.');
-}
+if (typeof renderPage !== "function") throw new TypeError('The static entry must export a "renderPage" function.');
 
 let templateHtml;
-
 try {
 	templateHtml = await readFile(indexPath, "utf8");
 } catch {
@@ -89,22 +71,9 @@ try {
 }
 
 const rootPattern = /<div id="root">(?:<!--app-html-->)?<\/div>/;
-
-if (!rootPattern.test(templateHtml)) {
-	throw new Error('The "#root" element was not found in dist/index.html.');
-}
-
-if (!pageTitlePattern.test(templateHtml)) {
-	throw new Error("The production HTML is missing a page title.");
-}
-
-if (
-	![pageMetadataMarker, alternateLinksMarker, structuredDataMarker].every((marker) =>
-		templateHtml.includes(marker),
-	)
-) {
-	throw new Error("The production HTML is missing a metadata marker.");
-}
+if (!rootPattern.test(templateHtml)) throw new Error('The "#root" element was not found in dist/index.html.');
+if (!pageTitlePattern.test(templateHtml)) throw new Error("The production HTML is missing a page title.");
+if (![pageMetadataMarker, alternateLinksMarker, structuredDataMarker].every((marker) => templateHtml.includes(marker))) throw new Error("The production HTML is missing a metadata marker.");
 
 const siteController = getSiteControllerScript(templateHtml);
 getReactEntryScript(templateHtml);
@@ -113,19 +82,13 @@ getLocaleRedirectScript(templateHtml);
 await validatePublicAssets({ projectDirectory, publicDirectory });
 
 let manifest;
-
 try {
 	manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 } catch {
 	throw new Error("The Vite manifest was not generated.");
 }
 
-const siteControllerAssets = readSiteControllerAssets({
-	manifest,
-	controllerSrc: siteController.src,
-	siteControllerEntry,
-	distDirectory,
-});
+const siteControllerAssets = readSiteControllerAssets({ manifest, controllerSrc: siteController.src, siteControllerEntry, distDirectory });
 const staticTemplateHtml = removeReactAndUnusedModules(templateHtml);
 const localizedTemplateHtml = removeLocaleRedirect(staticTemplateHtml);
 
@@ -134,60 +97,34 @@ const renderedPages = await Promise.all(
 		const page = renderPage(route);
 		const pageAlternateLinks = getAlternateLinks(route, localizedAlternateLinks);
 		const languageSwitcherLinks = getLanguageSwitcherLinks(route);
-
-		if (typeof page.appHtml !== "string" || page.appHtml.length === 0) {
-			throw new Error(`The ${route.kind} static renderer returned an empty document.`);
-		}
+		if (typeof page.appHtml !== "string" || page.appHtml.length === 0) throw new Error(`The ${route.kind} static renderer returned an empty document.`);
 
 		const structuredDataJson = JSON.stringify(page.structuredData).replaceAll("<", "\\u003c");
-		const routeTemplateHtml =
-			route.kind === "root" ? staticTemplateHtml : localizedTemplateHtml;
+		const routeTemplateHtml = route.kind === "root" ? staticTemplateHtml : localizedTemplateHtml;
 		const html = routeTemplateHtml
 			.replace('<html lang="en">', `<html lang="${page.lang}">`)
 			.replace(pageTitlePattern, `<title>${escapeHtml(page.title)}</title>`)
 			.replace(rootPattern, `<div id="root">${page.appHtml}</div>`)
 			.replace(pageMetadataMarker, renderMetadata(page, siteName))
 			.replace(alternateLinksMarker, renderAlternateLinks(pageAlternateLinks))
-			.replace(
-				structuredDataMarker,
-				`<script type="application/ld+json">${structuredDataJson}</script>`,
-			);
-		const outputPath = routeOutputPath(route, { distDirectory, indexPath });
+			.replace(structuredDataMarker, `<script type="application/ld+json">${structuredDataJson}</script>`);
 
+		const outputPath = routeOutputPath(route, { distDirectory, indexPath });
 		await mkdir(path.dirname(outputPath), { recursive: true });
 		await writeFile(outputPath, html, "utf8");
 
-		return {
-			page,
-			route,
-			outputPath,
-			html,
-			siteControllerSrc: siteController.src,
-			alternateLinks: pageAlternateLinks,
-			languageSwitcherLinks,
-		};
+		return { page, route, outputPath, html, siteControllerSrc: siteController.src, alternateLinks: pageAlternateLinks, languageSwitcherLinks };
 	}),
 );
 
 const sitemap = renderSitemap(renderedPages);
 await writeFile(sitemapPath, sitemap, "utf8");
 
-await rm(serverDirectory, {
-	recursive: true,
-	force: true,
-});
-await rm(manifestDirectory, {
-	recursive: true,
-	force: true,
-});
-await removeUnusedJavaScriptFiles({
-	distDirectory,
-	allowedFiles: siteControllerAssets,
-});
+await rm(serverDirectory, { recursive: true, force: true });
+await rm(manifestDirectory, { recursive: true, force: true });
+await removeUnusedJavaScriptFiles({ distDirectory, allowedFiles: siteControllerAssets });
 
-const externalVideoFiles = (
-	await listFiles(path.join(distDirectory, "videos", "timelapse"))
-).filter((filePath) => filePath.endsWith(".mp4"));
+const externalVideoFiles = (await listFiles(path.join(distDirectory, "videos", "timelapse"))).filter((filePath) => filePath.endsWith(".mp4"));
 await Promise.all(externalVideoFiles.map((filePath) => unlink(filePath)));
 
 const outputFiles = await listFiles(distDirectory);

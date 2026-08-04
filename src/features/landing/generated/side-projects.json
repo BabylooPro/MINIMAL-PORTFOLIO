@@ -24,7 +24,7 @@
 		"name": "DONT-COMMIT-JUST-SAVE",
 		"repositoryUrl": "https://github.com/MaxRemyDev/DONT-COMMIT-JUST-SAVE",
 		"homepageUrl": "https://marketplace.visualstudio.com/items?itemName=MaxRemyDev.dont-commit-just-save",
-		"githubDescription": "VSCODE EXTENSION THAT BLOCKS GIT PUSHES WITH \"DONT COMMIT JUST SAVE\" COMMITS MESSAGE",
+		"githubDescription": "VSCODE EXTENSION THAT BLOCKS GIT PUSHES",
 		"primaryLanguage": "TypeScript",
 		"createdAt": "2024-12-22T22:04:49Z",
 		"topics": ["vscode-extension"]

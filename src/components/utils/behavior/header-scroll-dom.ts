@@ -1,11 +1,4 @@
-import {
-	getDesktopHeaderPadding,
-	getHeaderIdentityProgress,
-	type HeaderPadding,
-	headerScrollConfig,
-	interpolate,
-	isMobileDetailsCollapsed,
-} from "@/components/utils/behavior/header-scroll-state";
+import { getDesktopHeaderPadding, getHeaderIdentityProgress, type HeaderPadding, headerScrollConfig, interpolate, isMobileDetailsCollapsed } from "@/components/utils/behavior/header-scroll-state";
 
 export type CollapsibleElement = {
 	content: HTMLElement | null;
@@ -32,22 +25,16 @@ export type ScrollStateElements = {
 export function getScrollStateElements(): ScrollStateElements {
 	return {
 		backToTop: document.querySelector<HTMLAnchorElement>("[data-back-to-top]"),
-		collapsibleElements: Array.from(
-			document.querySelectorAll<HTMLElement>("[data-header-scroll-hidden]"),
-		).map((element) => ({
+		collapsibleElements: Array.from(document.querySelectorAll<HTMLElement>("[data-header-scroll-hidden]")).map((element) => ({
 			content: element.querySelector<HTMLElement>("[data-header-scroll-content]"),
 			element,
 			height: 0,
 		})),
-		compactHeaderIdentity: document.querySelector<HTMLElement>(
-			"[data-header-compact-identity]",
-		),
+		compactHeaderIdentity: document.querySelector<HTMLElement>("[data-header-compact-identity]"),
 		footer: document.querySelector<HTMLElement>("[data-page-footer]"),
 		header: document.querySelector<HTMLElement>("[data-page-header]"),
 		headerIdentity: document.querySelector<HTMLElement>("[data-header-identity]"),
-		headerIdentityTransition: document.querySelector<HTMLElement>(
-			"[data-header-identity-transition]",
-		),
+		headerIdentityTransition: document.querySelector<HTMLElement>("[data-header-identity-transition]"),
 		pageTop: document.querySelector<HTMLElement>("[data-page-top]"),
 	};
 }
@@ -58,27 +45,16 @@ function readPixels(value: string): number {
 }
 
 export function readInitialHeaderPadding(header: HTMLElement | null): HeaderPadding | null {
-	if (!header) {
-		return null;
-	}
-
-	return {
-		bottom: readPixels(getComputedStyle(header).paddingBottom),
-		top: readPixels(getComputedStyle(header).paddingTop),
-	};
+	if (!header) return null;
+	return { bottom: readPixels(getComputedStyle(header).paddingBottom), top: readPixels(getComputedStyle(header).paddingTop) };
 }
 
-export function updateBackToTopVisibility(
-	backToTop: HTMLAnchorElement | null,
-	scrollY: number,
-): void {
+export function updateBackToTopVisibility(backToTop: HTMLAnchorElement | null, scrollY: number): void {
 	backToTop?.toggleAttribute("hidden", scrollY === 0);
 }
 
 export function returnFocusToPageTop(event: MouseEvent, pageTop: HTMLElement | null): void {
-	if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
-		return;
-	}
+	if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
 
 	event.preventDefault();
 	window.scrollTo(0, 0);
@@ -101,30 +77,17 @@ export function measureCollapsibleElements(collapsibleElements: CollapsibleEleme
 	}
 }
 
-export function measureHeaderIdentity(
-	{ headerIdentity, compactHeaderIdentity }: ScrollStateElements,
-	headerIdentityHeights: HeaderIdentityHeights,
-): void {
-	if (!headerIdentity || !compactHeaderIdentity) {
-		return;
-	}
+export function measureHeaderIdentity({ headerIdentity, compactHeaderIdentity }: ScrollStateElements, headerIdentityHeights: HeaderIdentityHeights): void {
+	if (!headerIdentity || !compactHeaderIdentity) return;
 
 	const normalHeight = headerIdentity.getBoundingClientRect().height;
 	const compactHeight = compactHeaderIdentity.getBoundingClientRect().height;
 
-	if (normalHeight > 0) {
-		headerIdentityHeights.normal = normalHeight;
-	}
-
-	if (compactHeight > 0) {
-		headerIdentityHeights.compact = compactHeight;
-	}
+	if (normalHeight > 0) headerIdentityHeights.normal = normalHeight;
+	if (compactHeight > 0) headerIdentityHeights.compact = compactHeight;
 }
 
-export function updateCollapsibleElements(
-	collapsibleElements: CollapsibleElement[],
-	progress: number,
-): void {
+export function updateCollapsibleElements(collapsibleElements: CollapsibleElement[], progress: number): void {
 	for (const { element, height } of collapsibleElements) {
 		const remaining = 1 - progress;
 
@@ -145,28 +108,18 @@ export function updateHeaderIdentity(
 		!headerIdentityTransition ||
 		headerIdentityHeights.normal === 0 ||
 		headerIdentityHeights.compact === 0
-	) {
-		return;
-	}
+	) return;
 
 	const { compactIdentityProgress, isCompactIdentity } = getHeaderIdentityProgress(progress);
 
-	headerIdentityTransition.style.height = `${interpolate(
-		headerIdentityHeights.normal,
-		headerIdentityHeights.compact,
-		compactIdentityProgress,
-	)}px`;
+	headerIdentityTransition.style.height = `${interpolate(headerIdentityHeights.normal, headerIdentityHeights.compact, compactIdentityProgress)}px`;
 	headerIdentity.style.opacity = isCompactIdentity ? "0" : "1";
 	headerIdentity.style.transform = "none";
 	compactHeaderIdentity.style.opacity = isCompactIdentity ? "1" : "0";
 	compactHeaderIdentity.style.transform = "none";
 }
 
-export function resetHeaderIdentityStyles({
-	headerIdentity,
-	compactHeaderIdentity,
-	headerIdentityTransition,
-}: ScrollStateElements): void {
+export function resetHeaderIdentityStyles({ headerIdentity, compactHeaderIdentity, headerIdentityTransition }: ScrollStateElements): void {
 	headerIdentityTransition?.style.removeProperty("height");
 	headerIdentity?.style.removeProperty("opacity");
 	headerIdentity?.style.removeProperty("transform");
@@ -183,10 +136,7 @@ export function resetCollapsibleElements(collapsibleElements: CollapsibleElement
 	}
 }
 
-export function updateMobileScrollState(
-	{ header, collapsibleElements }: ScrollStateElements,
-	scrollY: number,
-): void {
+export function updateMobileScrollState({ header, collapsibleElements }: ScrollStateElements, scrollY: number): void {
 	const detailsCollapsed = isMobileDetailsCollapsed(scrollY);
 
 	header?.toggleAttribute("data-scrolled", scrollY > 0);
@@ -197,11 +147,7 @@ export function updateMobileScrollState(
 	}
 }
 
-export function updateForcedCompactMobileHeader({
-	header,
-	footer,
-	collapsibleElements,
-}: ScrollStateElements): void {
+export function updateForcedCompactMobileHeader({ header, footer, collapsibleElements }: ScrollStateElements): void {
 	footer?.removeAttribute("data-expanded");
 	header?.style.removeProperty("padding-top");
 	header?.style.removeProperty("padding-bottom");
@@ -212,30 +158,19 @@ export function updateForcedCompactMobileHeader({
 	}
 }
 
-export function updateDesktopScrollState(
-	{ header, footer }: ScrollStateElements,
-	initialHeaderPadding: HeaderPadding | null,
-	progress: number,
-	isAtPageBottom: boolean,
-): void {
+export function updateDesktopScrollState({ header, footer }: ScrollStateElements, initialHeaderPadding: HeaderPadding | null, progress: number, isAtPageBottom: boolean): void {
 	header?.toggleAttribute("data-scrolled", progress > 0);
 	header?.toggleAttribute("data-fully-compact", progress === 1);
 	footer?.toggleAttribute("data-expanded", isAtPageBottom);
 
-	if (!header || !initialHeaderPadding) {
-		return;
-	}
+	if (!header || !initialHeaderPadding) return;
 
 	const padding = getDesktopHeaderPadding(initialHeaderPadding, progress);
 	header.style.paddingTop = `${padding.top}px`;
 	header.style.paddingBottom = `${padding.bottom}px`;
 }
 
-export function updateForcedCompactDesktopHeader(
-	elements: ScrollStateElements,
-	headerIdentityHeights: HeaderIdentityHeights,
-	isAtPageBottom: boolean,
-): void {
+export function updateForcedCompactDesktopHeader(elements: ScrollStateElements, headerIdentityHeights: HeaderIdentityHeights, isAtPageBottom: boolean): void {
 	const { header, footer, collapsibleElements } = elements;
 
 	footer?.toggleAttribute("data-expanded", isAtPageBottom);
@@ -254,7 +189,5 @@ export function prepareForPrint(collapsibleElements: CollapsibleElement[]): void
 }
 
 export function markCollapsibleElementsReady(collapsibleElements: CollapsibleElement[]): void {
-	for (const { element } of collapsibleElements) {
-		element.setAttribute("data-ready", "");
-	}
+	for (const { element } of collapsibleElements) element.setAttribute("data-ready", "");
 }

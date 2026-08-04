@@ -1,12 +1,7 @@
-import {
-	createLocalizedExperiences,
-	type LocalizedExperienceContent,
-} from "@/features/landing/data/portfolio/shared/experiences";
+import { createLocalizedExperiences, type LocalizedExperienceContent } from "@/features/landing/data/portfolio/shared/experiences";
 import { sharedPortfolioDetails } from "@/features/landing/data/portfolio/shared/portfolio-details";
-import {
-	createSkillGroups,
-	type LocalizedSkillGroupLabels,
-} from "@/features/landing/data/portfolio/shared/skill-groups";
+import { createSkillGroups, type LocalizedSkillGroupLabels } from "@/features/landing/data/portfolio/shared/skill-groups";
+
 import type { Portfolio } from "@/types/portfolio";
 
 const experienceContent = {
@@ -14,36 +9,31 @@ const experienceContent = {
 		role: "Ingénieur logiciel",
 		employmentType: "Freelance",
 		location: "À distance, sur site",
-		description:
-			"Développement d’une application de respiration en Swift/SwiftUI pour iOS et watchOS, intégrant Apple Watch, Garmin, HealthKit et le biofeedback HR/HRV en temps réel.",
+		description: "Développement d’une application de respiration en Swift/SwiftUI pour iOS et watchOS, intégrant Apple Watch, Garmin, HealthKit et le biofeedback HR/HRV en temps réel.",
 	},
 	"confidential-client-software-engineer": {
 		company: "Client confidentiel",
 		role: "Ingénieur logiciel",
 		employmentType: "Freelance",
 		location: "Télétravail intégral",
-		description:
-			"Conception et développement d’une plateforme distribuée d’arbitrage de cryptomonnaies avec C#, ASP.NET Core, MAUI, Docker, Grafana et Prometheus.",
+		description: "Conception et développement d’une plateforme distribuée d’arbitrage de cryptomonnaies avec C#, ASP.NET Core, MAUI, Docker, Grafana et Prometheus.",
 	},
 	"new-tells-studio-frontend-developer": {
 		role: "Développeur frontend",
 		employmentType: "Freelance",
 		location: "Télétravail intégral",
-		description:
-			"Création d’un portfolio Next.js responsive à partir de Figma, avec des animations Rive, pour une entreprise de motion design.",
+		description: "Création d’un portfolio Next.js responsive à partir de Figma, avec des animations Rive, pour une entreprise de motion design.",
 	},
 	"max-remy-dev-founder": {
 		role: "Fondateur",
 		location: "Suisse - Télétravail intégral",
-		description:
-			"Gestion d’une entreprise individuelle proposant des services freelance en informatique.",
+		description: "Gestion d’une entreprise individuelle proposant des services freelance en informatique.",
 	},
 	"various-clients-freelance-developer": {
 		company: "Divers clients via une agence",
 		role: "Développeur freelance",
 		location: "Suisse - À distance, sur site",
-		description:
-			"Réalisation de solutions backend, d’automatisation, web, mobiles et de jeux pour différents clients.",
+		description: "Réalisation de solutions backend, d’automatisation, web, mobiles et de jeux pour différents clients.",
 	},
 } satisfies LocalizedExperienceContent;
 
@@ -60,8 +50,7 @@ export const portfolioFr = {
 	...sharedPortfolioDetails,
 	role: "Ingénieur logiciel | Développeur full-stack",
 	location: "Moudon, Vaud, Suisse",
-	summary:
-		"Un développeur couteau suisse avec 10 ans d’expérience en freelance.\nEntièrement autodidacte, sans diplôme formel.",
+	summary: "Un développeur couteau suisse avec 10 ans d’expérience en freelance.\nEntièrement autodidacte, sans diplôme formel.",
 	languages: [
 		{
 			label: "Français - Maternelle (C2)",

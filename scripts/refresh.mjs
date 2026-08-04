@@ -12,27 +12,14 @@ try {
 		.map((entry) => path.join(refreshDirectory, entry.name))
 		.sort();
 
-	if (taskPaths.length === 0) {
-		throw new Error("No refresh tasks were found.");
-	}
+	if (taskPaths.length === 0) throw new Error("No refresh tasks were found.");
 
 	for (const taskPath of taskPaths) {
 		const task = await import(pathToFileURL(taskPath).href);
-
-		if (typeof task.label !== "string" || typeof task.refresh !== "function") {
-			throw new TypeError(
-				`Refresh task ${path.basename(taskPath)} must export a label and refresh function.`,
-			);
-		}
+		if (typeof task.label !== "string" || typeof task.refresh !== "function") throw new TypeError(`Refresh task ${path.basename(taskPath)} must export a label and refresh function.`);
 
 		const result = await task.refresh({ projectDirectory });
-		const source =
-			result &&
-			typeof result === "object" &&
-			"source" in result &&
-			typeof result.source === "string"
-				? ` from ${result.source}`
-				: "";
+		const source = result && typeof result === "object" && "source" in result && typeof result.source === "string" ? ` from ${result.source}` : "";
 
 		console.log(`${task.label} refreshed${source}.`);
 	}

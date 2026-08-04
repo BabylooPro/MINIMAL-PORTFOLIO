@@ -1,9 +1,12 @@
 import type { ReactNode } from "react";
+
 import { Container } from "@/components/ui/Container";
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/features/landing/Footer";
+
 import type { LegalPageId, Locale } from "@/lib/i18n/config";
 import type { Dictionary } from "@/lib/i18n/dictionaries";
+
 import "@/app/styles/global.css";
 
 type RootLayoutProps = {
@@ -14,13 +17,7 @@ type RootLayoutProps = {
 	usePageHeading?: boolean;
 };
 
-export default function RootLayout({
-	children,
-	dictionary,
-	locale,
-	page,
-	usePageHeading = page === undefined,
-}: RootLayoutProps) {
+export default function RootLayout({ children, dictionary, locale, page, usePageHeading = page === undefined }: RootLayoutProps) {
 	const { messages, portfolio } = dictionary;
 
 	return (
@@ -36,7 +33,9 @@ export default function RootLayout({
 				{...(page ? { page } : {})}
 			/>
 
-			<Container>{children}</Container>
+			<Container>
+				{children}
+			</Container>
 
 			<Footer
 				company={portfolio.company}

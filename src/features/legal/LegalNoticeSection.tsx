@@ -1,14 +1,11 @@
 import { Section, SectionHeading } from "@/components/ui/Section";
 import type { Messages } from "@/lib/i18n/messages/types";
 
+// TODO: MAKE A LIST URL
 const commercialRegisterUrl = "https://www.zefix.ch/fr/search/entity/list/firm/1580533";
-const sourceRepositoryLicenseUrl =
-	"https://github.com/BabylooPro/MINIMAL-PORTFOLIO/blob/main/LICENSE";
+const sourceRepositoryLicenseUrl = "https://github.com/BabylooPro/MINIMAL-PORTFOLIO/blob/main/LICENSE";
 
-type LegalNoticeSectionProps = {
-	content: Messages["legalPages"]["legal"];
-	email: string | null;
-};
+type LegalNoticeSectionProps = { content: Messages["legalPages"]["legal"]; email: string | null };
 
 export function LegalNoticeSection({ content, email }: LegalNoticeSectionProps) {
 	return (
@@ -19,30 +16,25 @@ export function LegalNoticeSection({ content, email }: LegalNoticeSectionProps) 
 			</Section>
 
 			<Section labelledBy="legal-business-information-title">
-				<SectionHeading id="legal-business-information-title">
-					{content.businessInformation.title}
-				</SectionHeading>
+				<SectionHeading id="legal-business-information-title">{content.businessInformation.title}</SectionHeading>
+
 				<dl className="mt-1 space-y-2 leading-6">
 					<LegalInformationItem
 						label={content.businessInformation.legalFormLabel}
 						value={content.businessInformation.legalFormValue}
 					/>
-
 					<LegalInformationItem
 						label={content.businessInformation.ownerLabel}
 						value={content.businessInformation.ownerValue}
 					/>
-
 					<LegalInformationItem
 						label={content.businessInformation.addressLabel}
 						value={content.businessInformation.addressValue}
 					/>
-
 					<LegalInformationItem
 						label={content.businessInformation.uidLabel}
 						value={content.businessInformation.uidValue}
 					/>
-
 					<LegalInformationItem
 						label={content.businessInformation.commercialRegisterLabel}
 						href={commercialRegisterUrl}
@@ -56,72 +48,46 @@ export function LegalNoticeSection({ content, email }: LegalNoticeSectionProps) 
 				<p className="mt-1 leading-6">{content.contactDescription}</p>
 
 				{email ? (
-					<a
-						className="mt-1 inline-flex underline underline-offset-2"
-						href={`mailto:${email}`}
-					>
+					<a className="mt-1 inline-flex underline underline-offset-2" href={`mailto:${email}`}>
 						{email}
 					</a>
 				) : null}
 			</Section>
 
 			<Section labelledBy="legal-responsibility-title">
-				<SectionHeading id="legal-responsibility-title">
-					{content.responsibilityTitle}
-				</SectionHeading>
+				<SectionHeading id="legal-responsibility-title">{content.responsibilityTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.responsibilityDescription}</p>
 			</Section>
 
 			<Section labelledBy="legal-intellectual-property-title">
-				<SectionHeading id="legal-intellectual-property-title">
-					{content.intellectualPropertyTitle}
-				</SectionHeading>
+				<SectionHeading id="legal-intellectual-property-title">{content.intellectualPropertyTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.intellectualPropertyDescription}</p>
 
-				<a
-					className="mt-1 inline-flex underline underline-offset-2"
-					href={sourceRepositoryLicenseUrl}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
+				<a className="mt-1 inline-flex underline underline-offset-2" href={sourceRepositoryLicenseUrl} rel="noopener noreferrer" target="_blank">
 					{content.sourceCodeLicenseLabel}
 					<span aria-hidden="true">&nbsp;↗</span>
 				</a>
 			</Section>
 
 			<Section labelledBy="legal-external-links-title">
-				<SectionHeading id="legal-external-links-title">
-					{content.externalLinksTitle}
-				</SectionHeading>
+				<SectionHeading id="legal-external-links-title">{content.externalLinksTitle}</SectionHeading>
 				<p className="mt-1 leading-6">{content.externalLinksDescription}</p>
 			</Section>
 		</>
 	);
 }
 
-function LegalInformationItem({
-	href,
-	label,
-	value,
-}: {
-	href?: string;
-	label: string;
-	value: string;
-}) {
+function LegalInformationItem({ href, label, value }: { href?: string; label: string; value: string }) {
 	return (
 		<div>
-			<dt className="font-medium text-(--foreground-color)">{label}</dt>
+			<dt className="font-medium text-(--foreground-color)">
+				{label}
+			</dt>
 
 			<dd>
 				{href ? (
-					<a
-						className="underline underline-offset-2"
-						href={href}
-						rel="noopener noreferrer"
-						target="_blank"
-					>
-						{value}
-						<span aria-hidden="true">&nbsp;↗</span>
+					<a className="underline underline-offset-2" href={href} rel="noopener noreferrer" target="_blank">
+						{value} <span aria-hidden="true">&nbsp;↗</span>
 					</a>
 				) : (
 					value

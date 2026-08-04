@@ -9,8 +9,8 @@
 	--foreground-color: #000000;
 	--inactive-hover-color: #e6e6e6;
 	--muted-color: #737373;
-	font-family:
-		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+	font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;
 	color: var(--foreground-color);
@@ -27,6 +27,7 @@
 		--foreground-color: #ffffff;
 		--inactive-hover-color: #1a1a1a;
 		--muted-color: #a3a3a3;
+
 		color-scheme: dark;
 	}
 }
@@ -39,6 +40,7 @@
 	--foreground-color: #ffffff;
 	--inactive-hover-color: #1a1a1a;
 	--muted-color: #a3a3a3;
+
 	color-scheme: dark;
 }
 
@@ -59,8 +61,7 @@ body {
 	overflow-anchor: none;
 }
 
-html,
-body {
+html, body {
 	overscroll-behavior-y: none;
 }
 

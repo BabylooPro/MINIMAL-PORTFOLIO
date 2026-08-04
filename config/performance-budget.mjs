@@ -5,12 +5,10 @@ export const performanceBudget = {
 		maximumLocalizedExecutableGzipBytes: 4_300,
 		expectedFileCount: 1,
 	},
-
 	css: {
 		maximumGzipBytes: 7_700,
 		expectedFileCount: 1,
 	},
-
 	html: {
 		maximumGzipBytesPerPage: 10_000,
 		expectedOutputPaths: [
@@ -30,12 +28,10 @@ export const performanceBudget = {
 			"index.html",
 		],
 	},
-
 	inlineScripts: {
 		maximumThemeBootstrapGzipBytes: 1_000,
 		maximumLocaleRedirectGzipBytes: 500,
 	},
-
 	media: {
 		expectedPreviewCount: 6,
 		expectedVideoCount: 6,
@@ -45,7 +41,6 @@ export const performanceBudget = {
 		maximumVideoFileBytes: 70_000_000,
 		maximumSocialImageBytes: 250_000,
 	},
-
 	architecture: {
 		expectedReactRuntimeBytes: 0,
 		expectedThirdPartyRuntimeRequests: 0,

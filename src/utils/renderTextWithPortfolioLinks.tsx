@@ -1,11 +1,9 @@
 import type { ReactNode } from "react";
 import type { ExternalLink } from "@/types/portfolio";
+
 import { isExternalHttpLink } from "@/utils/isExternalHttpLink";
 
-export function renderTextWithPortfolioLinks(
-	text: string,
-	links: readonly ExternalLink[],
-): ReactNode[] {
+export function renderTextWithPortfolioLinks(text: string, links: readonly ExternalLink[]): ReactNode[] {
 	const content: ReactNode[] = [];
 	let remainingText = text;
 	let key = 0;
@@ -14,26 +12,15 @@ export function renderTextWithPortfolioLinks(
 		const nextLink = links
 			.map((link) => ({ index: remainingText.indexOf(link.label), link }))
 			.filter((match) => match.index >= 0)
-			.sort(
-				(first, second) =>
-					first.index - second.index ||
-					second.link.label.length - first.link.label.length,
-			)[0];
+			.sort((first, second) => first.index - second.index || second.link.label.length - first.link.label.length)[0];
 
-		if (!nextLink) {
-			content.push(remainingText);
-			break;
-		}
-
-		if (nextLink.index > 0) {
-			content.push(remainingText.slice(0, nextLink.index));
-		}
+		if (!nextLink) { content.push(remainingText); break; }
+		if (nextLink.index > 0) content.push(remainingText.slice(0, nextLink.index));
 
 		content.push(
 			<a
 				className="font-medium text-(--foreground-color) underline underline-offset-2"
-				href={nextLink.link.href}
-				key={`${nextLink.link.href}-${key}`}
+				href={nextLink.link.href} key={`${nextLink.link.href}-${key}`}
 				rel={isExternalHttpLink(nextLink.link.href) ? "noopener noreferrer" : undefined}
 				target={isExternalHttpLink(nextLink.link.href) ? "_blank" : undefined}
 			>

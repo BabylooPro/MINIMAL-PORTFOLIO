@@ -9,20 +9,13 @@ type TooltipProps = {
 	trigger: ReactNode;
 };
 
-export function Tooltip({
-	children,
-	id,
-	interactive = false,
-	label,
-	mobilePlacement = "centered",
-	trigger,
-}: TooltipProps) {
+export function Tooltip({ children, id, interactive = false, label, mobilePlacement = "centered", trigger }: TooltipProps) {
 	return (
 		<div
 			className={[
 				"group relative flex sm:static",
 				mobilePlacement === "anchored" ? "[anchor-scope:--tooltip-trigger]" : "",
-				"[&:has(details[open])]:[--info-tooltip-opacity:1] [&:has(details[open])]:[--info-tooltip-pointer-events:auto]",
+				"[&:has(details[open])]:[--info-tooltip-opacity:1] [&:has(details[open])]:[--info-tooltip-pointer-events:auto]"
 			].join(" ")}
 		>
 			<button
@@ -44,10 +37,7 @@ export function Tooltip({
 				{trigger}
 			</button>
 
-			<details
-				className="group relative flex sm:hidden"
-				data-mobile-tooltip={mobilePlacement === "anchored" ? "" : undefined}
-			>
+			<details className="group relative flex sm:hidden" data-mobile-tooltip={mobilePlacement === "anchored" ? "" : undefined}>
 				<summary
 					aria-describedby={id}
 					aria-label={label}

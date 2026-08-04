@@ -10,10 +10,7 @@
 
 	try {
 		const storedPreference = window.localStorage.getItem(storageKey);
-
-		if (isThemePreference(storedPreference)) {
-			preference = storedPreference;
-		}
+		if (isThemePreference(storedPreference)) preference = storedPreference;
 	} catch {
 		// DEFAULT TO SYSTEM
 	}
@@ -29,8 +26,5 @@
 	document.documentElement.dataset.themePreference = preference;
 
 	const themeColor = document.querySelector("meta[data-theme-color]");
-
-	if (themeColor) {
-		themeColor.setAttribute("content", isDark ? "#000000" : "#ffffff");
-	}
+	if (themeColor) themeColor.setAttribute("content", isDark ? "#000000" : "#ffffff");
 })();

@@ -24,9 +24,7 @@
 		content: none;
 	}
 
-	section,
-	article,
-	li {
+	section, article, li {
 		break-inside: avoid;
 	}
 
@@ -34,9 +32,7 @@
 		break-inside: auto;
 	}
 
-	h1,
-	h2,
-	h3 {
+	h1, h2, h3 {
 		break-after: avoid;
 	}
 
@@ -44,8 +40,7 @@
 		display: none;
 	}
 
-	[data-page-header-shell],
-	[data-page-footer] {
+	[data-page-header-shell], [data-page-footer] {
 		position: static;
 	}
 

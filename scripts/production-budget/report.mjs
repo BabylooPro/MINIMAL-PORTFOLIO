@@ -2,14 +2,8 @@ import { mkdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export function formatBytes(bytes) {
-	if (bytes < 1_000) {
-		return `${bytes.toLocaleString("en-US")} B`;
-	}
-
-	if (bytes < 1_000_000) {
-		return `${(bytes / 1_000).toFixed(1)} kB`;
-	}
-
+	if (bytes < 1_000) return `${bytes.toLocaleString("en-US")} B`;
+	if (bytes < 1_000_000) return `${(bytes / 1_000).toFixed(1)} kB`;
 	return `${(bytes / 1_000_000).toFixed(1)} MB`;
 }
 
@@ -19,58 +13,30 @@ export function formatExactBytes(bytes) {
 
 function getCheck(validation, id) {
 	const check = validation.checks.find((candidate) => candidate.id === id);
-
-	if (!check) {
-		throw new Error(`Missing performance check: ${id}`);
-	}
-
+	if (!check) throw new Error(`Missing performance check: ${id}`);
 	return check;
 }
 
 function formatValue(value, { asBytes = false } = {}) {
-	if (value === null || value === undefined) {
-		return "Not available";
-	}
-
-	if (typeof value === "boolean") {
-		return value ? "Detected" : "None";
-	}
-
+	if (value === null || value === undefined) return "Not available";
+	if (typeof value === "boolean") return value ? "Detected" : "None";
 	return asBytes ? formatExactBytes(value) : String(value);
 }
 
 function formatMaximum(value, { asBytes = false } = {}) {
-	if (typeof value === "boolean") {
-		return value ? "Detected" : "None";
-	}
-
+	if (typeof value === "boolean") return value ? "Detected" : "None";
 	return asBytes ? `≤ ${formatExactBytes(value)}` : String(value);
 }
 
 function statusForFiles(validation, prefix) {
-	return validation.checks
-		.filter((check) => check.id.startsWith(prefix))
-		.every((check) => check.status === "PASS")
-		? "PASS"
-		: "FAIL";
+	return validation.checks.filter((check) => check.id.startsWith(prefix)).every((check) => check.status === "PASS") ? "PASS" : "FAIL";
 }
 
 function createTable(headers, rows) {
 	const stringRows = rows.map((row) => row.map(String));
-	const widths = headers.map((header, columnIndex) =>
-		Math.max(header.length, ...stringRows.map((row) => row[columnIndex]?.length ?? 0)),
-	);
-	const renderRow = (row) =>
-		row
-			.map((value, index) => value.padEnd(widths[index] ?? 0))
-			.join("  ")
-			.trimEnd();
-
-	return [
-		renderRow(headers),
-		renderRow(widths.map((width) => "─".repeat(width))),
-		...stringRows.map(renderRow),
-	].join("\n");
+	const widths = headers.map((header, columnIndex) => Math.max(header.length, ...stringRows.map((row) => row[columnIndex]?.length ?? 0)));
+	const renderRow = (row) => row.map((value, index) => value.padEnd(widths[index] ?? 0)).join("  ").trimEnd();
+	return [renderRow(headers), renderRow(widths.map((width) => "─".repeat(width))), ...stringRows.map(renderRow)].join("\n");
 }
 
 function getInitialRows(validation) {
@@ -83,13 +49,7 @@ function getInitialRows(validation) {
 		"css-gzip",
 	].map((id) => {
 		const check = getCheck(validation, id);
-
-		return [
-			check.label,
-			formatValue(check.current, { asBytes: true }),
-			formatMaximum(check.maximum, { asBytes: true }),
-			check.status,
-		];
+		return [check.label, formatValue(check.current, { asBytes: true }), formatMaximum(check.maximum, { asBytes: true }), check.status];
 	});
 	const react = getCheck(validation, "react-runtime");
 	const hydration = getCheck(validation, "client-side-hydration");
@@ -117,18 +77,10 @@ function getHtmlRows(validation, section) {
 	return validation.checks
 		.filter((check) => check.section === section)
 		.sort((first, second) => {
-			if (section !== "HTML") {
-				return first.label.localeCompare(second.label);
-			}
-
+			if (section !== "HTML") return first.label.localeCompare(second.label);
 			return primaryRouteOrder.indexOf(first.label) - primaryRouteOrder.indexOf(second.label);
 		})
-		.map((check) => [
-			check.label,
-			formatValue(check.current, { asBytes: true }),
-			formatMaximum(check.maximum, { asBytes: true }),
-			check.status,
-		]);
+		.map((check) => [check.label, formatValue(check.current, { asBytes: true }), formatMaximum(check.maximum, { asBytes: true }), check.status]);
 }
 
 function formatMediaMaximum(bytes) {
@@ -142,13 +94,7 @@ function formatMediaValue(bytes) {
 function getArchitectureRows(validation) {
 	return ["client-i18n-runtime", "third-party-runtime-requests", "external-fonts"].map((id) => {
 		const check = getCheck(validation, id);
-
-		return [
-			check.label,
-			formatValue(check.current),
-			formatMaximum(check.maximum),
-			check.status,
-		];
+		return [check.label, formatValue(check.current), formatMaximum(check.maximum), check.status];
 	});
 }
 
@@ -158,12 +104,8 @@ function getMediaRows(measurement, validation) {
 	const socialImage = getCheck(validation, "social-image");
 	const previewLargest = measurement.media.previews.largestFile;
 	const videoLargest = measurement.media.videos.largestFile;
-	const previewLargestCheck = previewLargest
-		? getCheck(validation, `preview-${previewLargest.name}`)
-		: null;
-	const videoLargestCheck = videoLargest
-		? getCheck(validation, `video-${videoLargest.name}`)
-		: null;
+	const previewLargestCheck = previewLargest ? getCheck(validation, `preview-${previewLargest.name}`) : null;
+	const videoLargestCheck = videoLargest ? getCheck(validation, `video-${videoLargest.name}`) : null;
 
 	return [
 		[
@@ -180,9 +122,7 @@ function getMediaRows(measurement, validation) {
 		],
 		[
 			"Largest video",
-			videoLargest
-				? `${videoLargest.name} (${formatBytes(videoLargest.rawBytes)})`
-				: "Not available",
+			videoLargest ? `${videoLargest.name} (${formatBytes(videoLargest.rawBytes)})` : "Not available",
 			videoLargestCheck ? formatMediaMaximum(videoLargestCheck.maximum) : "Not available",
 			statusForFiles(validation, "video-"),
 		],
@@ -200,9 +140,7 @@ function getMediaRows(measurement, validation) {
 		],
 		[
 			"Largest preview",
-			previewLargest
-				? `${previewLargest.name} (${formatExactBytes(previewLargest.rawBytes)})`
-				: "Not available",
+			previewLargest ? `${previewLargest.name} (${formatExactBytes(previewLargest.rawBytes)})` : "Not available",
 			previewLargestCheck ? formatMediaMaximum(previewLargestCheck.maximum) : "Not available",
 			statusForFiles(validation, "preview-"),
 		],
@@ -218,12 +156,7 @@ function getMediaRows(measurement, validation) {
 function getFileRows(validation, section) {
 	return validation.checks
 		.filter((check) => check.section === section)
-		.map((check) => [
-			check.label,
-			formatBytes(check.current),
-			formatMediaMaximum(check.maximum),
-			check.status,
-		]);
+		.map((check) => [check.label, formatBytes(check.current), formatMediaMaximum(check.maximum), check.status]);
 }
 
 function getIntegrityLines(validation) {
@@ -274,10 +207,7 @@ export function renderTerminalReport(measurement, validation) {
 		'The active video uses preload="metadata". It may start a media request before playback, potentially partial, without guaranteeing a Range request.',
 	];
 
-	if (validation.integrityFailures.length > 0) {
-		lines.push("", "Production output is incomplete:", ...getIntegrityLines(validation));
-	}
-
+	if (validation.integrityFailures.length > 0) lines.push("", "Production output is incomplete:", ...getIntegrityLines(validation));
 	lines.push("", validation.passed ? "Production budget passed." : "Production budget failed.");
 
 	return `${lines.join("\n")}\n`;
@@ -345,15 +275,8 @@ export function renderMarkdownReport(measurement, validation) {
 		renderMarkdownTable(["File", "Current", "Budget", "Status"], videoRows),
 	];
 
-	if (validation.integrityFailures.length > 0) {
-		sections.push("", "## Incomplete production output", "", ...getIntegrityLines(validation));
-	}
-
-	sections.push(
-		"",
-		validation.passed ? "Production budget passed." : "Production budget failed.",
-		"",
-	);
+	if (validation.integrityFailures.length > 0) sections.push("", "## Incomplete production output", "", ...getIntegrityLines(validation));
+	sections.push("", validation.passed ? "Production budget passed." : "Production budget failed.", "");
 
 	return sections.join("\n");
 }

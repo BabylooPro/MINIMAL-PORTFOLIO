@@ -2,7 +2,9 @@ import { InfoIcon } from "@/components/icons/InfoIcon";
 import { Section, SectionHeading } from "@/components/ui/Section";
 import { Tooltip } from "@/components/ui/Tooltip";
 import { getMediaUrl } from "@/lib/media-origin";
+
 import type { ExternalLink } from "@/types/portfolio";
+
 import { renderTextWithPortfolioLinks } from "@/utils/renderTextWithPortfolioLinks";
 
 type ProofWorkSectionProps = {
@@ -66,12 +68,7 @@ type VideoPreviewButtonProps = {
 	video: Video;
 };
 
-function VideoPreviewButton({
-	direction,
-	label,
-	positionClassName,
-	video,
-}: VideoPreviewButtonProps) {
+function VideoPreviewButton({ direction, label, positionClassName, video }: VideoPreviewButtonProps) {
 	return (
 		<button
 			aria-label={label}
@@ -103,7 +100,7 @@ function VideoPreviewButton({
 				aria-hidden="true"
 				className={[
 					"pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 text-3xl font-bold text-white drop-shadow",
-					direction === "previous" ? "left-2" : "right-2",
+					direction === "previous" ? "left-2" : "right-2"
 				].join(" ")}
 			>
 				{direction === "previous" ? "‹" : "›"}
@@ -117,6 +114,7 @@ function formatVideoCounter(template: string, current: number, total: number): s
 }
 
 export function ProofWorkSection({
+	// TODO: EXTRACT OUTSIDE OF THIS FUNCTION
 	title,
 	summary,
 	description,
@@ -133,9 +131,7 @@ export function ProofWorkSection({
 	const nextVideo = videos[1];
 	const tooltipHasLink = links.some((link) => description.includes(link.label));
 
-	if (!activeVideo || !previousVideo || !nextVideo) {
-		return null;
-	}
+	if (!activeVideo || !previousVideo || !nextVideo) return null;
 
 	return (
 		<Section
@@ -149,25 +145,22 @@ export function ProofWorkSection({
 			<div
 				className={[
 					"relative flex items-center gap-1",
-					"after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-(--muted-color)",
+					"after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-(--muted-color)"
 				].join(" ")}
 			>
-				<SectionHeading id="proof-work-title">{title}</SectionHeading>
+				<SectionHeading id="proof-work-title">
+					{title}
+				</SectionHeading>
 
-				<Tooltip
-					id="proof-work"
-					interactive={tooltipHasLink}
-					label={tooltipLabel}
-					trigger={<InfoIcon />}
-				>
-					<p className="whitespace-pre-line">
-						{renderTextWithPortfolioLinks(description, links)}
-					</p>
+				<Tooltip id="proof-work" interactive={tooltipHasLink} label={tooltipLabel} trigger={<InfoIcon />}>
+					<p className="whitespace-pre-line">{renderTextWithPortfolioLinks(description, links)}</p>
 					<p className="mt-2 text-(--muted-color) italic">{postscript}</p>
 				</Tooltip>
 			</div>
 
-			<p className="mt-2 text-sm leading-5">{summary}</p>
+			<p className="mt-2 text-sm leading-5">
+				{summary}
+			</p>
 
 			<div className="mt-3">
 				<div className="relative mx-auto h-[min(56vw,17rem)] w-full max-w-2xl sm:h-[min(72vw,22rem)]">
@@ -200,7 +193,7 @@ export function ProofWorkSection({
 							muted
 							playsInline
 							poster={activeVideo.preview}
-							preload="metadata" // WITH PRELOAD METADATA FOR SHOW FAST START FIRST VIDEO MUTED
+							preload="metadata" // DNC: REQUIRED FOR FAST INITIAL LOAD
 							tabIndex={0}
 						>
 							<source src={activeVideo.source} type="video/mp4" />
@@ -215,11 +208,7 @@ export function ProofWorkSection({
 					/>
 				</div>
 
-				<p
-					aria-live="polite"
-					className="mt-3 text-center text-sm text-(--muted-color)"
-					data-proof-work-counter
-				>
+				<p aria-live="polite" className="mt-3 text-center text-sm text-(--muted-color)" data-proof-work-counter>
 					{formatVideoCounter(videoCounterTemplate, 1, videos.length)}
 				</p>
 			</div>

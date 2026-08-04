@@ -17,42 +17,33 @@ import {
 	updateHeaderIdentity,
 	updateMobileScrollState,
 } from "@/components/utils/behavior/header-scroll-dom";
-import {
-	getDesktopScrollProgress,
-	type HeaderPadding,
-	isAtPageBottom,
-} from "@/components/utils/behavior/header-scroll-state";
+
+import { getDesktopScrollProgress, type HeaderPadding, isAtPageBottom } from "@/components/utils/behavior/header-scroll-state";
 
 let isScrollStateControllerInitialized = false;
 
 export function initializeScrollStateController(): void {
-	if (isScrollStateControllerInitialized) {
-		return;
-	}
-
+	if (isScrollStateControllerInitialized) return;
 	isScrollStateControllerInitialized = true;
 
 	const desktopViewport = window.matchMedia("(min-width: 40rem)");
 	const elements = getScrollStateElements();
+
 	let initialHeaderPadding: HeaderPadding | null = null;
+
 	const headerIdentityHeights: HeaderIdentityHeights = { compact: 0, normal: 0 };
+
 	let animationFrame: number | undefined;
 	let collapseMode: "desktop" | "mobile" | undefined;
 
 	function isDocumentAtBottom(): boolean {
-		return isAtPageBottom({
-			documentHeight: document.documentElement.scrollHeight,
-			scrollY: window.scrollY,
-			viewportHeight: window.innerHeight,
-		});
+		return isAtPageBottom({ documentHeight: document.documentElement.scrollHeight, scrollY: window.scrollY, viewportHeight: window.innerHeight });
 	}
 
 	function setCollapseMode(mode: "desktop" | "mobile"): boolean {
-		if (collapseMode === mode) {
-			return false;
-		}
-
+		if (collapseMode === mode) return false;
 		collapseMode = mode;
+
 		resetCollapsibleElements(elements.collapsibleElements);
 		resetHeaderIdentityStyles(elements);
 
@@ -60,9 +51,7 @@ export function initializeScrollStateController(): void {
 	}
 
 	function updateForcedCompactHeader(): void {
-		if (!elements.header?.hasAttribute("data-force-compact")) {
-			return;
-		}
+		if (!elements.header?.hasAttribute("data-force-compact")) return;
 
 		elements.header.setAttribute("data-scrolled", "");
 		elements.header.setAttribute("data-fully-compact", "");
@@ -107,10 +96,7 @@ export function initializeScrollStateController(): void {
 	}
 
 	function scheduleScrollStateUpdate(): void {
-		if (animationFrame !== undefined) {
-			return;
-		}
-
+		if (animationFrame !== undefined) return;
 		animationFrame = window.requestAnimationFrame(updateScrollState);
 	}
 
@@ -136,26 +122,17 @@ export function initializeScrollStateController(): void {
 	window.addEventListener("beforeprint", () => prepareForPrint(elements.collapsibleElements));
 	window.addEventListener("afterprint", updateScrollState);
 
-	elements.backToTop?.addEventListener("click", (event) =>
-		returnFocusToPageTop(event, elements.pageTop),
-	);
+	elements.backToTop?.addEventListener("click", (event) => returnFocusToPageTop(event, elements.pageTop));
 
 	desktopViewport.addEventListener("change", updateScrollState);
 
 	const resizeObserver = new ResizeObserver(handleObservedResize);
 
-	if (elements.headerIdentity) {
-		resizeObserver.observe(elements.headerIdentity);
-	}
-
-	if (elements.compactHeaderIdentity) {
-		resizeObserver.observe(elements.compactHeaderIdentity);
-	}
+	if (elements.headerIdentity) resizeObserver.observe(elements.headerIdentity);
+	if (elements.compactHeaderIdentity) resizeObserver.observe(elements.compactHeaderIdentity);
 
 	for (const { content } of elements.collapsibleElements) {
-		if (content) {
-			resizeObserver.observe(content);
-		}
+		if (content) resizeObserver.observe(content);
 	}
 
 	measureHeaderIdentity(elements, headerIdentityHeights);

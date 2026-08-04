@@ -1,7 +1,9 @@
 import { Container } from "@/components/ui/Container";
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+
 import type { LegalPageId, Locale } from "@/lib/i18n/config";
 import type { Portfolio } from "@/types/portfolio";
+
 import { isExternalHttpLink } from "@/utils/isExternalHttpLink";
 
 type HeaderProps = {
@@ -16,51 +18,23 @@ type HeaderProps = {
 	usePageHeading?: boolean;
 };
 
-function getContactLinkLabel(
-	link: Portfolio["links"][number],
-	emailLabel: string,
-	phoneLabel: string,
-) {
-	if (link.href.startsWith("mailto:")) {
-		return `${emailLabel}: ${link.label}`;
-	}
-
-	if (link.href.startsWith("tel:")) {
-		return `${phoneLabel}: ${link.label}`;
-	}
-
+function getContactLinkLabel(link: Portfolio["links"][number], emailLabel: string, phoneLabel: string) {
+	if (link.href.startsWith("mailto:")) return `${emailLabel}: ${link.label}`;
+	if (link.href.startsWith("tel:")) return `${phoneLabel}: ${link.label}`;
 	return undefined;
 }
 
-export function Header({
-	currentLocale,
-	downloadCvLabel,
-	emailLabel,
-	languageSwitcherLabel,
-	phoneLabel,
-	page,
-	portfolio,
-	isPermanentlyCompact = false,
-	usePageHeading = true,
-}: HeaderProps) {
+export function Header({ currentLocale, downloadCvLabel, emailLabel, languageSwitcherLabel, phoneLabel, page, portfolio, isPermanentlyCompact = false, usePageHeading = true }: HeaderProps) {
 	const IdentityHeading = usePageHeading ? "h1" : "p";
 	const contactLinks = portfolio.links.filter((link) => !isExternalHttpLink(link.href));
-	const mobileRoles = portfolio.role
-		.split("|")
-		.map((role) => role.trim())
-		.filter(Boolean);
+	const mobileRoles = portfolio.role.split("|").map((role) => role.trim()).filter(Boolean);
 	const profileLinks = portfolio.links.filter((link) => isExternalHttpLink(link.href));
 
 	return (
 		<>
 			<span aria-hidden="true" className="block h-0" id="top" />
 
-			<header
-				className="sticky top-0 z-40 bg-(--background-color) pt-[env(safe-area-inset-top)]"
-				data-page-top
-				data-page-header-shell
-				tabIndex={-1}
-			>
+			<header className="sticky top-0 z-40 bg-(--background-color) pt-[env(safe-area-inset-top)]" data-page-top data-page-header-shell tabIndex={-1}>
 				<Container>
 					<div
 						className={[
@@ -114,6 +88,7 @@ export function Header({
 											{portfolio.name}
 										</span>
 									</IdentityHeading>
+
 									<p
 										className={[
 											// MOBILE IDENTITY GRID
@@ -125,15 +100,12 @@ export function Header({
 										].join(" ")}
 										data-mobile-role-rotator
 									>
-										<span className="sr-only">{portfolio.role}</span>
+										<span className="sr-only">
+											{portfolio.role}
+										</span>
 
 										{mobileRoles.map((role, index) => (
-											<span
-												aria-hidden="true"
-												data-mobile-role
-												hidden={index > 0}
-												key={role}
-											>
+											<span aria-hidden="true" data-mobile-role hidden={index > 0} key={role}>
 												{role}
 											</span>
 										))}
@@ -212,12 +184,9 @@ export function Header({
 												{contactLinks.map((link, index) => (
 													<span key={link.href}>
 														{index > 0 ? " - " : ""}
+
 														<a
-															aria-label={getContactLinkLabel(
-																link,
-																emailLabel,
-																phoneLabel,
-															)}
+															aria-label={getContactLinkLabel(link, emailLabel, phoneLabel)}
 															href={link.href}
 															className="underline underline-offset-2"
 														>

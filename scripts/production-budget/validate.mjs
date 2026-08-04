@@ -1,51 +1,19 @@
 import { performanceBudget } from "../../config/performance-budget.mjs";
 
 function createCheck({ id, section, label, current, maximum, passed, detail = null }) {
-	return {
-		id,
-		section,
-		label,
-		current,
-		maximum,
-		status: passed ? "PASS" : "FAIL",
-		detail,
-	};
+	return { id, section, label, current, maximum, status: passed ? "PASS" : "FAIL", detail };
 }
 
 function maximumCheck({ id, section, label, current, maximum, detail = null }) {
-	return createCheck({
-		id,
-		section,
-		label,
-		current,
-		maximum,
-		passed: typeof current === "number" && current <= maximum,
-		detail,
-	});
+	return createCheck({ id, section, label, current, maximum, passed: typeof current === "number" && current <= maximum, detail });
 }
 
 function equalCheck({ id, section, label, current, expected, detail = null }) {
-	return createCheck({
-		id,
-		section,
-		label,
-		current,
-		maximum: expected,
-		passed: current === expected,
-		detail,
-	});
+	return createCheck({ id, section, label, current, maximum: expected, passed: current === expected, detail });
 }
 
 function booleanCheck({ id, section, label, current, expected, detail = null }) {
-	return createCheck({
-		id,
-		section,
-		label,
-		current,
-		maximum: expected,
-		passed: current === expected,
-		detail,
-	});
+	return createCheck({ id, section, label, current, maximum: expected, passed: current === expected, detail });
 }
 
 function getOutputIntegrityFailures(measurement, budget) {
@@ -58,35 +26,20 @@ function getOutputIntegrityFailures(measurement, budget) {
 
 	const actualHtmlPaths = measurement.html.map((page) => page.relativePath).sort();
 	const expectedHtmlPaths = [...budget.html.expectedOutputPaths].sort();
-	const missingHtmlPaths = expectedHtmlPaths.filter(
-		(filePath) => !actualHtmlPaths.includes(filePath),
-	);
-	const unexpectedHtmlPaths = actualHtmlPaths.filter(
-		(filePath) => !expectedHtmlPaths.includes(filePath),
-	);
+	const missingHtmlPaths = expectedHtmlPaths.filter((filePath) => !actualHtmlPaths.includes(filePath));
+	const unexpectedHtmlPaths = actualHtmlPaths.filter((filePath) => !expectedHtmlPaths.includes(filePath));
 
-	if (missingHtmlPaths.length > 0) {
-		failures.push(`Missing generated HTML pages: ${missingHtmlPaths.join(", ")}.`);
-	}
-
-	if (unexpectedHtmlPaths.length > 0) {
-		failures.push(`Unexpected generated HTML pages: ${unexpectedHtmlPaths.join(", ")}.`);
-	}
+	if (missingHtmlPaths.length > 0) failures.push(`Missing generated HTML pages: ${missingHtmlPaths.join(", ")}.`);
+	if (unexpectedHtmlPaths.length > 0) failures.push(`Unexpected generated HTML pages: ${unexpectedHtmlPaths.join(", ")}.`);
 
 	for (const requiredPath of ["_headers", "sitemap.xml", "og-image.jpg"]) {
-		if (!measurement.files.includes(requiredPath)) {
-			failures.push(`Missing required production output: ${requiredPath}.`);
-		}
+		if (!measurement.files.includes(requiredPath)) failures.push(`Missing required production output: ${requiredPath}.`);
 	}
 
-	if (measurement.files.some((filePath) => filePath.endsWith(".mp4"))) {
-		failures.push("Cloudflare Pages output must not contain MP4 files.");
-	}
+	if (measurement.files.some((filePath) => filePath.endsWith(".mp4"))) failures.push("Cloudflare Pages output must not contain MP4 files.");
 
 	for (const artifactDirectory of [".vite/", "server/"]) {
-		if (measurement.files.some((filePath) => filePath.startsWith(artifactDirectory))) {
-			failures.push(`Unpruned build artifact found: ${artifactDirectory}`);
-		}
+		if (measurement.files.some((filePath) => filePath.startsWith(artifactDirectory))) failures.push(`Unpruned build artifact found: ${artifactDirectory}`);
 	}
 
 	return failures;

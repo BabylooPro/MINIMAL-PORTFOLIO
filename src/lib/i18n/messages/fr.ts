@@ -4,10 +4,8 @@ export const frMessages = {
 	meta: {
 		title: "Max Remy - Développeur",
 		description: "Développeur autodidacte avec 10 ans d’expérience en freelance.",
-		ogDescription:
-			"Développeur freelance autodidacte basé dans le canton de Vaud, en Suisse, avec 10 ans d’expérience.",
-		socialImageAlt:
-			"Portrait de Max Remy portant des lunettes de natation et faisant un pouce levé.",
+		ogDescription: "Développeur freelance autodidacte basé dans le canton de Vaud, en Suisse, avec 10 ans d’expérience.",
+		socialImageAlt: "Portrait de Max Remy portant des lunettes de natation et faisant un pouce levé.",
 	},
 	notFound: {
 		title: "Page introuvable",
@@ -39,45 +37,35 @@ export const frMessages = {
 		lastUpdated: "Dernière mise à jour : 30 juillet 2026",
 		privacy: {
 			title: "Confidentialité",
-			description:
-				"La manière dont ce portfolio traite les préférences techniques et les coordonnées de contact.",
+			description: "La manière dont ce portfolio traite les préférences techniques et les coordonnées de contact.",
 			intro: "Ce portfolio ne propose ni compte, ni formulaire de contact, ni outil de mesure d’audience, ni traceur publicitaire.",
 			themeTitle: "Préférence de thème",
-			themeDescription:
-				"Le choix Système, Clair ou Sombre enregistre uniquement cette préférence dans le stockage local de votre navigateur. Le site ne transmet pas cette préférence à Max Remy Dev.",
+			themeDescription: "Le choix Système, Clair ou Sombre enregistre uniquement cette préférence dans le stockage local de votre navigateur. Le site ne transmet pas cette préférence à Max Remy Dev.",
 			languageTitle: "Langue",
 			languageDescription:
 				"Le site lit la langue configurée dans votre navigateur afin de rediriger les navigateurs en français et en allemand vers leurs URL localisées. L’anglais et les langues non prises en charge restent sur la page d’accueil anglaise. Cette détection s’effectue localement, n’est pas enregistrée et n’est pas transmise à Max Remy Dev. Le choix manuel d’une langue utilise un lien vers l’URL correspondante et n’est pas enregistré non plus.",
 			cvDownloadTitle: "Téléchargement du CV",
-			cvDownloadDescription:
-				"Le lien « Télécharger le CV » met à disposition un fichier PDF statique. Le portfolio n’utilise ni formulaire, ni outil de mesure pour identifier les téléchargements.",
+			cvDownloadDescription: "Le lien « Télécharger le CV » met à disposition un fichier PDF statique. Le portfolio n’utilise ni formulaire, ni outil de mesure pour identifier les téléchargements.",
 			hostingTitle: "Hébergement",
-			hostingDescription:
-				"Ce site et ses fichiers statiques, y compris le CV, sont hébergés sur Cloudflare Pages. Cloudflare agit comme sous-traitant pour l’hébergement et la diffusion du contenu. Dans le cadre de ces services, Cloudflare peut traiter des données techniques de connexion, notamment l’adresse IP, les informations du navigateur, la date et l’heure de la requête ainsi que la ressource demandée. Selon le service et sa configuration, ces données peuvent être traitées aux États-Unis et dans d’autres pays.",
+			hostingDescription: "Ce site et ses fichiers statiques, y compris le CV, sont hébergés sur Cloudflare Pages. Cloudflare agit comme sous-traitant pour l’hébergement et la diffusion du contenu. Dans le cadre de ces services, Cloudflare peut traiter des données techniques de connexion, notamment l’adresse IP, les informations du navigateur, la date et l’heure de la requête ainsi que la ressource demandée. Selon le service et sa configuration, ces données peuvent être traitées aux États-Unis et dans d’autres pays.",
 			hostingPrivacyPolicyLabel: "Politique de confidentialité de Cloudflare",
 			externalLinksTitle: "Liens externes",
-			externalLinksDescription:
-				"Les liens vers des services externes ne s’ouvrent que lorsque vous les sélectionnez. Ces services traitent les données selon leurs propres politiques de confidentialité.",
+			externalLinksDescription: "Les liens vers des services externes ne s’ouvrent que lorsque vous les sélectionnez. Ces services traitent les données selon leurs propres politiques de confidentialité.",
 			contactTitle: "Contact",
-			contactDescription:
-				"Max Remy Dev, entreprise individuelle détenue par Max Remy et établie à Avenue de Cerjat 9, 1510 Moudon, Suisse, est responsable du traitement. Lors de l’envoi d’un e-mail, votre message est reçu par Max Remy Dev via Gmail (Google), le fournisseur de messagerie utilisé. Votre propre fournisseur de messagerie participe également à l’acheminement.",
+			contactDescription: "Max Remy Dev, entreprise individuelle détenue par Max Remy et établie à Avenue de Cerjat 9, 1510 Moudon, Suisse, est responsable du traitement. Lors de l’envoi d’un e-mail, votre message est reçu par Max Remy Dev via Gmail (Google), le fournisseur de messagerie utilisé. Votre propre fournisseur de messagerie participe également à l’acheminement.",
 			emailProviderPrivacyPolicyLabel: "Politique de confidentialité de Google",
 			rightsTitle: "Vos droits",
-			rightsDescription:
-				"Vous pouvez demander l’accès, la rectification ou l’effacement de vos données personnelles, ainsi que vous opposer à leur traitement, en écrivant à l’adresse e-mail indiquée ci-dessus.",
+			rightsDescription: "Vous pouvez demander l’accès, la rectification ou l’effacement de vos données personnelles, ainsi que vous opposer à leur traitement, en écrivant à l’adresse e-mail indiquée ci-dessus.",
 			retentionTitle: "Durée de conservation",
-			retentionDescription:
-				"Les e-mails et coordonnées de contact sont supprimés au plus tard 24 mois après le dernier échange, sauf si leur conservation est nécessaire à l’exécution d’une relation contractuelle, à la défense de droits ou au respect d’une obligation légale. Les pièces comptables sont conservées pendant dix ans à compter de la fin de l’exercice concerné. Les données techniques de connexion traitées par Cloudflare suivent la durée définie dans sa politique de confidentialité.",
+			retentionDescription: "Les e-mails et coordonnées de contact sont supprimés au plus tard 24 mois après le dernier échange, sauf si leur conservation est nécessaire à l’exécution d’une relation contractuelle, à la défense de droits ou au respect d’une obligation légale. Les pièces comptables sont conservées pendant dix ans à compter de la fin de l’exercice concerné. Les données techniques de connexion traitées par Cloudflare suivent la durée définie dans sa politique de confidentialité.",
 			updatesTitle: "Mises à jour",
-			updatesDescription:
-				"Cette page sera mise à jour avant qu’une nouvelle fonctionnalité n’introduise un traitement supplémentaire de données personnelles ou un service tiers.",
+			updatesDescription: "Cette page sera mise à jour avant qu’une nouvelle fonctionnalité n’introduise un traitement supplémentaire de données personnelles ou un service tiers.",
 		},
 		legal: {
 			title: "Mentions légales",
 			description: "Éditeur, contact et informations relatives au contenu de maxremy.dev.",
 			publisherTitle: "Éditeur",
-			publisherDescription:
-				"Ce portfolio est publié par Max Remy Dev, une entreprise individuelle suisse détenue par Max Remy.",
+			publisherDescription: "Ce portfolio est publié par Max Remy Dev, une entreprise individuelle suisse détenue par Max Remy.",
 			businessInformation: {
 				title: "Informations de l’entreprise",
 				legalFormLabel: "Forme juridique",
@@ -94,23 +82,18 @@ export const frMessages = {
 			contactTitle: "Contact",
 			contactDescription: "Pour toute question concernant ce site, contactez :",
 			responsibilityTitle: "Responsabilité du contenu",
-			responsibilityDescription:
-				"Max Remy est responsable du contenu publié sur ce portfolio.",
+			responsibilityDescription: "Max Remy est responsable du contenu publié sur ce portfolio.",
 			intellectualPropertyTitle: "Propriété intellectuelle",
-			intellectualPropertyDescription:
-				"Le code source de ce portfolio est mis à disposition sous licence MIT. Sauf mention contraire, les textes, le design, les photographies, le CV et les autres éléments visuels ne sont pas couverts par cette licence et ne peuvent pas être réutilisés sans autorisation préalable.",
+			intellectualPropertyDescription: "Le code source de ce portfolio est mis à disposition sous licence MIT. Sauf mention contraire, les textes, le design, les photographies, le CV et les autres éléments visuels ne sont pas couverts par cette licence et ne peuvent pas être réutilisés sans autorisation préalable.",
 			sourceCodeLicenseLabel: "Code source : licence MIT",
 			externalLinksTitle: "Liens externes",
-			externalLinksDescription:
-				"Max Remy Dev n’a aucun contrôle sur le contenu ni sur le traitement des données des sites tiers liés.",
+			externalLinksDescription: "Max Remy Dev n’a aucun contrôle sur le contenu ni sur le traitement des données des sites tiers liés.",
 		},
 	},
 	proofWork: {
-		description:
-			"De véritables sessions de développement où j’écris le code moi-même, condensées en timelapses ultra-rapides. J’y utilise peu, voire pas, d’IA, juste pour retrouver les sensations de la bonne époque :)\n\nDes versions plus lentes sont disponibles sur ma chaîne YouTube.",
+		description: "De véritables sessions de développement où j’écris le code moi-même, condensées en timelapses ultra-rapides. J’y utilise peu, voire pas, d’IA, juste pour retrouver les sensations de la bonne époque :)\n\nDes versions plus lentes sont disponibles sur ma chaîne YouTube.",
 		summary: "De véritables sessions de développement en timelapse.",
-		postscript:
-			"P.-S. : Hors vidéo, j’utilise bien les IA agentiques pour aller plus vite, mais jamais pour « vibe coder ». Je garde la main sur la réflexion, l’architecture, le code et les décisions techniques.",
+		postscript: "P.-S. : Hors vidéo, j’utilise bien les IA agentiques pour aller plus vite, mais jamais pour « vibe coder ». Je garde la main sur la réflexion, l’architecture, le code et les décisions techniques.",
 		tooltipLabel: "À propos de la démonstration de savoir-faire",
 		previousVideo: "Vidéo précédente",
 		nextVideo: "Vidéo suivante",

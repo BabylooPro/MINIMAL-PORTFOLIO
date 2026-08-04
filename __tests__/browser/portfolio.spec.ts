@@ -49,9 +49,7 @@ test("keeps runtime resources on first-party origins", async ({ browser }) => {
 	const siteOrigin = "http://127.0.0.1:4174";
 	const requestedUrls = new Set<string>();
 
-	page.on("request", (request) => {
-		requestedUrls.add(request.url());
-	});
+	page.on("request", (request) => requestedUrls.add(request.url()));
 
 	for (const route of ["/", "/en/", "/fr/", "/de/"]) {
 		await page.goto(`${siteOrigin}${route}`, { waitUntil: "domcontentloaded" });
@@ -63,74 +61,35 @@ test("keeps runtime resources on first-party origins", async ({ browser }) => {
 
 	await carousel.scrollIntoViewIfNeeded();
 	await page.locator('[data-proof-work-direction="next"]').click();
-	await expect(page.locator("[data-proof-work-player] source")).toHaveAttribute(
-		"src",
-		`${mediaOrigin}/videos/timelapse/2.mp4`,
-	);
+	await expect(page.locator("[data-proof-work-player] source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
 
 	const carouselResourceOrigins = await carousel.evaluate((element) => {
-		const urls = [
-			...Array.from(element.querySelectorAll<HTMLImageElement>("img")).map(
-				(image) => image.src,
-			),
-			...Array.from(element.querySelectorAll<HTMLVideoElement>("video")).flatMap((video) => [
-				video.poster,
-				...Array.from(video.querySelectorAll<HTMLSourceElement>("source")).map(
-					(source) => source.src,
-				),
-			]),
-		];
+		const urls = [...Array.from(element.querySelectorAll<HTMLImageElement>("img")).map((image) => image.src), ...Array.from(element.querySelectorAll<HTMLVideoElement>("video")).flatMap((video) => [video.poster, ...Array.from(video.querySelectorAll<HTMLSourceElement>("source")).map((source) => source.src)])];
 		const serializedVideos = element.getAttribute("data-videos");
-
-		if (!serializedVideos) {
-			throw new Error("Proof Work carousel must declare its video sources.");
-		}
+		if (!serializedVideos) throw new Error("Proof Work carousel must declare its video sources.");
 
 		const videos: unknown = JSON.parse(serializedVideos);
-
-		if (!Array.isArray(videos)) {
-			throw new Error("Proof Work carousel video data must be an array.");
-		}
+		if (!Array.isArray(videos)) throw new Error("Proof Work carousel video data must be an array.");
 
 		for (const video of videos) {
-			if (!video || typeof video !== "object") {
-				throw new Error("Proof Work carousel video data must contain objects.");
-			}
+			if (!video || typeof video !== "object") throw new Error("Proof Work carousel video data must contain objects.");
 
 			const { preview, source } = video as Record<string, unknown>;
+			if (typeof preview !== "string" || typeof source !== "string") throw new Error("Proof Work carousel video data must contain source and preview URLs.");
 
-			if (typeof preview !== "string" || typeof source !== "string") {
-				throw new Error(
-					"Proof Work carousel video data must contain source and preview URLs.",
-				);
-			}
-
-			urls.push(
-				new URL(preview, window.location.href).href,
-				new URL(source, window.location.href).href,
-			);
+			urls.push(new URL(preview, window.location.href).href, new URL(source, window.location.href).href);
 		}
 
 		return urls.filter(Boolean).map((url) => new URL(url).origin);
 	});
 
 	expect(carouselResourceOrigins).toEqual(expect.arrayContaining([siteOrigin, mediaOrigin]));
-	expect(
-		carouselResourceOrigins.every((origin) => [siteOrigin, mediaOrigin].includes(origin)),
-	).toBe(true);
-	await expect(page.locator('[data-proof-work-preview="previous"]')).toHaveAttribute(
-		"loading",
-		"lazy",
-	);
-	await expect(page.locator('[data-proof-work-preview="next"]')).toHaveAttribute(
-		"loading",
-		"lazy",
-	);
-	expect(
-		[...requestedUrls]
-			.filter((url) => !url.startsWith("data:"))
-			.every((url) => [siteOrigin, mediaOrigin].includes(new URL(url).origin)),
-	).toBe(true);
+	expect(carouselResourceOrigins.every((origin) => [siteOrigin, mediaOrigin].includes(origin))).toBe(true);
+
+	await expect(page.locator('[data-proof-work-preview="previous"]')).toHaveAttribute("loading", "lazy");
+	await expect(page.locator('[data-proof-work-preview="next"]')).toHaveAttribute("loading", "lazy");
+
+	expect([...requestedUrls].filter((url) => !url.startsWith("data:")).every((url) => [siteOrigin, mediaOrigin].includes(new URL(url).origin))).toBe(true);
 
 	await context.close();
 });
@@ -142,8 +101,8 @@ test("renders the static not-found page", async ({ page }) => {
 	await expect(page).toHaveTitle("Page not found | Max Remy");
 	await expect(page.getByRole("heading", { name: "Page not found" })).toBeVisible();
 	await expect(page.locator("main")).toHaveClass(/justify-center/);
-	const backToPortfolio = page.getByRole("link", { name: "Back to portfolio" });
 
+	const backToPortfolio = page.getByRole("link", { name: "Back to portfolio" });
 	await expect(backToPortfolio).toHaveAttribute("href", "/en/");
 	await expect(backToPortfolio).toHaveCSS("background-color", "rgb(255, 255, 255)");
 	await expect(backToPortfolio).toHaveCSS("color", "rgb(0, 0, 0)");
@@ -168,10 +127,7 @@ test("renders a localized static not-found page for every locale", async ({ page
 
 		await expect(page.locator("html")).toHaveAttribute("lang", localeConfigs[locale].htmlLang);
 		await expect(page.getByRole("heading", { name: title })).toBeVisible();
-		await expect(page.getByRole("link", { name: backToPortfolio })).toHaveAttribute(
-			"href",
-			`/${locale}/`,
-		);
+		await expect(page.getByRole("link", { name: backToPortfolio })).toHaveAttribute("href", `/${locale}/`);
 	}
 });
 
@@ -186,28 +142,19 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	await expect(player).toHaveJSProperty("controls", true);
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
-	await expect(player.locator("source")).toHaveAttribute(
-		"src",
-		`${mediaOrigin}/videos/timelapse/1.mp4`,
-	);
+	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/1.mp4`);
 	await expect(player).toHaveClass(/object-\[50%_67%\]/);
 
 	await page.locator('[data-proof-work-direction="next"]').click();
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
-	await expect(player.locator("source")).toHaveAttribute(
-		"src",
-		`${mediaOrigin}/videos/timelapse/2.mp4`,
-	);
+	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
 	await expect(player).toHaveClass(/object-\[50%_72%\]/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
 	expect(
 		await player.evaluate((element) => {
-			if (!(element instanceof HTMLVideoElement)) {
-				throw new TypeError("Proof Work player must be a video element.");
-			}
-
+			if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
 			return element.paused;
 		}),
 	).toBe(true);
@@ -231,10 +178,7 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 		await page.evaluate(() => {
 			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
 			const panel = document.querySelector<HTMLElement>("#proof-work");
-
-			if (!header || !panel) {
-				throw new Error("The header and Proof Work tooltip must be rendered.");
-			}
+			if (!header || !panel) throw new Error("The header and Proof Work tooltip must be rendered.");
 
 			const headerBox = header.getBoundingClientRect();
 			const panelBox = panel.getBoundingClientRect();
@@ -243,25 +187,14 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 			const top = Math.max(headerBox.top, panelBox.top);
 			const bottom = Math.min(headerBox.bottom, panelBox.bottom);
 
-			if (right <= left || bottom <= top) {
-				throw new Error("The mobile tooltip must overlap the sticky header in this test.");
-			}
+			if (right <= left || bottom <= top) throw new Error("The mobile tooltip must overlap the sticky header in this test.");
 
-			const topmostElement = document.elementFromPoint(
-				left + (right - left) / 2,
-				top + (bottom - top) / 2,
-			);
-
+			const topmostElement = document.elementFromPoint(left + (right - left) / 2, top + (bottom - top) / 2);
 			return Boolean(topmostElement && panel.contains(topmostElement));
 		}),
 	).toBe(true);
 
-	expect(
-		await tooltip.evaluate((panel) => ({
-			panel: getComputedStyle(panel).zIndex,
-			trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex,
-		})),
-	).toEqual({ panel: "50", trigger: "auto" });
+	expect(await tooltip.evaluate((panel) => ({ panel: getComputedStyle(panel).zIndex, trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex }))).toEqual({ panel: "50", trigger: "auto" });
 });
 
 test("keeps the mobile role stable when reduced motion is requested", async ({ page }) => {
@@ -272,9 +205,7 @@ test("keeps the mobile role stable when reduced motion is requested", async ({ p
 	const visibleRole = page.locator("[data-mobile-role]:not([hidden])");
 	const initialRole = await visibleRole.textContent();
 
-	if (!initialRole) {
-		throw new Error("The mobile role rotator needs a visible initial role.");
-	}
+	if (!initialRole) throw new Error("The mobile role rotator needs a visible initial role.");
 
 	await page.waitForTimeout(5_100);
 	await expect(page.locator("[data-mobile-role]:not([hidden])")).toHaveText(initialRole);
@@ -305,9 +236,7 @@ test("keeps localized legal links and language switching on every locale", async
 		await expect(page.locator(`[data-page-footer] a[href="/${locale}/legal/"]`)).toBeVisible();
 
 		for (const targetLocale of locales) {
-			await expect(
-				page.locator(`a[hreflang="${localeConfigs[targetLocale].htmlLang}"]`),
-			).toHaveAttribute("href", `/${targetLocale}/privacy/`);
+			await expect(page.locator(`a[hreflang="${localeConfigs[targetLocale].htmlLang}"]`)).toHaveAttribute("href", `/${targetLocale}/privacy/`);
 		}
 
 		const alternateLocale = locales.find((targetLocale) => targetLocale !== locale);
@@ -320,8 +249,6 @@ test("keeps localized legal links and language switching on every locale", async
 		await expect(page).toHaveURL(`/${alternateLocale}/privacy/`);
 
 		await page.goto(`/${locale}/legal/`);
-		await expect(
-			page.locator(`[data-page-footer] a[href="/${locale}/privacy/"]`),
-		).toBeVisible();
+		await expect(page.locator(`[data-page-footer] a[href="/${locale}/privacy/"]`)).toBeVisible();
 	}
 });

@@ -1,5 +1,4 @@
 import path from "node:path";
-
 import { escapeHtml } from "./html.mjs";
 
 export function renderMetadata(page, siteName) {
@@ -56,25 +55,16 @@ export function getLanguageSwitcherLinks(route) {
 }
 
 export function renderAlternateLinks(links) {
-	return links
-		.map((link) => `<link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`)
-		.join("\n        ");
+	return links.map((link) => `<link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`).join("\n        ");
 }
 
 export function renderSitemap(renderedPages) {
 	const indexablePages = renderedPages.filter(({ page }) => page.indexable);
 	const entries = indexablePages
 		.map(({ page, alternateLinks }) => {
-			const alternates = alternateLinks
-				.map(
-					(link) =>
-						`\t\t<xhtml:link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`,
-				)
-				.join("\n");
+			const alternates = alternateLinks.map((link) => `\t\t<xhtml:link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`).join("\n");
 
-			return ["\t<url>", `\t\t<loc>${page.canonical}</loc>`, alternates, "\t</url>"].join(
-				"\n",
-			);
+			return ["\t<url>", `\t\t<loc>${page.canonical}</loc>`, alternates, "\t</url>"].join("\n");
 		})
 		.join("\n");
 
@@ -88,17 +78,7 @@ export function renderSitemap(renderedPages) {
 }
 
 export function routeOutputPath(route, { distDirectory, indexPath }) {
-	if (route.kind === "root") {
-		return indexPath;
-	}
-
-	if (route.kind === "not-found") {
-		return route.rootFallback
-			? path.join(distDirectory, "404.html")
-			: path.join(distDirectory, route.locale, "404.html");
-	}
-
-	return route.kind === "legal"
-		? path.join(distDirectory, route.locale, route.page, "index.html")
-		: path.join(distDirectory, route.locale, "index.html");
+	if (route.kind === "root") return indexPath;
+	if (route.kind === "not-found") return route.rootFallback ? path.join(distDirectory, "404.html") : path.join(distDirectory, route.locale, "404.html");
+	return route.kind === "legal" ? path.join(distDirectory, route.locale, route.page, "index.html") : path.join(distDirectory, route.locale, "index.html");
 }
