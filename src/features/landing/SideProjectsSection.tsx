@@ -59,10 +59,10 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 
 										{project.primaryLanguage && project.topics.length > 0 ? (<>
 											<span className="sr-only">, </span>
-											<span aria-hidden="true"> · </span>
+											<span aria-hidden="true"> • </span>
 										</>) : null}
 
-										{project.topics.join(" · ")}
+										{project.topics.join(" • ")}
 									</p>
 								) : (
 									<div aria-hidden="true" />
@@ -77,7 +77,7 @@ export function SideProjectsSection({ content, locale, title }: SideProjectsSect
 
 									{project.homepageUrl ? (<>
 										<span aria-hidden="true" className="text-(--muted-color)">
-											{" · "}
+											{" • "}
 										</span>
 
 										<ProjectExternalLink href={project.homepageUrl} label={content.liveDemoLabel} />

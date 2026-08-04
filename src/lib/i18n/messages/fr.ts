@@ -77,7 +77,7 @@ export const frMessages = {
 				uidLabel: "IDE",
 				uidValue: "CHE-334.481.047",
 				commercialRegisterLabel: "Registre du commerce",
-				commercialRegisterValue: "Canton de Vaud · CH-550.1.232.514-2",
+				commercialRegisterValue: "Canton de Vaud • CH-550.1.232.514-2",
 			},
 			contactTitle: "Contact",
 			contactDescription: "Pour toute question concernant ce site, contactez :",

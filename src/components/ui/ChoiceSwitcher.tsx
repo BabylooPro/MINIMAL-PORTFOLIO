@@ -37,7 +37,7 @@ function ChoiceList<T extends Choice>({ choices, renderChoice }: { choices: read
 					{renderChoice(choice)}
 
 					{index < choices.length - 1 ? (
-						<span aria-hidden="true">&nbsp;·&nbsp;</span>
+						<span aria-hidden="true">&nbsp;•&nbsp;</span>
 					) : null}
 				</li>
 			))}

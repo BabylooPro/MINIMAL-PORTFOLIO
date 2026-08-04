@@ -80,7 +80,7 @@ export const deMessages = {
 				uidLabel: "Schweizer Unternehmens-Identifikationsnummer (UID)",
 				uidValue: "CHE-334.481.047",
 				commercialRegisterLabel: "Handelsregister",
-				commercialRegisterValue: "Kanton Waadt · CH-550.1.232.514-2",
+				commercialRegisterValue: "Kanton Waadt • CH-550.1.232.514-2",
 			},
 			contactTitle: "Kontakt",
 			contactDescription: "Bei Fragen zu dieser Website kontaktieren Sie:",

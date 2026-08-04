@@ -80,7 +80,7 @@ export const enMessages = {
 				uidLabel: "Swiss business identification number (UID)",
 				uidValue: "CHE-334.481.047",
 				commercialRegisterLabel: "Commercial Register",
-				commercialRegisterValue: "Canton of Vaud · CH-550.1.232.514-2",
+				commercialRegisterValue: "Canton of Vaud • CH-550.1.232.514-2",
 			},
 			contactTitle: "Contact",
 			contactDescription: "For questions about this site, contact:",
