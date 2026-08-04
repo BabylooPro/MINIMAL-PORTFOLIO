@@ -1,7 +1,7 @@
 {
 	"name": "portfolio",
 	"private": true,
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"type": "module",
 	"imports": {
 		"#config/*": "./config/*",
@@ -13,29 +13,22 @@
 		"dev:vite": "vite",
 		"typecheck:watch": "tsc -b --pretty false --watch --preserveWatchOutput",
 		"preview": "vite preview",
-
 		"build": "pnpm refresh && pnpm build:static",
 		"build:static": "tsc -b && pnpm build:client && pnpm build:server && pnpm prerender",
 		"build:client": "vite build",
 		"build:server": "vite build --ssr app/server/entry.tsx --outDir dist/server",
-
 		"prerender": "node --import ./scripts/register-aliases.mjs scripts/prerender.mjs",
 		"refresh": "node --import ./scripts/register-aliases.mjs scripts/refresh.mjs",
-
 		"test": "node --import ./scripts/register-aliases.mjs --experimental-strip-types --test",
 		"test:browser": "playwright test",
-
 		"check": "biome check .",
 		"check:write": "biome check --write .",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"typecheck": "tsc -b --pretty false",
-
 		"check:production-budget": "node --import ./scripts/register-aliases.mjs scripts/production-budget.mjs",
 		"report:production-budget": "pnpm build && node --import ./scripts/register-aliases.mjs scripts/production-budget.mjs --write-report",
-
 		"validate": "pnpm typecheck && pnpm check && pnpm test && pnpm build",
-
 		"verify:production": "pnpm validate && pnpm test:browser && pnpm check:production-budget",
 		"verify:cloudflare": "node --import ./scripts/register-aliases.mjs scripts/verify-cloudflare-deployment.mjs"
 	},
