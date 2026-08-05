@@ -205,6 +205,24 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 	expect(await tooltip.evaluate((panel) => ({ panel: getComputedStyle(panel).zIndex, trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex }))).toEqual({ panel: "50", trigger: "auto" });
 });
 
+test("opens language tooltips on tablet touch input", async ({ browser }) => {
+	const context = await browser.newContext({
+		hasTouch: true,
+		isMobile: true,
+		viewport: { width: 820, height: 1_180 },
+	});
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+	await expect(page.locator('summary[aria-describedby="language-0-listening"]')).toBeVisible();
+	await expect(page.locator('button[aria-describedby="language-0-listening"]')).toBeHidden();
+
+	await page.locator('summary[aria-describedby="language-0-listening"]').click();
+	await expect(page.locator("#language-0-listening")).toHaveCSS("opacity", "1");
+
+	await context.close();
+});
+
 test("keeps the mobile role stable when reduced motion is requested", async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.setViewportSize({ width: 390, height: 844 });

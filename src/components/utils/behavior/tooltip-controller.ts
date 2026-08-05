@@ -1,4 +1,4 @@
-const mobileMediaQuery = window.matchMedia("(max-width: 39.999rem)");
+const touchMediaQuery = window.matchMedia("(max-width: 39.999rem), (hover: none), (pointer: coarse)");
 let isTooltipControllerInitialized = false;
 
 export function initializeTooltipController(): void {
@@ -13,7 +13,7 @@ export function initializeTooltipController(): void {
 		const panel = tooltip.parentElement?.querySelector<HTMLElement>("[data-tooltip-panel]");
 		if (!trigger || !panel) return;
 
-		if (!mobileMediaQuery.matches || !tooltip.open) {
+		if (!touchMediaQuery.matches || !tooltip.open) {
 			delete panel.dataset.mobileTooltipPlacement;
 			return;
 		}
@@ -50,5 +50,5 @@ export function initializeTooltipController(): void {
 
 	window.addEventListener("resize", updateOpenTooltips);
 	window.addEventListener("scroll", updateOpenTooltips, { passive: true });
-	mobileMediaQuery.addEventListener("change", updateOpenTooltips);
+	touchMediaQuery.addEventListener("change", updateOpenTooltips);
 }

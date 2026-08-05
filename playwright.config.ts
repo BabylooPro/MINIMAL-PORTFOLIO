@@ -14,7 +14,7 @@ export default defineConfig({
 		},
 		{
 			name: "webkit-proof-work",
-			grep: /Proof Work/,
+			grep: /Proof Work|tablet touch input/,
 			use: { browserName: "webkit" },
 		},
 	],
