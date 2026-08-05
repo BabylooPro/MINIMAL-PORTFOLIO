@@ -51,7 +51,8 @@ export function Tooltip({ children, id, interactive = false, label, mobilePlacem
 						// KEYBOARD ACCESSIBILITY
 						"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
 						// TAP-OUTSIDE LAYER WHILE OPEN
-						"group-open:before:fixed group-open:before:inset-0 group-open:before:z-10 group-open:before:content-['']",
+						"group-open:before:fixed group-open:before:inset-0 group-open:before:z-20 group-open:before:content-['']",
+						interactive ? "group-open:before:backdrop-blur-sm" : "",
 					].join(" ")}
 				>
 					{trigger}

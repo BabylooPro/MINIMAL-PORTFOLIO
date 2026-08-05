@@ -182,6 +182,17 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 	await expect(tooltip).toHaveCSS("border-left-width", "1px");
 	await expect(tooltip).toHaveCSS("border-right-width", "1px");
 
+	expect(await summary.evaluate((element) => getComputedStyle(element, "::before").backdropFilter)).toContain("blur(");
+	expect(
+		await page.evaluate(() => {
+			const summary = document.querySelector<HTMLElement>('summary[aria-describedby="proof-work"]');
+			const activeCard = document.querySelector<HTMLElement>("[data-proof-work-active-card]");
+			if (!summary || !activeCard) throw new Error("The Proof Work tooltip and active card must be rendered.");
+
+			return { blurLayer: getComputedStyle(summary, "::before").zIndex, activeCard: getComputedStyle(activeCard).zIndex };
+		}),
+	).toEqual({ blurLayer: "20", activeCard: "10" });
+
 	expect(
 		await page.evaluate(() => {
 			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
