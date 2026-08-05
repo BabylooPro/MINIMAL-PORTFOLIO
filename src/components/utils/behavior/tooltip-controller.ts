@@ -15,6 +15,7 @@ export function initializeTooltipController(): void {
 
 		if (!touchMediaQuery.matches || !tooltip.open) {
 			delete panel.dataset.mobileTooltipPlacement;
+			panel.style.removeProperty("--mobile-tooltip-offset-x");
 			return;
 		}
 
@@ -24,12 +25,20 @@ export function initializeTooltipController(): void {
 		const spaceBelow = window.innerHeight - triggerRect.bottom;
 		const tooltipGap = 8;
 
-		if (spaceAbove >= panelHeight + tooltipGap && spaceAbove > spaceBelow) {
-			panel.dataset.mobileTooltipPlacement = "above";
-			return;
-		}
+		Object.assign(
+			panel.dataset,
+			spaceAbove >= panelHeight + tooltipGap && spaceAbove > spaceBelow
+				? { mobileTooltipPlacement: "above" }
+				: (() => { delete panel.dataset.mobileTooltipPlacement; return {}; })()
+		);
 
-		delete panel.dataset.mobileTooltipPlacement;
+		panel.style.removeProperty("--mobile-tooltip-offset-x");
+
+		const panelRect = panel.getBoundingClientRect();
+		const viewportInset = 16;
+		const offset = Math.min(Math.max(0, viewportInset - panelRect.left), window.innerWidth - viewportInset - panelRect.right);
+
+		panel.style.setProperty("--mobile-tooltip-offset-x", `${offset}px`);
 	}
 
 	function updateOpenTooltips(): void {

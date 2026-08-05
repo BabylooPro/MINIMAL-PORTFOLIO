@@ -205,6 +205,35 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 	expect(await tooltip.evaluate((panel) => ({ panel: getComputedStyle(panel).zIndex, trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex }))).toEqual({ panel: "50", trigger: "auto" });
 });
 
+test("keeps the touch Proof Work tooltip inside the content column", async ({ browser }) => {
+	const context = await browser.newContext({
+		hasTouch: true,
+		isMobile: true,
+		viewport: { width: 1_024, height: 768 },
+	});
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+
+	const summary = page.locator('summary[aria-describedby="proof-work"]');
+	await summary.scrollIntoViewIfNeeded();
+	await summary.click();
+
+	const tooltip = page.locator("#proof-work");
+	await expect(tooltip).toHaveCSS("opacity", "1");
+
+	const bounds = await tooltip.evaluate((element) => {
+		const { left, right, width } = element.getBoundingClientRect();
+		return { left, right, viewportWidth: window.innerWidth, width };
+	});
+
+	expect(bounds.width).toBeLessThanOrEqual(384);
+	expect(bounds.left).toBeGreaterThanOrEqual(16);
+	expect(bounds.right).toBeLessThanOrEqual(bounds.viewportWidth - 16);
+
+	await context.close();
+});
+
 test("opens language tooltips on tablet touch input", async ({ browser }) => {
 	const context = await browser.newContext({
 		hasTouch: true,
@@ -221,6 +250,35 @@ test("opens language tooltips on tablet touch input", async ({ browser }) => {
 	await expect(page.locator("#language-0-listening")).toHaveCSS("opacity", "1");
 
 	await context.close();
+});
+
+test("keeps language tooltips inside every touch viewport", async ({ browser }) => {
+	for (const { locale, viewport } of [
+		{ locale: "en", viewport: { width: 390, height: 844 } },
+		{ locale: "fr", viewport: { width: 1_125, height: 844 } },
+	]) {
+		const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport });
+		const page = await context.newPage();
+
+		await page.goto(`/${locale}/`);
+
+		const trigger = page.locator('summary[aria-describedby="language-0-writing"]');
+		await trigger.scrollIntoViewIfNeeded();
+		await trigger.click();
+
+		const tooltip = page.locator("#language-0-writing");
+		await expect(tooltip).toHaveCSS("opacity", "1");
+
+		const bounds = await tooltip.evaluate((element) => {
+			const { left, right } = element.getBoundingClientRect();
+			return { left, right, viewportWidth: window.innerWidth };
+		});
+
+		expect(bounds.left).toBeGreaterThanOrEqual(16);
+		expect(bounds.right).toBeLessThanOrEqual(bounds.viewportWidth - 16);
+
+		await context.close();
+	}
 });
 
 test("keeps the mobile role stable when reduced motion is requested", async ({ page }) => {
