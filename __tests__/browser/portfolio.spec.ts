@@ -216,6 +216,27 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 	expect(await tooltip.evaluate((panel) => ({ panel: getComputedStyle(panel).zIndex, trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex }))).toEqual({ panel: "50", trigger: "auto" });
 });
 
+test("keeps the desktop Proof Work tooltip below the sticky header", async ({ page }) => {
+	await page.setViewportSize({ width: 1_280, height: 800 });
+	await page.goto("/en/");
+
+	const trigger = page.locator('button[aria-describedby="proof-work"]');
+	await trigger.evaluate((element) => (element as HTMLButtonElement).focus());
+
+	const tooltip = page.locator("#proof-work");
+	await expect(tooltip).toHaveCSS("opacity", "1");
+
+	expect(
+		await page.evaluate(() => {
+			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
+			const panel = document.querySelector<HTMLElement>("#proof-work");
+			if (!header || !panel) throw new Error("The header and Proof Work tooltip must be rendered.");
+
+			return { header: getComputedStyle(header).zIndex, panel: getComputedStyle(panel).zIndex };
+		}),
+	).toEqual({ header: "40", panel: "30" });
+});
+
 test("keeps the touch Proof Work tooltip inside the content column", async ({ browser }) => {
 	const context = await browser.newContext({
 		hasTouch: true,
@@ -279,6 +300,16 @@ test("keeps language tooltips inside every touch viewport", async ({ browser }) 
 
 		const tooltip = page.locator("#language-0-writing");
 		await expect(tooltip).toHaveCSS("opacity", "1");
+
+		expect(
+			await page.evaluate(() => {
+				const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
+				const panel = document.querySelector<HTMLElement>("#language-0-writing");
+				if (!header || !panel) throw new Error("The header and language tooltip must be rendered.");
+
+				return { header: getComputedStyle(header).zIndex, panel: getComputedStyle(panel).zIndex };
+			}),
+		).toEqual({ header: "40", panel: "30" });
 
 		const bounds = await tooltip.evaluate((element) => {
 			const { left, right } = element.getBoundingClientRect();

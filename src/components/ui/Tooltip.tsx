@@ -70,7 +70,8 @@ export function Tooltip({ children, id, interactive = false, label, mobilePlacem
 
 					// MOBILE/TABLET TOUCH
 					mobilePlacement === "anchored" ? [
-						"absolute left-1/2 top-full z-50 mt-2 max-h-[calc(100dvh-2rem)] w-max max-w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 overflow-y-auto",
+						"absolute left-1/2 top-full z-30 mt-2 max-h-[calc(100dvh-2rem)] w-max max-w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 overflow-y-auto",
+						interactive ? "[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:z-50" : "",
 						"[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:[position-anchor:--tooltip-trigger]",
 						"[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:left-[calc(anchor(center)+var(--mobile-tooltip-offset-x,0px))]",
 						"[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:top-[anchor(bottom)]",
@@ -78,9 +79,13 @@ export function Tooltip({ children, id, interactive = false, label, mobilePlacem
 						"[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:data-[mobile-tooltip-placement=above]:top-[anchor(top)]",
 						"[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:data-[mobile-tooltip-placement=above]:mt-0",
 						"[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:data-[mobile-tooltip-placement=above]:[translate:-50%_calc(-100%-0.5rem)]"
-					].join(" ") : "fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-max max-w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
+					].join(" ") : [
+						"fixed left-1/2 top-1/2 z-30 max-h-[calc(100dvh-2rem)] w-max max-w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
+						interactive ? "[@media(max-width:39.999rem)_or_(hover:none)_or_(pointer:coarse)]:z-50" : "",
+					].join(" "),
 					[
 						"[@media(min-width:40rem)_and_(hover:hover)_and_(pointer:fine)]:absolute",
+						"[@media(min-width:40rem)_and_(hover:hover)_and_(pointer:fine)]:z-30",
 						"[@media(min-width:40rem)_and_(hover:hover)_and_(pointer:fine)]:top-full",
 						"[@media(min-width:40rem)_and_(hover:hover)_and_(pointer:fine)]:mt-2",
 						"[@media(min-width:40rem)_and_(hover:hover)_and_(pointer:fine)]:max-h-none",
