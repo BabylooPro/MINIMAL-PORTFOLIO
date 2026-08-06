@@ -1,7 +1,8 @@
 import { InfoIcon } from "@/src/components/icons/InfoIcon";
+import { Popover } from "@/src/components/ui/Popover";
 import { Section, SectionHeading } from "@/src/components/ui/Section";
-import { Tooltip } from "@/src/components/ui/Tooltip";
 
+import type { Locale } from "@/src/lib/i18n/config";
 import type { Messages } from "@/src/lib/i18n/messages/types";
 import { getMediaUrl } from "@/src/lib/media-origin";
 import type { ExternalLink } from "@/src/types/portfolio";
@@ -9,8 +10,9 @@ import { renderTextWithPortfolioLinks } from "@/src/utils/renderTextWithPortfoli
 
 type ProofWorkSectionProps = {
 	content: Messages["proofWork"];
-	title: string;
 	links: readonly ExternalLink[];
+	locale: Locale;
+	title: string;
 };
 
 type SquarePosition = `object-[${string}]`;
@@ -106,11 +108,10 @@ function formatVideoCounter(template: string, current: number, total: number): s
 	return template.replace("{current}", String(current)).replace("{total}", String(total));
 }
 
-export function ProofWorkSection({ content, links, title }: ProofWorkSectionProps) {
+export function ProofWorkSection({ content, links, locale, title }: ProofWorkSectionProps) {
 	const activeVideo = videos[0];
 	const previousVideo = videos[videos.length - 1];
 	const nextVideo = videos[1];
-	const tooltipHasLink = links.some((link) => content.description.includes(link.label));
 
 	if (!activeVideo || !previousVideo || !nextVideo) return null;
 
@@ -133,10 +134,10 @@ export function ProofWorkSection({ content, links, title }: ProofWorkSectionProp
 					{title}
 				</SectionHeading>
 
-				<Tooltip id="proof-work" interactive={tooltipHasLink} label={content.tooltipLabel} trigger={<InfoIcon />}>
+				<Popover id="proof-work" label={content.tooltipLabel} locale={locale} trigger={<InfoIcon />}>
 					<p className="whitespace-pre-line">{renderTextWithPortfolioLinks(content.description, links)}</p>
 					<p className="mt-2 text-(--muted-color) italic">{content.postscript}</p>
-				</Tooltip>
+				</Popover>
 			</div>
 
 			<p className="mt-2 text-sm leading-5">

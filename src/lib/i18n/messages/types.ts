@@ -24,6 +24,8 @@ export type Messages = {
 		email: string;
 		phone: string;
 		backToPortfolio: string;
+		moreInformation: string;
+		close: string;
 	};
 	footer: {
 		navigationLabel: string;

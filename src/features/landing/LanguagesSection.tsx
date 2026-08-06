@@ -7,11 +7,12 @@ import { Tooltip } from "@/src/components/ui/Tooltip";
 import type { Language } from "@/src/types/portfolio";
 
 type LanguagesSectionProps = {
+	moreInformationLabel: string;
 	title: string;
 	languages: readonly Language[];
 };
 
-export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
+export function LanguagesSection({ languages, moreInformationLabel, title }: LanguagesSectionProps) {
 	if (languages.length === 0) return null;
 
 	return (
@@ -34,9 +35,8 @@ export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
 								<div className="relative inline-flex">
 									<Tooltip
 										id={`language-${languageIndex}-listening`}
-										label={language.capabilities.listening}
-										mobilePlacement="anchored"
 										trigger={<EarIcon />}
+										triggerLabel={moreInformationLabel}
 									>
 										<p>{language.capabilities.listening}</p>
 									</Tooltip>
@@ -47,9 +47,8 @@ export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
 								<div className="relative inline-flex">
 									<Tooltip
 										id={`language-${languageIndex}-speaking`}
-										label={language.capabilities.speaking}
-										mobilePlacement="anchored"
 										trigger={<PersonVoiceIcon />}
+										triggerLabel={moreInformationLabel}
 									>
 										<p>{language.capabilities.speaking}</p>
 									</Tooltip>
@@ -60,9 +59,8 @@ export function LanguagesSection({ languages, title }: LanguagesSectionProps) {
 								<div className="relative inline-flex">
 									<Tooltip
 										id={`language-${languageIndex}-writing`}
-										label={language.capabilities.writing}
-										mobilePlacement="anchored"
 										trigger={<MessageIcon />}
+										triggerLabel={moreInformationLabel}
 									>
 										<p>{language.capabilities.writing}</p>
 									</Tooltip>

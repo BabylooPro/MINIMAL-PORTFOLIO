@@ -30,6 +30,7 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: PortfolioPagePr
 				<ProofWorkSection
 					content={messages.proofWork}
 					links={portfolio.links}
+					locale={locale}
 					title={messages.sections.proofWork}
 				/>
 
@@ -40,6 +41,7 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: PortfolioPagePr
 
 				<LanguagesSection
 					languages={portfolio.languages}
+					moreInformationLabel={messages.labels.moreInformation}
 					title={messages.sections.languages}
 				/>
 

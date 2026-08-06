@@ -26,6 +26,8 @@ export const enMessages = {
 		email: "Email",
 		phone: "Phone",
 		backToPortfolio: "Back to portfolio",
+		moreInformation: "More information",
+		close: "Close",
 	},
 	footer: {
 		navigationLabel: "Footer navigation",

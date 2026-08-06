@@ -168,28 +168,32 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	).toBe(true);
 });
 
-test("keeps the mobile Proof Work tooltip above the sticky header", async ({ page }) => {
+test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
 	await page.setViewportSize({ width: 390, height: 350 });
 	await page.goto("/en/");
 
-	const summary = page.locator('summary[aria-describedby="proof-work"]');
-	await summary.evaluate((element) => element.scrollIntoView({ block: "center" }));
-	await summary.click();
+	const trigger = page.locator("[data-popover-trigger]");
+	await trigger.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await trigger.click();
 
-	const tooltip = page.locator("#proof-work");
-	await expect(tooltip).toBeVisible();
-	await expect(tooltip).toHaveCSS("opacity", "1");
-	await expect(tooltip).toHaveCSS("border-left-width", "1px");
-	await expect(tooltip).toHaveCSS("border-right-width", "1px");
+	const popover = page.locator("#proof-work");
+	const closeButton = popover.getByRole("button", { name: "Close" });
 
-	expect(await summary.evaluate((element) => getComputedStyle(element, "::before").backdropFilter)).toContain("blur(");
+	await expect(trigger).toHaveAttribute("aria-expanded", "true");
+	await expect(popover).toBeVisible();
+	await expect(popover).toHaveAttribute("role", "dialog");
+	await expect(popover).toHaveAttribute("aria-label", "About Proof of Work");
+	await expect(popover).toHaveCSS("border-left-width", "1px");
+	await expect(popover).toHaveCSS("border-right-width", "1px");
+	await expect(page.locator("[data-popover-backdrop]")).toBeVisible();
+
 	expect(
 		await page.evaluate(() => {
-			const summary = document.querySelector<HTMLElement>('summary[aria-describedby="proof-work"]');
+			const backdrop = document.querySelector<HTMLElement>("[data-popover-backdrop]");
 			const activeCard = document.querySelector<HTMLElement>("[data-proof-work-active-card]");
-			if (!summary || !activeCard) throw new Error("The Proof Work tooltip and active card must be rendered.");
+			if (!backdrop || !activeCard) throw new Error("The Proof Work backdrop and active card must be rendered.");
 
-			return { blurLayer: getComputedStyle(summary, "::before").zIndex, activeCard: getComputedStyle(activeCard).zIndex };
+			return { blurLayer: getComputedStyle(backdrop).zIndex, activeCard: getComputedStyle(activeCard).zIndex };
 		}),
 	).toEqual({ blurLayer: "20", activeCard: "10" });
 
@@ -197,7 +201,7 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 		await page.evaluate(() => {
 			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
 			const panel = document.querySelector<HTMLElement>("#proof-work");
-			if (!header || !panel) throw new Error("The header and Proof Work tooltip must be rendered.");
+			if (!header || !panel) throw new Error("The header and Proof Work popover must be rendered.");
 
 			const headerBox = header.getBoundingClientRect();
 			const panelBox = panel.getBoundingClientRect();
@@ -206,38 +210,69 @@ test("keeps the mobile Proof Work tooltip above the sticky header", async ({ pag
 			const top = Math.max(headerBox.top, panelBox.top);
 			const bottom = Math.min(headerBox.bottom, panelBox.bottom);
 
-			if (right <= left || bottom <= top) throw new Error("The mobile tooltip must overlap the sticky header in this test.");
+			if (right <= left || bottom <= top) throw new Error("The mobile popover must overlap the sticky header in this test.");
 
 			const topmostElement = document.elementFromPoint(left + (right - left) / 2, top + (bottom - top) / 2);
 			return Boolean(topmostElement && panel.contains(topmostElement));
 		}),
 	).toBe(true);
 
-	expect(await tooltip.evaluate((panel) => ({ panel: getComputedStyle(panel).zIndex, trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex }))).toEqual({ panel: "50", trigger: "auto" });
+	expect(await popover.evaluate((panel) => ({ panel: getComputedStyle(panel).zIndex, trigger: getComputedStyle(panel.parentElement as HTMLElement).zIndex }))).toEqual({ panel: "50", trigger: "auto" });
+
+	await closeButton.focus();
+	await expect(closeButton).toBeFocused();
+	await popover.locator("a").focus();
+	await expect(popover.locator("a")).toBeFocused();
+	await page.keyboard.press("Escape");
+	await expect(popover).toBeHidden();
+	await expect(trigger).toBeFocused();
+	await expect(trigger).toHaveAttribute("aria-expanded", "false");
 });
 
-test("keeps the desktop Proof Work tooltip below the sticky header", async ({ page }) => {
+test("localizes the Proof Work popover close action", async ({ page }) => {
+	for (const [locale, closeLabel] of [["en", "Close"], ["fr", "Fermer"], ["de", "Schliessen"]] as const) {
+		await page.goto(`/${locale}/`);
+		await expect(page.locator("[data-popover-close]")).toHaveAttribute("aria-label", closeLabel);
+	}
+});
+
+test("keeps the desktop Proof Work popover hoverable below the sticky header", async ({ page }) => {
 	await page.setViewportSize({ width: 1_280, height: 800 });
 	await page.goto("/en/");
 
-	const trigger = page.locator('button[aria-describedby="proof-work"]');
-	await trigger.evaluate((element) => (element as HTMLButtonElement).focus());
+	const trigger = page.locator("[data-popover-trigger]");
+	const popover = page.locator("#proof-work");
 
-	const tooltip = page.locator("#proof-work");
-	await expect(tooltip).toHaveCSS("opacity", "1");
+	await trigger.hover();
+	await expect(popover).toBeHidden();
+	await page.waitForTimeout(750);
+	await expect(popover).toBeVisible();
+	await popover.hover();
+	await page.waitForTimeout(200);
+	await expect(popover).toBeVisible();
+
+	await page.mouse.move(0, 0);
+	await page.waitForTimeout(200);
+	await expect(popover).toBeHidden();
+
+	await trigger.evaluate((element) => (element as HTMLButtonElement).focus());
+	await expect(popover).toBeVisible();
+	await expect(trigger).toHaveAttribute("aria-haspopup", "dialog");
+	await expect(trigger).toHaveAttribute("aria-expanded", "true");
+	await expect(popover.getByRole("button", { name: "Close" })).toBeHidden();
 
 	expect(
 		await page.evaluate(() => {
 			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
 			const panel = document.querySelector<HTMLElement>("#proof-work");
-			if (!header || !panel) throw new Error("The header and Proof Work tooltip must be rendered.");
+			if (!header || !panel) throw new Error("The header and Proof Work popover must be rendered.");
 
 			return { header: getComputedStyle(header).zIndex, panel: getComputedStyle(panel).zIndex };
 		}),
 	).toEqual({ header: "40", panel: "30" });
 });
 
-test("keeps the touch Proof Work tooltip inside the content column", async ({ browser }) => {
+test("keeps the touch Proof Work popover inside the content column", async ({ browser }) => {
 	const context = await browser.newContext({
 		hasTouch: true,
 		isMobile: true,
@@ -247,14 +282,23 @@ test("keeps the touch Proof Work tooltip inside the content column", async ({ br
 
 	await page.goto("/en/");
 
-	const summary = page.locator('summary[aria-describedby="proof-work"]');
-	await summary.scrollIntoViewIfNeeded();
-	await summary.click();
+	const trigger = page.locator("[data-popover-trigger]");
+	await trigger.scrollIntoViewIfNeeded();
+	await trigger.click();
 
-	const tooltip = page.locator("#proof-work");
-	await expect(tooltip).toHaveCSS("opacity", "1");
+	const popover = page.locator("#proof-work");
+	await expect(popover).toBeVisible();
+	await expect(popover.getByRole("button", { name: "Close" })).toBeVisible();
 
-	const bounds = await tooltip.evaluate((element) => {
+	await page.locator("[data-popover-backdrop]").click({ position: { x: 8, y: 700 } });
+	await expect(popover).toBeHidden();
+	await expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+	await trigger.focus();
+	await trigger.click();
+	await expect(popover).toBeVisible();
+
+	const bounds = await popover.evaluate((element) => {
 		const { left, right, width } = element.getBoundingClientRect();
 		return { left, right, viewportWidth: window.innerWidth, width };
 	});
@@ -266,7 +310,37 @@ test("keeps the touch Proof Work tooltip inside the content column", async ({ br
 	await context.close();
 });
 
-test("opens language tooltips on tablet touch input", async ({ browser }) => {
+test("uses a single standard desktop trigger for language tooltips", async ({ page }) => {
+	await page.setViewportSize({ width: 1_280, height: 800 });
+	await page.goto("/en/");
+
+	const trigger = page.locator('[data-tooltip-trigger][aria-describedby="language-0-listening"]');
+	const tooltip = page.locator("#language-0-listening");
+
+	await expect(trigger).toHaveAttribute("aria-label", "More information");
+	await expect(trigger).not.toHaveAttribute("aria-expanded", /.+/);
+	await expect(tooltip).toHaveAttribute("role", "tooltip");
+	await expect(tooltip.locator("a, button, input, select, textarea")).toHaveCount(0);
+	await expect(page.locator("[data-tooltip] summary")).toHaveCount(0);
+
+	await trigger.scrollIntoViewIfNeeded();
+	await page.waitForTimeout(200);
+	await trigger.hover();
+	await expect(tooltip).toHaveCSS("opacity", "0");
+	await page.waitForTimeout(750);
+	await expect(tooltip).toHaveCSS("opacity", "1");
+	await tooltip.hover();
+	await page.waitForTimeout(200);
+	await expect(tooltip).toHaveCSS("opacity", "1");
+
+	await page.keyboard.press("Escape");
+	await expect(tooltip).toHaveCSS("opacity", "0");
+	await page.mouse.move(0, 0);
+	await trigger.evaluate((element) => (element as HTMLButtonElement).focus());
+	await expect(tooltip).toHaveCSS("opacity", "1");
+});
+
+test("opens language tooltips as toggletips on tablet touch input", async ({ browser }) => {
 	const context = await browser.newContext({
 		hasTouch: true,
 		isMobile: true,
@@ -275,11 +349,21 @@ test("opens language tooltips on tablet touch input", async ({ browser }) => {
 	const page = await context.newPage();
 
 	await page.goto("/en/");
-	await expect(page.locator('summary[aria-describedby="language-0-listening"]')).toBeVisible();
-	await expect(page.locator('button[aria-describedby="language-0-listening"]')).toBeHidden();
+	const trigger = page.locator('[data-tooltip-trigger][aria-controls="language-0-listening"]');
+	const tooltip = page.locator("#language-0-listening");
+	await expect(trigger).toBeVisible();
+	await expect(trigger).toHaveAttribute("aria-expanded", "false");
+	await expect(tooltip).toHaveAttribute("role", "status");
+	await expect(tooltip).toHaveAttribute("aria-live", "polite");
+	await expect(tooltip).toHaveAttribute("aria-hidden", "true");
 
-	await page.locator('summary[aria-describedby="language-0-listening"]').click();
-	await expect(page.locator("#language-0-listening")).toHaveCSS("opacity", "1");
+	await trigger.click();
+	await expect(trigger).toHaveAttribute("aria-expanded", "true");
+	await expect(tooltip).toHaveAttribute("aria-hidden", "false");
+	await expect(tooltip).toHaveCSS("opacity", "1");
+	await page.mouse.click(5, 5);
+	await expect(trigger).toHaveAttribute("aria-expanded", "false");
+	await expect(tooltip).toHaveAttribute("aria-hidden", "true");
 
 	await context.close();
 });
@@ -294,11 +378,12 @@ test("keeps language tooltips inside every touch viewport", async ({ browser }) 
 
 		await page.goto(`/${locale}/`);
 
-		const trigger = page.locator('summary[aria-describedby="language-0-writing"]');
+		const trigger = page.locator('[data-tooltip-trigger][aria-controls="language-0-writing"]');
 		await trigger.scrollIntoViewIfNeeded();
 		await trigger.click();
 
 		const tooltip = page.locator("#language-0-writing");
+		await expect(trigger).toHaveAttribute("aria-expanded", "true");
 		await expect(tooltip).toHaveCSS("opacity", "1");
 
 		expect(
@@ -318,6 +403,9 @@ test("keeps language tooltips inside every touch viewport", async ({ browser }) 
 
 		expect(bounds.left).toBeGreaterThanOrEqual(16);
 		expect(bounds.right).toBeLessThanOrEqual(bounds.viewportWidth - 16);
+
+		await page.keyboard.press("Escape");
+		await expect(trigger).toHaveAttribute("aria-expanded", "false");
 
 		await context.close();
 	}
