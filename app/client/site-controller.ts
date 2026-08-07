@@ -5,9 +5,17 @@ import { initializeMobileRoleRotator } from "@/src/features/landing/utils/mobile
 import { initializeProofWorkController } from "@/src/features/landing/utils/proof-work-controller";
 import { initializeThemeController } from "@/src/features/themes/theme-controller";
 
-initializeThemeController();
-initializeProofWorkController();
-initializeMobileRoleRotator();
-initializeScrollStateController();
-initializeTooltipController();
-initializePopoverController();
+for (const initialize of [
+	initializeThemeController,
+	initializeProofWorkController,
+	initializeMobileRoleRotator,
+	initializeScrollStateController,
+	initializeTooltipController,
+	initializePopoverController,
+]) {
+	try {
+		initialize();
+	} catch (error) {
+		console.error(error);
+	}
+}
