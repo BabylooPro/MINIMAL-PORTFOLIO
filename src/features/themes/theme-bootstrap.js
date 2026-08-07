@@ -1,30 +1,24 @@
 (() => {
-	const storageKey = "theme-preference";
-	const systemTheme = window.matchMedia("(prefers-color-scheme: dark)");
-
-	function isThemePreference(value) {
-		return value === "light" || value === "dark" || value === "system";
-	}
+	const root = document.documentElement;
 
 	let preference = "system";
 
 	try {
-		const storedPreference = window.localStorage.getItem(storageKey);
-		if (isThemePreference(storedPreference)) preference = storedPreference;
+		const storedPreference = localStorage.getItem("theme-preference");
+		if (storedPreference === "light" || storedPreference === "dark" || storedPreference === "system") preference = storedPreference;
 	} catch {
 		// DEFAULT TO SYSTEM
 	}
 
-	const isDark = preference === "dark" || (preference === "system" && systemTheme.matches);
-
 	if (preference === "system") {
-		document.documentElement.removeAttribute("data-theme");
+		root.removeAttribute("data-theme");
 	} else {
-		document.documentElement.dataset.theme = preference;
+		root.dataset.theme = preference;
 	}
 
-	document.documentElement.dataset.themePreference = preference;
+	root.dataset.themePreference = preference;
 
-	const themeColor = document.querySelector("meta[data-theme-color]");
-	if (themeColor) themeColor.setAttribute("content", isDark ? "#000000" : "#ffffff");
+	const isDark = preference === "dark" || (preference === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
+
+	document.querySelector("meta[data-theme-color]")?.setAttribute("content", isDark ? "#000000" : "#ffffff");
 })();
