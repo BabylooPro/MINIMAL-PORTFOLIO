@@ -466,3 +466,63 @@ test("keeps localized legal links and language switching on every locale", async
 		await expect(page.locator(`[data-page-footer] a[href="/${locale}/privacy/"]`)).toBeVisible();
 	}
 });
+
+test("opens overlays by tap on a device that reports desktop pointer capabilities", async ({ browser }) => {
+	const context = await browser.newContext({ viewport: { width: 1_280, height: 800 }, hasTouch: true });
+	await context.addInitScript(() => {
+		const native = window.matchMedia.bind(window);
+		window.matchMedia = (query) => {
+			const real = native(query);
+			if (!query.includes("hover: hover")) return real;
+
+			return {
+				media: query,
+				matches: true,
+				onchange: null,
+				addEventListener: (...args: Parameters<MediaQueryList["addEventListener"]>) => real.addEventListener(...args),
+				removeEventListener: (...args: Parameters<MediaQueryList["removeEventListener"]>) => real.removeEventListener(...args),
+				addListener: (...args: Parameters<MediaQueryList["addListener"]>) => real.addListener(...args),
+				removeListener: (...args: Parameters<MediaQueryList["removeListener"]>) => real.removeListener(...args),
+				dispatchEvent: (...args: Parameters<MediaQueryList["dispatchEvent"]>) => real.dispatchEvent(...args),
+			} as MediaQueryList;
+		};
+	});
+
+	const page = await context.newPage();
+	await page.goto("/en/");
+
+
+	await page.locator("[data-header-scroll-hidden][data-ready]").waitFor();
+
+	expect(await page.evaluate(() => matchMedia("(min-width: 40rem) and (hover: hover) and (pointer: fine)").matches)).toBe(true);
+
+	async function tap(locator: ReturnType<typeof page.locator>): Promise<void> {
+		await locator.scrollIntoViewIfNeeded();
+		await page.waitForTimeout(200);
+
+		const box = await locator.boundingBox();
+		if (!box) throw new Error("The tap target must be laid out.");
+
+		await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+	}
+
+	const tooltipTrigger = page.locator("[data-tooltip-trigger]").first();
+	const tooltipPanel = page.locator("[data-tooltip-panel]").first();
+
+	await tap(tooltipTrigger);
+	await expect(tooltipPanel).toHaveAttribute("data-open", "true");
+
+	await tap(tooltipTrigger);
+	await expect(tooltipPanel).not.toHaveAttribute("data-open", "true");
+
+	await tap(page.locator("[data-popover-trigger]").first());
+	await expect(page.locator("[data-popover-panel]").first()).toBeVisible();
+
+	await page.keyboard.press("Escape");
+	await tooltipTrigger.scrollIntoViewIfNeeded();
+	await page.mouse.move(5, 5);
+	await tooltipTrigger.hover();
+	await expect(tooltipPanel).toHaveAttribute("data-open", "true");
+
+	await context.close();
+});
