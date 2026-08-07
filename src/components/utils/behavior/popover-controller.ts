@@ -1,126 +1,83 @@
-import { getPointerMode, onPointerModeChange, type PointerMode } from "@/src/components/utils/behavior/pointer-mode";
-import { closeOpenToggletips } from "@/src/components/utils/behavior/tooltip-controller";
+import { bindOverlayHover, clearOverlayTimer, collectOverlays, type Overlay } from "@/src/components/utils/behavior/overlay";
+import { isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
+import { closeOpenTooltips } from "@/src/components/utils/behavior/tooltip-controller";
 
-type PopoverItem = {
+type PopoverItem = Overlay & {
 	backdrop: HTMLElement;
 	closeButton: HTMLButtonElement;
 	isRestoringFocus: boolean;
-	panel: HTMLElement;
-	root: HTMLElement;
-	timer: number | undefined;
-	trigger: HTMLButtonElement;
 };
 
-const params = {
-	hoverOpenDelay: 300,
-	hoverCloseDelay: 150,
-};
-
-const state = {
-	isInitialized: false,
-};
+let popovers: PopoverItem[] = [];
+let isInitialized = false;
 
 function isPopoverOpen(popover: PopoverItem): boolean {
 	return !popover.panel.hidden;
 }
 
-function clearPopoverTimer(popover: PopoverItem): void {
-	if (popover.timer !== undefined) window.clearTimeout(popover.timer);
-	popover.timer = undefined;
+function closePopover(popover: PopoverItem, returnFocus = false): void {
+	clearOverlayTimer(popover);
+	if (!isPopoverOpen(popover)) return;
+
+	const focusWasInPanel = popover.panel.contains(document.activeElement);
+	popover.panel.hidden = true;
+	popover.backdrop.hidden = true;
+	popover.trigger.setAttribute("aria-expanded", "false");
+	if (!returnFocus || !focusWasInPanel) return;
+
+	popover.isRestoringFocus = true;
+	popover.trigger.focus();
+	popover.isRestoringFocus = false;
+}
+
+function openPopover(popover: PopoverItem): void {
+	clearOverlayTimer(popover);
+	const isTouch = !isDesktopPointer();
+
+	if (isTouch) {
+		for (const other of popovers) if (other !== popover) closePopover(other);
+		closeOpenTooltips();
+	}
+
+	popover.panel.hidden = false;
+	popover.backdrop.hidden = false;
+	popover.trigger.setAttribute("aria-expanded", "true");
+
+	if (isTouch) popover.closeButton.focus();
 }
 
 export function initializePopoverController(): void {
-	if (state.isInitialized) return;
-	state.isInitialized = true;
+	if (isInitialized) return;
+	isInitialized = true;
 
-	const popovers: PopoverItem[] = [...document.querySelectorAll<HTMLElement>("[data-popover]")].flatMap((root) => {
-		const trigger = root.querySelector<HTMLButtonElement>("[data-popover-trigger]");
-		const panel = root.querySelector<HTMLElement>("[data-popover-panel]");
-		const backdrop = root.querySelector<HTMLElement>("[data-popover-backdrop]");
-		const closeButton = root.querySelector<HTMLButtonElement>("[data-popover-close]");
-		return trigger && panel && backdrop && closeButton ? [{ backdrop, closeButton, isRestoringFocus: false, panel, root, timer: undefined, trigger }] : [];
+	popovers = collectOverlays("popover").flatMap((overlay) => {
+		const backdrop = overlay.root.querySelector<HTMLElement>("[data-popover-backdrop]");
+		const closeButton = overlay.root.querySelector<HTMLButtonElement>("[data-popover-close]");
+		return backdrop && closeButton ? [{ ...overlay, backdrop, closeButton, isRestoringFocus: false }] : [];
 	});
 
-	function closePopover(popover: PopoverItem, returnFocus = false): void {
-		clearPopoverTimer(popover);
-
-		if (!isPopoverOpen(popover)) return;
-		const focusWasInPanel = popover.panel.contains(document.activeElement);
-		popover.panel.hidden = true;
-		popover.backdrop.hidden = true;
-		popover.trigger.setAttribute("aria-expanded", "false");
-		if (!returnFocus || !focusWasInPanel) return;
-
-		popover.isRestoringFocus = true;
-		popover.trigger.focus();
-		popover.isRestoringFocus = false;
-	}
-
-	const preparePopoverOpen: Record<PointerMode, (popover: PopoverItem) => void> = {
-		desktop: () => undefined,
-		touch: (popover) => {
-			popovers.filter((otherPopover) => otherPopover !== popover).forEach((otherPopover) => { closePopover(otherPopover) });
-			closeOpenToggletips();
-		},
-	};
-
-	function openPopover(popover: PopoverItem): void {
-		clearPopoverTimer(popover);
-		preparePopoverOpen[getPointerMode()](popover);
-
-		popover.panel.hidden = false;
-		popover.backdrop.hidden = false;
-		popover.trigger.setAttribute("aria-expanded", "true");
-
-		if (getPointerMode() === "touch") popover.closeButton.focus();
-	}
-
-	function schedulePopoverClose(popover: PopoverItem): void {
-		clearPopoverTimer(popover);
-		popover.timer = window.setTimeout(() => {
-			if (!popover.trigger.matches(":hover") && !popover.panel.matches(":hover") && !popover.root.contains(document.activeElement)) closePopover(popover);
-		}, params.hoverCloseDelay);
-	}
-
-	function togglePopover(popover: PopoverItem): void {
-		const action = isPopoverOpen(popover) ? closePopover : openPopover;
-		action(popover);
-	}
-
-	function onDesktopPointer(callback: () => void): () => void {
-		return () => { if (getPointerMode() === "desktop") callback() };
-	}
-
-	const popoverClickActions: Record<PointerMode, (popover: PopoverItem) => void> = {
-		desktop: openPopover,
-		touch: togglePopover,
-	};
-
 	for (const popover of popovers) {
-		popover.trigger.addEventListener("pointerenter", onDesktopPointer(() => { clearPopoverTimer(popover); popover.timer = window.setTimeout(() => openPopover(popover), params.hoverOpenDelay); }));
-		popover.trigger.addEventListener("pointerleave", onDesktopPointer(() => schedulePopoverClose(popover)));
-		popover.panel.addEventListener("pointerenter", onDesktopPointer(() => clearPopoverTimer(popover)));
-		popover.panel.addEventListener("pointerleave", onDesktopPointer(() => schedulePopoverClose(popover)));
-		popover.trigger.addEventListener("focus", onDesktopPointer(() => { if (!popover.isRestoringFocus) openPopover(popover) }));
-		popover.trigger.addEventListener("blur", onDesktopPointer(() => schedulePopoverClose(popover)));
-		popover.panel.addEventListener("focusin", onDesktopPointer(() => clearPopoverTimer(popover)));
-		popover.panel.addEventListener("focusout", onDesktopPointer(() => schedulePopoverClose(popover)));
-		popover.trigger.addEventListener("click", () => popoverClickActions[getPointerMode()](popover));
+		bindOverlayHover(popover, () => { if (!popover.isRestoringFocus) openPopover(popover) }, () => closePopover(popover));
+
+		popover.trigger.addEventListener("click", () => {
+			if (!isDesktopPointer() && isPopoverOpen(popover)) closePopover(popover);
+			else openPopover(popover);
+		});
+
 		popover.closeButton.addEventListener("click", () => closePopover(popover, true));
-		popover.backdrop.addEventListener("pointerdown", () => { if (getPointerMode() === "touch") closePopover(popover, true) });
+		popover.backdrop.addEventListener("pointerdown", () => { if (!isDesktopPointer()) closePopover(popover, true) });
 	}
 
 	document.addEventListener("pointerdown", (event) => {
-		popovers.filter((popover) => isPopoverOpen(popover) && !popover.root.contains(event.target as Node)).forEach((popover) => { closePopover(popover, true) });
+		for (const popover of popovers) if (isPopoverOpen(popover) && !popover.root.contains(event.target as Node)) closePopover(popover, true);
 	});
 
 	document.addEventListener("keydown", (event) => {
 		if (event.key !== "Escape") return;
-
-		const openPopovers = popovers.filter(isPopoverOpen);
-		openPopovers.forEach((popover) => { closePopover(popover, true) });
-		if (openPopovers.length > 0) event.preventDefault();
+		const hadOpenPopover = popovers.some(isPopoverOpen);
+		for (const popover of popovers) closePopover(popover, true);
+		if (hadOpenPopover) event.preventDefault();
 	});
 
-	onPointerModeChange(() => { popovers.forEach((popover) => { closePopover(popover) }) });
+	onPointerModeChange(() => { for (const popover of popovers) closePopover(popover, true) });
 }
