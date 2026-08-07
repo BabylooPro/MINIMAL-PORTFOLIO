@@ -4,74 +4,37 @@ type VideoDefinition = {
 	squarePosition: string;
 };
 
-let isProofWorkControllerInitialized = false;
-
 export function initializeProofWorkController(): void {
-	if (isProofWorkControllerInitialized) return;
-
-	isProofWorkControllerInitialized = true;
-
-	function isVideoDefinition(value: unknown): value is VideoDefinition {
-		if (!value || typeof value !== "object") return false;
-		const { preview, source, squarePosition } = value as Record<string, unknown>;
-		return typeof preview === "string" && typeof source === "string" && typeof squarePosition === "string";
-	}
-
-	function parseVideos(serializedVideos: string | undefined): VideoDefinition[] {
-		if (!serializedVideos) return [];
-
-		try {
-			const parsedVideos: unknown = JSON.parse(serializedVideos);
-			return Array.isArray(parsedVideos) && parsedVideos.every(isVideoDefinition) ? parsedVideos : [];
-		} catch {
-			return [];
-		}
-	}
-
 	function formatCounter(template: string, current: number, total: number): string {
 		return template.replace("{current}", String(current)).replace("{total}", String(total));
 	}
 
 	function initializeCarousel(carousel: HTMLElement): void {
-		if (carousel.dataset.proofWorkInitialized === "true") return;
+		let parsedVideos: unknown;
+		try {
+			parsedVideos = JSON.parse(carousel.dataset.videos ?? "[]");
+		} catch {
+			return;
+		}
 
-		const videos = parseVideos(carousel.dataset.videos);
-		const counterTemplate = carousel.dataset.counterTemplate;
-		const videoLabel = carousel.dataset.videoLabel;
+		if (!Array.isArray(parsedVideos) || parsedVideos.length === 0) return;
 
-		const previousButton = carousel.querySelector<HTMLButtonElement>('[data-proof-work-direction="previous"]');
-		const nextButton = carousel.querySelector<HTMLButtonElement>('[data-proof-work-direction="next"]');
-		const previousPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-preview="previous"]');
-		const nextPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-preview="next"]');
+		const videos = parsedVideos as VideoDefinition[];
 
-		const transitionPreview = carousel.querySelector<HTMLImageElement>('[data-proof-work-transition-preview]');
-		const transitionLoader = carousel.querySelector<HTMLElement>('[data-proof-work-transition-loader]');
+		const counterTextTemplate = carousel.dataset.counterTemplate as string;
+		const playerLabel = carousel.dataset.videoLabel as string;
 
-		const player = carousel.querySelector<HTMLVideoElement>("[data-proof-work-player]");
-		const source = player?.querySelector<HTMLSourceElement>("source");
-		const counter = carousel.querySelector<HTMLElement>("[data-proof-work-counter]");
+		const previousControl = carousel.querySelector('[data-proof-work-direction="previous"]') as HTMLButtonElement;
+		const nextControl = carousel.querySelector('[data-proof-work-direction="next"]') as HTMLButtonElement;
+		const previousPreviewImage = carousel.querySelector('[data-proof-work-preview="previous"]') as HTMLImageElement;
+		const nextPreviewImage = carousel.querySelector('[data-proof-work-preview="next"]') as HTMLImageElement;
 
-		if (
-			videos.length === 0 || !counterTemplate || !videoLabel ||
-			!previousButton || !nextButton || !previousPreview || !nextPreview ||
-			!transitionPreview || !transitionLoader ||
-			!player || !source || !counter
-		) return;
+		const transitionPreviewImage = carousel.querySelector('[data-proof-work-transition-preview]') as HTMLImageElement;
+		const transitionLoaderElement = carousel.querySelector('[data-proof-work-transition-loader]') as HTMLElement;
 
-		carousel.dataset.proofWorkInitialized = "true";
-
-		const videoPlayer = player;
-		const videoSource = source;
-
-		const previousPreviewImage = previousPreview;
-		const nextPreviewImage = nextPreview;
-		const transitionPreviewImage = transitionPreview;
-		const transitionLoaderElement = transitionLoader;
-		const counterElement = counter;
-		const previousControl = previousButton;
-		const nextControl = nextButton;
-		const counterTextTemplate = counterTemplate;
-		const playerLabel = videoLabel;
+		const videoPlayer = carousel.querySelector("[data-proof-work-player]") as HTMLVideoElement;
+		const videoSource = videoPlayer?.querySelector("source") as HTMLSourceElement;
+		const counterElement = carousel.querySelector("[data-proof-work-counter]") as HTMLElement;
 
 		const squarePositionClasses = [...new Set(videos.map((video) => video.squarePosition))];
 
@@ -80,12 +43,10 @@ export function initializeProofWorkController(): void {
 		let playbackRequest = 0;
 		let transitionSource: string | null = null;
 
-		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 		function videoAt(index: number): VideoDefinition {
-			const video = videos[(index + videos.length) % videos.length];
-			if (!video) throw new Error("Proof Work carousel requires at least one video.");
-			return video;
+			return videos[(index + videos.length) % videos.length] as VideoDefinition;
 		}
 
 		function setSquarePosition(element: HTMLElement, squarePosition: string): void {

@@ -1,67 +1,46 @@
-type RoleRotator = {
-	activeIndex: number;
-	element: HTMLElement;
-	roles: HTMLElement[];
-	timeout: number | undefined;
-};
-
-const rotationTiming = {
-	changeInterval: 5000,
-	fadeDuration: 500,
-} as const;
-
-let isMobileRoleRotatorInitialized = false;
-
 export function initializeMobileRoleRotator(): void {
-	if (isMobileRoleRotatorInitialized) return;
-	isMobileRoleRotatorInitialized = true;
-
-	const mobileViewport = window.matchMedia("(max-width: 39.999rem)");
-	const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-	function clearRotation(rotator: RoleRotator): void {
-		if (rotator.timeout !== undefined) {
-			window.clearTimeout(rotator.timeout);
-			rotator.timeout = undefined;
-		}
-
-		rotator.element.removeAttribute("data-role-fading");
-	}
-
-	function queueRoleChange(rotator: RoleRotator): void {
-		const fadeDuration = reducedMotion.matches ? 0 : rotationTiming.fadeDuration;
-
-		rotator.timeout = window.setTimeout(() => {
-			rotator.element.setAttribute("data-role-fading", "");
-
-			rotator.timeout = window.setTimeout(() => {
-				rotator.roles[rotator.activeIndex]?.setAttribute("hidden", "");
-				rotator.activeIndex = (rotator.activeIndex + 1) % rotator.roles.length;
-				rotator.roles[rotator.activeIndex]?.removeAttribute("hidden");
-				rotator.element.removeAttribute("data-role-fading");
-				queueRoleChange(rotator);
-			}, fadeDuration);
-		}, rotationTiming.changeInterval - fadeDuration);
-	}
-
-	function synchronizeRoleRotators(rotators: RoleRotator[]): void {
-		for (const rotator of rotators) {
-			clearRotation(rotator);
-			if (mobileViewport.matches && !document.hidden && !reducedMotion.matches) queueRoleChange(rotator);
-		}
-	}
+	const mobileViewport = matchMedia("(max-width: 39.999rem)");
+	const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
 	const roleRotators = Array.from(document.querySelectorAll<HTMLElement>("[data-mobile-role-rotator]")).flatMap((element) => {
 		const roles = Array.from(element.querySelectorAll<HTMLElement>("[data-mobile-role]"));
 
 		if (roles.length < 2) return [];
 
-		return [{ activeIndex: Math.max(roles.findIndex((role) => !role.hidden), 0), element, roles, timeout: undefined }];
+		let activeIndex = Math.max(roles.findIndex((role) => !role.hidden), 0);
+		let timeout: number | undefined;
+
+		function queueRoleChange(): void {
+			const fadeDuration = reducedMotion.matches ? 0 : 500;
+
+			timeout = setTimeout(() => {
+				element.setAttribute("data-role-fading", "");
+
+				timeout = setTimeout(() => {
+					roles[activeIndex]?.setAttribute("hidden", "");
+					activeIndex = (activeIndex + 1) % roles.length;
+					roles[activeIndex]?.removeAttribute("hidden");
+					element.removeAttribute("data-role-fading");
+					queueRoleChange();
+				}, fadeDuration);
+			}, 5000 - fadeDuration);
+		}
+
+		return [() => {
+			clearTimeout(timeout);
+			timeout = undefined;
+
+			element.removeAttribute("data-role-fading");
+
+			if (mobileViewport.matches && !document.hidden && !reducedMotion.matches) queueRoleChange();
+		}];
 	});
 
-	synchronizeRoleRotators(roleRotators);
+	for (const synchronizeRoleRotator of roleRotators) {
+		synchronizeRoleRotator();
 
-	mobileViewport.addEventListener("change", () => synchronizeRoleRotators(roleRotators));
-	reducedMotion.addEventListener("change", () => synchronizeRoleRotators(roleRotators));
-	document.addEventListener("visibilitychange", () => synchronizeRoleRotators(roleRotators));
+		mobileViewport.addEventListener("change", synchronizeRoleRotator);
+		reducedMotion.addEventListener("change", synchronizeRoleRotator);
+		document.addEventListener("visibilitychange", synchronizeRoleRotator);
+	}
 }
