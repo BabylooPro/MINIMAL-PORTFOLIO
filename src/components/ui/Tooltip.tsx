@@ -35,8 +35,6 @@ export function Tooltip({ children, id, trigger, triggerLabel }: TooltipProps) {
 					"invisible pointer-events-none opacity-0 transition-opacity motion-reduce:transition-none",
 					// OPEN (VISIBLE) STATE
 					"data-[open=true]:visible data-[open=true]:pointer-events-auto data-[open=true]:opacity-100",
-					// DISMISSED STATE STYLING
-					"data-[dismissed=true]:invisible! data-[dismissed=true]:pointer-events-none! data-[dismissed=true]:opacity-0!",
 				].join(" ")}
 				data-tooltip-panel
 				id={id}

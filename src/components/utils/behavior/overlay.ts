@@ -1,4 +1,4 @@
-import { isDesktopPointer } from "@/src/components/utils/behavior/pointer-mode";
+import { isDesktopGesture } from "@/src/components/utils/behavior/pointer-mode";
 
 export type Overlay = {
 	panel: HTMLElement;
@@ -19,7 +19,7 @@ export function collectOverlays(name: string): Overlay[] {
 }
 
 export function clearOverlayTimer(overlay: Overlay): void {
-	window.clearTimeout(overlay.timer);
+	clearTimeout(overlay.timer);
 	overlay.timer = undefined;
 }
 
@@ -29,12 +29,12 @@ export function isOverlayEngaged({ panel, root, trigger }: Overlay): boolean {
 
 export function bindOverlayHover(overlay: Overlay, open: () => void, close: () => void): void {
 	function onDesktop(action: () => void): () => void {
-		return () => { if (isDesktopPointer()) action() };
+		return () => { if (isDesktopGesture()) action() };
 	}
 
 	function schedule(action: () => void, delay: number): void {
 		clearOverlayTimer(overlay);
-		overlay.timer = window.setTimeout(action, delay);
+		overlay.timer = setTimeout(action, delay);
 	}
 
 	const scheduleClose = onDesktop(() => schedule(() => { if (!isOverlayEngaged(overlay)) close() }, hoverCloseDelay));

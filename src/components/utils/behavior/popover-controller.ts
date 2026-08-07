@@ -1,5 +1,5 @@
 import { bindOverlayHover, clearOverlayTimer, collectOverlays, type Overlay } from "@/src/components/utils/behavior/overlay";
-import { isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
+import { isDesktopGesture, isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
 import { closeOpenTooltips } from "@/src/components/utils/behavior/tooltip-controller";
 
 type PopoverItem = Overlay & {
@@ -9,7 +9,6 @@ type PopoverItem = Overlay & {
 };
 
 let popovers: PopoverItem[] = [];
-let isInitialized = false;
 
 function isPopoverOpen(popover: PopoverItem): boolean {
 	return !popover.panel.hidden;
@@ -47,9 +46,6 @@ function openPopover(popover: PopoverItem): void {
 }
 
 export function initializePopoverController(): void {
-	if (isInitialized) return;
-	isInitialized = true;
-
 	popovers = collectOverlays("popover").flatMap((overlay) => {
 		const backdrop = overlay.root.querySelector<HTMLElement>("[data-popover-backdrop]");
 		const closeButton = overlay.root.querySelector<HTMLButtonElement>("[data-popover-close]");
@@ -60,12 +56,12 @@ export function initializePopoverController(): void {
 		bindOverlayHover(popover, () => { if (!popover.isRestoringFocus) openPopover(popover) }, () => closePopover(popover));
 
 		popover.trigger.addEventListener("click", () => {
-			if (!isDesktopPointer() && isPopoverOpen(popover)) closePopover(popover);
+			if (!isDesktopGesture() && isPopoverOpen(popover)) closePopover(popover);
 			else openPopover(popover);
 		});
 
 		popover.closeButton.addEventListener("click", () => closePopover(popover, true));
-		popover.backdrop.addEventListener("pointerdown", () => { if (!isDesktopPointer()) closePopover(popover, true) });
+		popover.backdrop.addEventListener("pointerdown", () => { if (!isDesktopGesture()) closePopover(popover, true) });
 	}
 
 	document.addEventListener("pointerdown", (event) => {

@@ -1,11 +1,10 @@
 import { bindOverlayHover, clearOverlayTimer, collectOverlays, isOverlayEngaged, type Overlay } from "@/src/components/utils/behavior/overlay";
-import { isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
+import { isDesktopGesture, isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
 
 const tooltipGap = 8;
 const viewportInset = 16;
 
 let tooltips: Overlay[] = [];
-let isInitialized = false;
 
 function applyAttribute(element: HTMLElement, name: string, value: string | null): void {
 	if (value === null) element.removeAttribute(name);
@@ -19,11 +18,11 @@ function updateTooltipPlacement({ panel, trigger }: Overlay): void {
 	const panelRect = panel.getBoundingClientRect();
 
 	const spaceAbove = triggerRect.top - tooltipGap - viewportInset;
-	const spaceBelow = window.innerHeight - triggerRect.bottom - tooltipGap - viewportInset;
+	const spaceBelow = innerHeight - triggerRect.bottom - tooltipGap - viewportInset;
 	const above = panelRect.height > spaceBelow && spaceAbove > spaceBelow;
 
 	const minimumLeft = viewportInset + panelRect.width / 2;
-	const maximumLeft = window.innerWidth - viewportInset - panelRect.width / 2;
+	const maximumLeft = innerWidth - viewportInset - panelRect.width / 2;
 	const left = Math.max(minimumLeft, Math.min(triggerRect.left + triggerRect.width / 2, maximumLeft));
 
 	panel.dataset.tooltipPlacement = above ? "above" : "below";
@@ -55,7 +54,6 @@ function closeTooltip(tooltip: Overlay): void {
 }
 
 function openTooltip(tooltip: Overlay): void {
-	delete tooltip.panel.dataset.dismissed;
 	tooltip.panel.dataset.open = "true";
 	syncTooltipSemantics(tooltip);
 	updateTooltipPlacement(tooltip);
@@ -66,9 +64,6 @@ export function closeOpenTooltips(): void {
 }
 
 export function initializeTooltipController(): void {
-	if (isInitialized) return;
-	isInitialized = true;
-
 	tooltips = collectOverlays("tooltip");
 
 	for (const tooltip of tooltips) {
@@ -76,24 +71,16 @@ export function initializeTooltipController(): void {
 		bindOverlayHover(tooltip, () => openTooltip(tooltip), () => closeTooltip(tooltip));
 
 		tooltip.trigger.addEventListener("click", () => {
-			if (isDesktopPointer()) return;
+			if (isDesktopGesture()) return;
 
 			const opens = !isTooltipOpen(tooltip);
 			closeOpenTooltips();
 			if (opens) openTooltip(tooltip);
 		});
-
-		for (const element of [tooltip.trigger, tooltip.panel]) {
-			for (const type of ["pointerleave", "focusout"]) {
-				element.addEventListener(type, () => {
-					window.setTimeout(() => { if (!isOverlayEngaged(tooltip)) delete tooltip.panel.dataset.dismissed }, 0);
-				});
-			}
-		}
 	}
 
 	document.addEventListener("pointerdown", (event) => {
-		if (isDesktopPointer()) return;
+		if (isDesktopGesture()) return;
 		for (const tooltip of tooltips) if (!tooltip.root.contains(event.target as Node)) closeTooltip(tooltip);
 	});
 
@@ -106,7 +93,6 @@ export function initializeTooltipController(): void {
 		for (const tooltip of affected) {
 			clearOverlayTimer(tooltip);
 			closeTooltip(tooltip);
-			if (isDesktop) tooltip.panel.dataset.dismissed = "true";
 		}
 
 		if (affected.length > 0) event.preventDefault();
@@ -124,12 +110,11 @@ export function initializeTooltipController(): void {
 	onPointerModeChange(() => {
 		for (const tooltip of tooltips) {
 			clearOverlayTimer(tooltip);
-			delete tooltip.panel.dataset.dismissed;
 			delete tooltip.panel.dataset.open;
 			syncTooltipSemantics(tooltip);
 		}
 	});
 
-	window.addEventListener("resize", updateOpenTooltips);
-	window.addEventListener("scroll", updateOpenTooltips, { passive: true });
+	addEventListener("resize", updateOpenTooltips);
+	addEventListener("scroll", updateOpenTooltips, { passive: true });
 }
