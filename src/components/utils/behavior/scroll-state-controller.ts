@@ -1,95 +1,57 @@
 import {
-	getScrollStateElements, type HeaderIdentityHeights, markCollapsibleElementsReady, measureCollapsibleElements, measureHeaderIdentity,
-	prepareForPrint, readInitialHeaderPadding, resetCollapsibleElements, resetHeaderIdentityStyles, returnFocusToPageTop,
-	updateBackToTopVisibility, updateCollapsibleElements, updateDesktopScrollState, updateForcedCompactDesktopHeader,
-	updateForcedCompactMobileHeader, updateHeaderIdentity, updateMobileScrollState,
+	bindBackToTop, markCollapsibleElementsReady, measureHeaderElements, observeHeaderElements, queryScrollStateElements, resetCollapsibleElements, resetDesktopHeaderStyles,
+	resetHeaderIdentityStyles, updateBackToTopVisibility, updateCollapsibleElements, updateDesktopScrollState,
+	updateHeaderIdentity, updateMobileScrollState,
 } from "@/src/components/utils/behavior/header-scroll-dom";
-import { getDesktopScrollProgress, type HeaderPadding, isAtPageBottom } from "@/src/components/utils/behavior/header-scroll-state";
+import { isDocumentAtBottom } from "@/src/components/utils/behavior/header-scroll-state";
 
-let isScrollStateControllerInitialized = false;
 
 export function initializeScrollStateController(): void {
-	if (isScrollStateControllerInitialized) return;
-	isScrollStateControllerInitialized = true;
+	const desktopViewport = matchMedia("(min-width: 40rem)");
 
-	const desktopViewport = window.matchMedia("(min-width: 40rem)");
-	const elements = getScrollStateElements();
-
-	let initialHeaderPadding: HeaderPadding | null = null;
-
-	const headerIdentityHeights: HeaderIdentityHeights = { compact: 0, normal: 0 };
+	queryScrollStateElements();
 
 	let animationFrame: number | undefined;
 	let collapseMode: "desktop" | "mobile" | undefined;
-
-	function isDocumentAtBottom(): boolean {
-		return isAtPageBottom({ documentHeight: document.documentElement.scrollHeight, scrollY: window.scrollY, viewportHeight: window.innerHeight });
-	}
 
 	function setCollapseMode(mode: "desktop" | "mobile"): boolean {
 		if (collapseMode === mode) return false;
 		collapseMode = mode;
 
-		resetCollapsibleElements(elements.collapsibleElements);
-		resetHeaderIdentityStyles(elements);
+		resetCollapsibleElements();
+		resetHeaderIdentityStyles();
 
 		return true;
 	}
 
-	function updateForcedCompactHeader(): void {
-		if (!elements.header?.hasAttribute("data-force-compact")) return;
-
-		elements.header.setAttribute("data-scrolled", "");
-		elements.header.setAttribute("data-fully-compact", "");
-
-		if (!desktopViewport.matches) {
-			updateForcedCompactMobileHeader(elements);
-			return;
-		}
-
-		updateForcedCompactDesktopHeader(elements, headerIdentityHeights, isDocumentAtBottom());
-	}
-
 	function updateScrollState(): void {
 		animationFrame = undefined;
-		updateBackToTopVisibility(elements.backToTop, window.scrollY);
-
-		if (elements.header?.hasAttribute("data-force-compact")) {
-			setCollapseMode(desktopViewport.matches ? "desktop" : "mobile");
-			updateForcedCompactHeader();
-			return;
-		}
+		updateBackToTopVisibility();
 
 		if (!desktopViewport.matches) {
-			if (setCollapseMode("mobile")) {
-				elements.header?.removeAttribute("data-fully-compact");
-				elements.footer?.removeAttribute("data-expanded");
-				elements.header?.style.removeProperty("padding-top");
-				elements.header?.style.removeProperty("padding-bottom");
-			}
+			if (setCollapseMode("mobile")) resetDesktopHeaderStyles();
 
-			updateMobileScrollState(elements, window.scrollY);
+			updateMobileScrollState();
 			return;
 		}
 
-		const progress = getDesktopScrollProgress(window.scrollY);
+		const progress = Math.min(scrollY / 180, 1);
 
 		setCollapseMode("desktop");
-		initialHeaderPadding ??= readInitialHeaderPadding(elements.header);
-		updateDesktopScrollState(elements, initialHeaderPadding, progress, isDocumentAtBottom());
-		updateHeaderIdentity(elements, headerIdentityHeights, progress);
-		updateCollapsibleElements(elements.collapsibleElements, progress);
+		updateDesktopScrollState(progress, isDocumentAtBottom());
+		updateHeaderIdentity(progress);
+		updateCollapsibleElements(progress);
 	}
 
 	function scheduleScrollStateUpdate(): void {
 		if (animationFrame !== undefined) return;
-		animationFrame = window.requestAnimationFrame(updateScrollState);
+		animationFrame = requestAnimationFrame(updateScrollState);
 	}
 
 	function handleScroll(): void {
 		if (!desktopViewport.matches) {
-			updateBackToTopVisibility(elements.backToTop, window.scrollY);
-			updateMobileScrollState(elements, window.scrollY);
+			updateBackToTopVisibility();
+			updateMobileScrollState();
 			return;
 		}
 
@@ -97,32 +59,23 @@ export function initializeScrollStateController(): void {
 	}
 
 	function handleObservedResize(): void {
-		measureHeaderIdentity(elements, headerIdentityHeights);
-		measureCollapsibleElements(elements.collapsibleElements);
+		measureHeaderElements();
 		scheduleScrollStateUpdate();
 	}
 
-	window.addEventListener("scroll", handleScroll, { passive: true });
-	window.addEventListener("resize", scheduleScrollStateUpdate);
-	window.addEventListener("pageshow", updateScrollState);
-	window.addEventListener("beforeprint", () => prepareForPrint(elements.collapsibleElements));
-	window.addEventListener("afterprint", updateScrollState);
+	addEventListener("scroll", handleScroll, { passive: true });
+	addEventListener("resize", scheduleScrollStateUpdate);
+	addEventListener("pageshow", updateScrollState);
+	addEventListener("beforeprint", resetCollapsibleElements);
+	addEventListener("afterprint", updateScrollState);
 
-	elements.backToTop?.addEventListener("click", (event) => returnFocusToPageTop(event, elements.pageTop));
+	bindBackToTop();
 
 	desktopViewport.addEventListener("change", updateScrollState);
 
-	const resizeObserver = new ResizeObserver(handleObservedResize);
+	observeHeaderElements(new ResizeObserver(handleObservedResize));
 
-	if (elements.headerIdentity) resizeObserver.observe(elements.headerIdentity);
-	if (elements.compactHeaderIdentity) resizeObserver.observe(elements.compactHeaderIdentity);
-
-	for (const { content } of elements.collapsibleElements) {
-		if (content) resizeObserver.observe(content);
-	}
-
-	measureHeaderIdentity(elements, headerIdentityHeights);
-	measureCollapsibleElements(elements.collapsibleElements);
-	markCollapsibleElementsReady(elements.collapsibleElements);
+	measureHeaderElements();
+	markCollapsibleElementsReady();
 	updateScrollState();
 }
