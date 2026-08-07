@@ -130,7 +130,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 					"after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:border-b after:border-(--muted-color)"
 				].join(" ")}
 			>
-				<SectionHeading id="proof-work-title">
+				<SectionHeading bordered={false} id="proof-work-title">
 					{title}
 				</SectionHeading>
 

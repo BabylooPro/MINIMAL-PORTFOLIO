@@ -12,11 +12,15 @@ export function Section({ children, labelledBy, ...props }: SectionProps) {
 	);
 }
 
-type SectionHeadingProps = { id: string; children: string };
+type SectionHeadingProps = {
+	id: string;
+	children: string;
+	bordered?: boolean
+};
 
-export function SectionHeading({ id, children }: SectionHeadingProps) {
+export function SectionHeading({ id, children, bordered = true }: SectionHeadingProps) {
 	return (
-		<h2 id={id} className="border-b text-sm font-medium uppercase tracking-wider text-(--muted-color)">
+		<h2 id={id} className={`text-sm font-medium uppercase tracking-wider text-(--muted-color) ${bordered ? "border-b" : ""}`} >
 			{children}
 		</h2>
 	);
