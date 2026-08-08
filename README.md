@@ -15,7 +15,7 @@ https://github.com/user-attachments/assets/93162065-e0cf-4b74-97d1-80ae41906b07
 - No client-side hydration
 - No third-party runtime requests
 
-    \-\-\-\-
+## Ultra-fast Performance
 
 - **HTML:** ≤ 10.0 kB gzip
 - **JavaScript:** ≤ 4.6 kB gzip
