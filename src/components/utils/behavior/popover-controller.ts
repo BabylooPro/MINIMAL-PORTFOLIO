@@ -14,6 +14,10 @@ function isPopoverOpen(popover: PopoverItem): boolean {
 	return !popover.panel.hidden;
 }
 
+function syncOverlayBlur(): void {
+	document.documentElement.toggleAttribute("data-overlay-blur", !isDesktopPointer() && popovers.some(isPopoverOpen));
+}
+
 function closePopover(popover: PopoverItem, returnFocus = false): void {
 	clearOverlayTimer(popover);
 	if (!isPopoverOpen(popover)) return;
@@ -22,6 +26,7 @@ function closePopover(popover: PopoverItem, returnFocus = false): void {
 	popover.panel.hidden = true;
 	popover.backdrop.hidden = true;
 	popover.trigger.setAttribute("aria-expanded", "false");
+	syncOverlayBlur();
 	if (!returnFocus || !focusWasInPanel) return;
 
 	popover.isRestoringFocus = true;
@@ -41,6 +46,7 @@ function openPopover(popover: PopoverItem): void {
 	popover.panel.hidden = false;
 	popover.backdrop.hidden = false;
 	popover.trigger.setAttribute("aria-expanded", "true");
+	syncOverlayBlur();
 
 	if (isTouch) popover.closeButton.focus();
 }

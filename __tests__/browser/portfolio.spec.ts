@@ -229,6 +229,60 @@ test("keeps the mobile Proof Work popover above the sticky header and restores f
 	await expect(trigger).toHaveAttribute("aria-expanded", "false");
 });
 
+test("blurs only the header details behind the touch Proof Work popover backdrop", async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto("/en/");
+
+	const trigger = page.locator("[data-popover-trigger]");
+	const headerBackdrop = page.locator("[data-header-details-backdrop]");
+
+	await expect(headerBackdrop).toBeHidden();
+
+	await trigger.scrollIntoViewIfNeeded();
+	await trigger.click();
+	await expect(page.locator("#proof-work")).toBeVisible();
+
+	await expect(headerBackdrop).toBeVisible();
+	await expect(headerBackdrop).toHaveCSS("backdrop-filter", "blur(8px)");
+	await expect(page.locator("[data-popover-backdrop]")).toHaveCSS("backdrop-filter", "blur(8px)");
+	await expect(page.locator("[data-header-scroll-content]")).toHaveCSS("filter", "none");
+
+	expect(
+		await page.evaluate(() => {
+			const backdrop = document.querySelector<HTMLElement>("[data-header-details-backdrop]");
+			const details = document.querySelector<HTMLElement>("[data-header-scroll-content]");
+			const header = document.querySelector<HTMLElement>("[data-page-header]");
+			const identity = document.querySelector<HTMLElement>("[data-header-identity]");
+			if (!backdrop || !details || !header || !identity) throw new Error("The header details backdrop, details, shell and identity must be rendered.");
+
+			const backdropBox = backdrop.getBoundingClientRect();
+			const detailsBox = details.getBoundingClientRect();
+
+			return {
+				startsAtDetails: backdropBox.top === detailsBox.top,
+				coversDetails: backdropBox.bottom >= detailsBox.bottom,
+				bleedsSideways: backdropBox.left < detailsBox.left && backdropBox.right > detailsBox.right,
+				keepsIdentitySharp: backdropBox.top >= identity.getBoundingClientRect().bottom,
+				staysInsideHeader: backdropBox.bottom <= header.getBoundingClientRect().bottom,
+			};
+		}),
+	).toEqual({ startsAtDetails: true, coversDetails: true, bleedsSideways: true, keepsIdentitySharp: true, staysInsideHeader: true });
+
+	await page.keyboard.press("Escape");
+	await expect(headerBackdrop).toBeHidden();
+});
+
+test("keeps the header details sharp behind the desktop Proof Work popover", async ({ page }) => {
+	await page.setViewportSize({ width: 1_280, height: 800 });
+	await page.goto("/en/");
+
+	await page.locator("[data-popover-trigger]").hover();
+	await page.waitForTimeout(750);
+
+	await expect(page.locator("#proof-work")).toBeVisible();
+	await expect(page.locator("[data-header-details-backdrop]")).toBeHidden();
+});
+
 test("localizes the Proof Work popover close action", async ({ page }) => {
 	for (const [locale, closeLabel] of [["en", "Close"], ["fr", "Fermer"], ["de", "Schliessen"]] as const) {
 		await page.goto(`/${locale}/`);

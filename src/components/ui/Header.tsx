@@ -163,71 +163,86 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 							/>
 						</div>
 
-						<div
-							className={[
-								// COLLAPSIBLE CONTAINER
-								"overflow-hidden contain-[layout_paint] will-change-[height,opacity]",
-								// MOBILE MEASURED HEIGHT AND MOTION
-								"max-sm:data-ready:max-h-(--header-details-height) max-sm:data-ready:[transition:max-height_380ms_ease,opacity_320ms_linear,transform_380ms_ease] max-sm:data-ready:will-change-[opacity,transform] max-sm:motion-reduce:transition-none",
-								// MOBILE COLLAPSED STATE
-								"max-sm:data-ready:data-collapsed:max-h-0 max-sm:data-collapsed:-translate-y-2 max-sm:data-collapsed:opacity-0",
-								// DESKTOP BOTTOM-ANCHORED CONTENT
-								"sm:flex sm:flex-col sm:justify-end",
-							].join(" ")}
-							data-header-scroll-hidden
-						>
-							<div className="max-sm:pt-4 sm:flex-none" data-header-scroll-content>
-								<p>{portfolio.location}</p>
+						<div className="relative">
+							<div
+								className={[
+									// COLLAPSIBLE CONTAINER
+									"overflow-hidden contain-[layout_paint] will-change-[height,opacity]",
+									// MOBILE MEASURED HEIGHT AND MOTION
+									"max-sm:data-ready:max-h-(--header-details-height) max-sm:data-ready:[transition:max-height_380ms_ease,opacity_320ms_linear,transform_380ms_ease] max-sm:data-ready:will-change-[opacity,transform] max-sm:motion-reduce:transition-none",
+									// MOBILE COLLAPSED STATE
+									"max-sm:data-ready:data-collapsed:max-h-0 max-sm:data-collapsed:-translate-y-2 max-sm:data-collapsed:opacity-0",
+									// DESKTOP BOTTOM-ANCHORED CONTENT
+									"sm:flex sm:flex-col sm:justify-end",
+								].join(" ")}
+								data-header-scroll-hidden
+							>
+								<div className="max-sm:pt-4 sm:flex-none" data-header-scroll-content>
+									<p>{portfolio.location}</p>
 
-								{portfolio.links.length > 0 ? (
-									<div className="mt-4">
-										{contactLinks.length > 0 ? (
-											<p>
-												{contactLinks.map((link, index) => (
-													<span key={link.href}>
-														{index > 0 ? " - " : ""}
+									{portfolio.links.length > 0 ? (
+										<div className="mt-4">
+											{contactLinks.length > 0 ? (
+												<p>
+													{contactLinks.map((link, index) => (
+														<span key={link.href}>
+															{index > 0 ? " - " : ""}
 
-														<a
-															aria-label={getContactLinkLabel(link, labels)}
-															href={link.href}
-															className="underline underline-offset-2"
-														>
-															{link.label}
-														</a>
-													</span>
-												))}
-											</p>
-										) : null}
+															<a
+																aria-label={getContactLinkLabel(link, labels)}
+																href={link.href}
+																className="underline underline-offset-2"
+															>
+																{link.label}
+															</a>
+														</span>
+													))}
+												</p>
+											) : null}
 
-										{profileLinks.length > 0 ? (
-											<p>
-												{profileLinks.map((link, index) => (
-													<span key={link.href}>
-														{index > 0 ? " - " : ""}
+											{profileLinks.length > 0 ? (
+												<p>
+													{profileLinks.map((link, index) => (
+														<span key={link.href}>
+															{index > 0 ? " - " : ""}
 
-														<a
-															className="underline underline-offset-2"
-															href={link.href}
-															rel="noreferrer"
-															target="_blank"
-														>
-															{link.label}
-														</a>
-													</span>
-												))}
-											</p>
-										) : null}
-									</div>
-								) : null}
+															<a
+																className="underline underline-offset-2"
+																href={link.href}
+																rel="noreferrer"
+																target="_blank"
+															>
+																{link.label}
+															</a>
+														</span>
+													))}
+												</p>
+											) : null}
+										</div>
+									) : null}
 
-								<a
-									className="mt-1 inline-flex underline underline-offset-2"
-									download="CV_Developer_Max_Remy.pdf"
-									href="/CV_Developer_Max_Remy.pdf"
-								>
-									{labels.downloadCv}
-								</a>
+									<a
+										className="mt-1 inline-flex underline underline-offset-2"
+										download="CV_Developer_Max_Remy.pdf"
+										href="/CV_Developer_Max_Remy.pdf"
+									>
+										{labels.downloadCv}
+									</a>
+								</div>
 							</div>
+
+							<div
+								aria-hidden="true"
+								className={[
+									// BACKDROP OVER HEADER DETAILS ONLY
+									"pointer-events-none absolute hidden backdrop-blur-sm",
+									// BLEED FOR BLUR
+									"-inset-x-6 top-0 -bottom-3 sm:-inset-x-8 sm:-bottom-4",
+									// SHOWN WHEN BLUR
+									"[html[data-overlay-blur]_&]:block",
+								].join(" ")}
+								data-header-details-backdrop
+							/>
 						</div>
 					</div>
 				</Container>
