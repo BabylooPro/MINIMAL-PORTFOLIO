@@ -43,8 +43,6 @@ export function initializeProofWorkController(): void {
 		let playbackRequest = 0;
 		let transitionSource: string | null = null;
 
-		const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-
 		function videoAt(index: number): VideoDefinition {
 			return videos[(index + videos.length) % videos.length] as VideoDefinition;
 		}
@@ -86,7 +84,7 @@ export function initializeProofWorkController(): void {
 		}
 
 		function shouldPlay(): boolean {
-			return isPlayerVisible && !document.hidden && !reducedMotion.matches;
+			return isPlayerVisible && !document.hidden;
 		}
 
 		function stopPlayback(): void {
@@ -103,7 +101,9 @@ export function initializeProofWorkController(): void {
 			videoPlayer.muted = true;
 			void videoPlayer.play().then(() => {
 				if (request !== playbackRequest || !shouldPlay()) stopPlayback();
-			}, () => undefined);
+			}, () => {
+				for (const type of ["pointerdown", "keydown"]) document.addEventListener(type, syncPlayback, { once: true });
+			});
 		}
 
 		function renderActiveVideo(shouldReload = true): void {
@@ -132,24 +132,16 @@ export function initializeProofWorkController(): void {
 			renderActiveVideo(true);
 		}
 
-		function handleDocumentVisibility(): void {
-			syncPlayback();
-		}
-
-		function handleReducedMotionChange(): void {
-			syncPlayback();
-		}
-
 		function enablePlayerControls(): void {
 			videoPlayer.controls = true;
 		}
 
 		const observer = new IntersectionObserver(
 			([entry]) => {
-				isPlayerVisible = Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.5);
+				isPlayerVisible = (entry?.intersectionRatio ?? 0) >= 0.25;
 				syncPlayback();
 			},
-			{ threshold: 0.5 },
+			{ threshold: 0.25 },
 		);
 
 		previousControl.addEventListener("click", () => switchVideo(-1));
@@ -161,11 +153,11 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("loadeddata", hideTransitionLoader);
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
 		videoPlayer.addEventListener("error", hideTransitionLoader);
-		videoPlayer.addEventListener("ended", () => { if (isPlayerVisible && !document.hidden) switchVideo(1) });
+		videoPlayer.addEventListener("ended", () => { if (shouldPlay()) switchVideo(1) });
 
-		document.addEventListener("visibilitychange", handleDocumentVisibility);
-		reducedMotion.addEventListener("change", handleReducedMotionChange);
+		document.addEventListener("visibilitychange", syncPlayback);
 		observer.observe(videoPlayer);
+		if (matchMedia("(prefers-reduced-motion: reduce)").matches) enablePlayerControls();
 		renderActiveVideo(false);
 	}
 
