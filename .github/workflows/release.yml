@@ -1,5 +1,5 @@
 name: Release
-run-name: Release - ${{ inputs.environment }}
+run-name: Release - ${{ inputs.environment }}${{ inputs.branch != '' && format(' ({0})', inputs.branch) || '' }}
 
 on:
     workflow_dispatch:
@@ -12,6 +12,11 @@ on:
                 options:
                     - production
                     - staging
+            branch:
+                description: Branch to use for staging
+                required: false
+                type: string
+                default: ""
 
 permissions:
     contents: write
@@ -32,9 +37,16 @@ jobs:
             url: ${{ inputs.environment == 'production' && 'https://maxremy.dev' || 'https://staging.minimal-portfolio-a05.pages.dev' }}
 
         steps:
+            - name: Reject a branch override on production
+              if: inputs.environment == 'production' && inputs.branch != ''
+              run: |
+                  echo "The branch input is only supported for staging deployments. Production always ships the dispatch ref." >&2
+                  exit 1
+
             - name: Check out the release commit
               uses: actions/checkout@v5
               with:
+                  ref: ${{ inputs.environment == 'staging' && inputs.branch || '' }}
                   fetch-depth: 0
 
             - name: Set up pnpm
@@ -111,12 +123,16 @@ jobs:
                   CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
                   CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
                   DEPLOYMENT_BRANCH: ${{ inputs.environment == 'production' && 'main' || 'staging' }}
+                  SOURCE_REF: ${{ inputs.environment == 'staging' && inputs.branch || github.ref_name }}
               run: |
+                  set -euo pipefail
+                  deployed_sha="$(git rev-parse HEAD)"
+
                   pnpm dlx wrangler@4.116.0 pages deploy dist \
                     --project-name=minimal-portfolio \
                     --branch="$DEPLOYMENT_BRANCH" \
-                    --commit-hash="$GITHUB_SHA" \
-                    --commit-message="GitHub Actions run $GITHUB_RUN_ID"
+                    --commit-hash="$deployed_sha" \
+                    --commit-message="GitHub Actions run $GITHUB_RUN_ID from $SOURCE_REF"
 
             - name: Verify the deployment
               env:
