@@ -100,32 +100,11 @@ function getArchitectureRows(validation) {
 
 function getMediaRows(measurement, validation) {
 	const previewTotal = getCheck(validation, "preview-total");
-	const videoTotal = getCheck(validation, "video-total");
 	const socialImage = getCheck(validation, "social-image");
 	const previewLargest = measurement.media.previews.largestFile;
-	const videoLargest = measurement.media.videos.largestFile;
 	const previewLargestCheck = previewLargest ? getCheck(validation, `preview-${previewLargest.name}`) : null;
-	const videoLargestCheck = videoLargest ? getCheck(validation, `video-${videoLargest.name}`) : null;
 
 	return [
-		[
-			"Timelapse video count",
-			formatValue(getCheck(validation, "video-count").current),
-			formatMaximum(getCheck(validation, "video-count").maximum),
-			getCheck(validation, "video-count").status,
-		],
-		[
-			"Timelapse videos",
-			formatMediaValue(videoTotal.current),
-			formatMediaMaximum(videoTotal.maximum),
-			videoTotal.status,
-		],
-		[
-			"Largest video",
-			videoLargest ? `${videoLargest.name} (${formatBytes(videoLargest.rawBytes)})` : "Not available",
-			videoLargestCheck ? formatMediaMaximum(videoLargestCheck.maximum) : "Not available",
-			statusForFiles(validation, "video-"),
-		],
 		[
 			"Preview image count",
 			formatValue(getCheck(validation, "preview-count").current),
@@ -170,7 +149,6 @@ export function renderTerminalReport(measurement, validation) {
 	const architectureRows = getArchitectureRows(validation);
 	const mediaRows = getMediaRows(measurement, validation);
 	const previewRows = getFileRows(validation, "Preview files");
-	const videoRows = getFileRows(validation, "Video files");
 	const lines = [
 		"Performance budget",
 		"─".repeat(72),
@@ -199,12 +177,8 @@ export function renderTerminalReport(measurement, validation) {
 		"",
 		createTable(["File", "Current", "Budget", "Status"], previewRows),
 		"",
-		"Video files",
-		"",
-		createTable(["File", "Current", "Budget", "Status"], videoRows),
-		"",
 		'The active poster may load immediately. Side previews use loading="lazy", but the browser decides when to fetch them.',
-		'The active video uses preload="metadata". It may start a media request before playback, potentially partial, without guaranteeing a Range request.',
+		'Timelapse renditions are served from the media origin and are not measured here.',
 	];
 
 	if (validation.integrityFailures.length > 0) lines.push("", "Production output is incomplete:", ...getIntegrityLines(validation));
@@ -236,7 +210,6 @@ export function renderMarkdownReport(measurement, validation) {
 	const architectureRows = toMarkdownRows(getArchitectureRows(validation));
 	const mediaRows = toMarkdownRows(getMediaRows(measurement, validation));
 	const previewRows = toMarkdownRows(getFileRows(validation, "Preview files"));
-	const videoRows = toMarkdownRows(getFileRows(validation, "Video files"));
 	const sections = [
 		"# Performance budget",
 		"",
@@ -264,15 +237,11 @@ export function renderMarkdownReport(measurement, validation) {
 		"",
 		renderMarkdownTable(["Metric", "Current", "Budget", "Status"], mediaRows),
 		"",
-		'The active poster may load immediately. Side previews use `loading="lazy"`, but the browser decides when to fetch them. The active video uses `preload="metadata"`, so it may start a media request before playback; that request can be partial, but a `Range` request is not guaranteed.',
+		'The active poster may load immediately. Side previews use `loading="lazy"`, but the browser decides when to fetch them. Timelapse renditions are served from the media origin and are not measured here.',
 		"",
 		"### Preview files",
 		"",
 		renderMarkdownTable(["File", "Current", "Budget", "Status"], previewRows),
-		"",
-		"### Video files",
-		"",
-		renderMarkdownTable(["File", "Current", "Budget", "Status"], videoRows),
 	];
 
 	if (validation.integrityFailures.length > 0) sections.push("", "## Incomplete production output", "", ...getIntegrityLines(validation));

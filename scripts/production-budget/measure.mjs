@@ -9,7 +9,6 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export const projectDirectory = path.resolve(scriptDirectory, "../..");
 export const defaultOutputDirectory = path.join(projectDirectory, "dist");
-export const defaultMediaSourceDirectory = path.join(projectDirectory, "public", "videos", "timelapse");
 
 const reactRuntimePattern = /react-dom|react-jsx-runtime|createRoot|hydrateRoot/i;
 const hydrationPattern = /createRoot|hydrateRoot/i;
@@ -185,27 +184,22 @@ function getInlineMeasurement(source) {
 
 export async function measureProductionOutput({
 	outputDirectory = defaultOutputDirectory,
-	mediaSourceDirectory = path.resolve(outputDirectory) === defaultOutputDirectory ? defaultMediaSourceDirectory : outputDirectory,
 	allowedRuntimeOrigins = performanceBudget.architecture.allowedRuntimeOrigins,
 } = {}) {
 	const resolvedOutputDirectory = path.resolve(outputDirectory);
-	const resolvedMediaSourceDirectory = path.resolve(mediaSourceDirectory);
 	const outputExists = await pathExists(resolvedOutputDirectory);
 	const files = await listFiles(resolvedOutputDirectory);
-	const mediaSourceFiles = await listFiles(resolvedMediaSourceDirectory);
 	const relativeFiles = files.map((filePath) => path.relative(resolvedOutputDirectory, filePath));
 	const javascriptFiles = files.filter((filePath) => filePath.endsWith(".js"));
 	const cssFiles = files.filter((filePath) => filePath.endsWith(".css"));
 	const htmlPaths = files.filter((filePath) => filePath.endsWith(".html")).sort();
 	const previewPaths = files.filter((filePath) => /\/videos\/timelapse\/previews\/[^/]+\.jpg$/u.test(filePath)).sort();
-	const videoPaths = mediaSourceFiles.filter((filePath) => /\/videos\/timelapse\/[^/]+\.mp4$/u.test(filePath)).sort();
 	const socialImagePath = path.join(resolvedOutputDirectory, "og-image.jpg");
 
-	const [javascript, css, previews, videos, html] = await Promise.all([
+	const [javascript, css, previews, html] = await Promise.all([
 		Promise.all(javascriptFiles.map(measureFile)),
 		Promise.all(cssFiles.map(measureFile)),
 		Promise.all(previewPaths.map(measureFile)),
-		Promise.all(videoPaths.map(measureFile)),
 		Promise.all(htmlPaths.map(async (filePath) => {
 			const source = await readFile(filePath, "utf8");
 			const relativePath = path.relative(resolvedOutputDirectory, filePath);
@@ -261,12 +255,6 @@ export async function measureProductionOutput({
 				count: previews.length,
 				totalBytes: getTotalBytes(previews),
 				largestFile: getLargestFile(previews),
-			},
-			videos: {
-				files: videos,
-				count: videos.length,
-				totalBytes: getTotalBytes(videos),
-				largestFile: getLargestFile(videos),
 			},
 			socialImage,
 		},

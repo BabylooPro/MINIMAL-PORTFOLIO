@@ -209,20 +209,6 @@ export function validatePerformanceBudget(measurement, budget = performanceBudge
 			current: measurement.media.previews.totalBytes,
 			maximum: budget.media.maximumPreviewTotalBytes,
 		}),
-		equalCheck({
-			id: "video-count",
-			section: "Media",
-			label: "Timelapse video count",
-			current: measurement.media.videos.count,
-			expected: budget.media.expectedVideoCount,
-		}),
-		maximumCheck({
-			id: "video-total",
-			section: "Media",
-			label: "Timelapse videos",
-			current: measurement.media.videos.totalBytes,
-			maximum: budget.media.maximumVideoTotalBytes,
-		}),
 		maximumCheck({
 			id: "social-image",
 			section: "Media",
@@ -240,18 +226,6 @@ export function validatePerformanceBudget(measurement, budget = performanceBudge
 				label: preview.name,
 				current: preview.rawBytes,
 				maximum: budget.media.maximumPreviewFileBytes,
-			}),
-		);
-	}
-
-	for (const video of measurement.media.videos.files) {
-		checks.push(
-			maximumCheck({
-				id: `video-${video.name}`,
-				section: "Video files",
-				label: video.name,
-				current: video.rawBytes,
-				maximum: budget.media.maximumVideoFileBytes,
 			}),
 		);
 	}
