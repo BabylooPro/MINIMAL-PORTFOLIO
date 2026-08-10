@@ -1,3 +1,5 @@
+import { isDesktopPointer } from "@/src/components/utils/behavior/pointer-mode";
+
 type VideoDefinition = {
 	source: string;
 	preview: string;
@@ -86,7 +88,8 @@ export function initializeProofWorkController(): void {
 		}
 
 		function shouldPlay(): boolean {
-			return isPlayerVisible && !document.hidden && !reducedMotion.matches;
+			if (!isPlayerVisible || document.hidden || reducedMotion.matches) return false;
+			return isDesktopPointer() || videoPlayer.controls;
 		}
 
 		function stopPlayback(): void {
@@ -132,16 +135,9 @@ export function initializeProofWorkController(): void {
 			renderActiveVideo(true);
 		}
 
-		function handleDocumentVisibility(): void {
-			syncPlayback();
-		}
-
-		function handleReducedMotionChange(): void {
-			syncPlayback();
-		}
-
 		function enablePlayerControls(): void {
 			videoPlayer.controls = true;
+			syncPlayback();
 		}
 
 		const observer = new IntersectionObserver(
@@ -161,10 +157,9 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("loadeddata", hideTransitionLoader);
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
 		videoPlayer.addEventListener("error", hideTransitionLoader);
-		videoPlayer.addEventListener("ended", () => { if (isPlayerVisible && !document.hidden) switchVideo(1) });
 
-		document.addEventListener("visibilitychange", handleDocumentVisibility);
-		reducedMotion.addEventListener("change", handleReducedMotionChange);
+		document.addEventListener("visibilitychange", syncPlayback);
+		reducedMotion.addEventListener("change", syncPlayback);
 		observer.observe(videoPlayer);
 		renderActiveVideo(false);
 	}

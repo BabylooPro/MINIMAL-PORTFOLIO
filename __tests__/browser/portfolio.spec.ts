@@ -168,6 +168,40 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	).toBe(true);
 });
 
+test("keeps the timelapse carousel paused on touch until an explicit gesture", async ({ browser }) => {
+	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await page.waitForTimeout(1_000);
+
+	expect(await page.evaluate(() => matchMedia("(min-width: 40rem) and (hover: hover) and (pointer: fine)").matches)).toBe(false);
+
+	expect(
+		await player.evaluate((element) => {
+			if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
+			return element.paused;
+		}),
+	).toBe(true);
+
+	await context.close();
+});
+
+test("does not advance the timelapse carousel when a clip ends", async ({ page }) => {
+	await page.goto("/en/");
+
+	const counter = page.locator("[data-proof-work-counter]");
+	await expect(counter).toHaveText("Video 1 of 6");
+
+	await page.locator("[data-proof-work-player]").evaluate((element) => element.dispatchEvent(new Event("ended")));
+	await page.waitForTimeout(300);
+
+	await expect(counter).toHaveText("Video 1 of 6");
+});
+
 test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
 	await page.setViewportSize({ width: 390, height: 350 });
 	await page.goto("/en/");
