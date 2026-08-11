@@ -53,6 +53,25 @@ html {
 	scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	[data-mobile-role] + [data-mobile-role]::before {
+		content: " | ";
+	}
+}
+
+@layer base {
+	@media (prefers-reduced-motion: reduce) {
+		[data-mobile-role][hidden] {
+			/* biome-ignore lint/complexity/noImportantStyles: the Tailwind preflight rule this overrides is itself !important, so nothing else can win */
+			display: inline !important;
+		}
+	}
+}
+
 body {
 	background: var(--background-color);
 	color: var(--body-color);
