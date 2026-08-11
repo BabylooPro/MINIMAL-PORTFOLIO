@@ -23,6 +23,7 @@
 
 /og-image.jpg
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  ! Cross-Origin-Resource-Policy
   Cross-Origin-Resource-Policy: cross-origin
 
 /CV_Developer_Max_Remy.pdf
