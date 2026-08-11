@@ -42,6 +42,7 @@ export function initializeProofWorkController(): void {
 		let playbackRequest = 0;
 		let transitionSource: string | null = null;
 		let programmaticPause = false;
+		let pendingLoad = false;
 		let userPaused = false;
 
 		const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
@@ -93,6 +94,8 @@ export function initializeProofWorkController(): void {
 
 		function syncPlayback(): void {
 			if (!shouldPlay()) { stopPlayback(); return; }
+
+			if (pendingLoad) { pendingLoad = false; videoPlayer.load() }
 			if (!videoPlayer.paused) return;
 
 			const request = ++playbackRequest;
@@ -111,7 +114,7 @@ export function initializeProofWorkController(): void {
 
 			if (shouldReload) {
 				videoSource.src = activeVideo.source;
-				videoPlayer.load();
+				pendingLoad = true;
 			}
 
 			setPreview(previousPreviewImage, videoAt(activeIndex - 1));
@@ -124,7 +127,7 @@ export function initializeProofWorkController(): void {
 		function switchVideo(offset: number): void {
 			activeIndex = (activeIndex + offset + videos.length) % videos.length;
 			userPaused = false;
-			showTransitionPreview(videoAt(activeIndex));
+			if (shouldPlay()) showTransitionPreview(videoAt(activeIndex));
 			renderActiveVideo(true);
 		}
 
@@ -150,7 +153,7 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("pause", () => { if (programmaticPause) programmaticPause = false; else userPaused = !videoPlayer.ended });
 		videoPlayer.addEventListener("loadeddata", () => { hideTransitionLoader(); if (!shouldPlay()) hideTransitionPreview() });
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
-		videoPlayer.addEventListener("error", hideTransitionLoader);
+		videoSource?.addEventListener("error", hideTransitionLoader);
 
 		document.addEventListener("visibilitychange", syncPlayback);
 		reducedMotion.addEventListener("change", syncPlayback);

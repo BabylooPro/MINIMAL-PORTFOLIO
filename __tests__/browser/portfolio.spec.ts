@@ -154,9 +154,12 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
-	await expect(player).toHaveAttribute("data-loading", "true");
-	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/2\.avif$/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
+	await expect(player).toHaveAttribute("poster", /\/videos\/timelapse\/previews\/2\.avif$/);
+
+	await expect(player).not.toHaveAttribute("data-loading", "true");
+	await expect(transitionPreview).toBeHidden();
+	await expect(transitionLoader).toBeHidden();
 
 	expect(
 		await player.evaluate((element) => {
@@ -164,6 +167,35 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 			return element.paused;
 		}),
 	).toBe(true);
+});
+
+test("fetches no timelapse bytes when the carousel is navigated on touch", async ({ browser }) => {
+	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+	const page = await context.newPage();
+	const mediaRequests: string[] = [];
+
+	page.on("request", (request) => { if (request.url().startsWith(mediaOrigin)) mediaRequests.push(request.url()) });
+
+	await page.goto("/en/");
+	await page.locator("[data-proof-work-player]").evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await page.waitForTimeout(800);
+
+	const tapPoint = await page.evaluate(() => {
+		const next = document.querySelector('[data-proof-work-direction="next"]')?.getBoundingClientRect();
+		const card = document.querySelector("[data-proof-work-active-card]")?.getBoundingClientRect();
+		if (!next || !card) throw new Error("The Proof Work carousel controls must be measurable.");
+
+		return { x: Math.round((card.right + next.right) / 2), y: Math.round(next.top + next.height / 2) };
+	});
+
+	await page.touchscreen.tap(tapPoint.x, tapPoint.y);
+	await page.waitForTimeout(2_000);
+
+	expect(mediaRequests).toEqual([]);
+	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
+	await expect(page.locator("[data-proof-work-player]")).toHaveAttribute("poster", /\/videos\/timelapse\/previews\/2\.avif$/);
+
+	await context.close();
 });
 
 test("keeps the timelapse carousel paused on touch until an explicit gesture", async ({ browser }) => {
