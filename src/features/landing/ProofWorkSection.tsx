@@ -189,7 +189,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 								muted
 								playsInline
 								poster={activeVideo.preview}
-								preload="metadata" // NOTE: REQUIRED FOR FAST INITIAL LOAD
+								preload="none" // NOTE: THE POSTER ALREADY PAINTS THE FIRST FRAME, SO NOTHING IS FETCHED BEFORE PLAYBACK
 								tabIndex={0}
 							>
 								<source src={activeVideo.source} type="video/mp4" />
