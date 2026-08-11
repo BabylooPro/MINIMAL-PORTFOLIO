@@ -1,8 +1,21 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Locator, type Page, test } from "@playwright/test";
 import { localeConfigs } from "@/src/lib/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
 const mediaOrigin = "https://media.maxremy.dev";
+
+async function scrollClearOfStickyHeader(page: Page, target: Locator) {
+	await target.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await page.waitForTimeout(700);
+
+	await target.evaluate((element) => {
+		const headerBottom = document.querySelector("[data-page-header-shell]")?.getBoundingClientRect().bottom ?? 0;
+		const overlap = headerBottom - element.getBoundingClientRect().top;
+		if (overlap > 0) scrollBy({ top: -(overlap + 16), behavior: "instant" });
+	});
+
+	await page.waitForTimeout(300);
+}
 
 const localizedNotFoundPages = [
 	{ locale: "en", title: "Page not found", backToPortfolio: "Back to portfolio" },
@@ -274,7 +287,7 @@ test("keeps the mobile Proof Work popover above the sticky header and restores f
 	await page.goto("/en/");
 
 	const trigger = page.locator("[data-popover-trigger]");
-	await trigger.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await scrollClearOfStickyHeader(page, trigger);
 	await trigger.click();
 
 	const popover = page.locator("#proof-work");
