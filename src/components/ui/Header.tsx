@@ -76,7 +76,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 
 											<img
 												src="/myface.jpg"
-												alt="My Face"
+												alt=""
 												aria-hidden="true"
 												className="size-full rounded-md object-cover"
 											/>
@@ -136,7 +136,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 									<div className="size-10 rounded-md sm:col-start-1 sm:row-span-2">
 										<img
 											src="/myface.jpg"
-											alt="My Face"
+											alt=""
 											aria-hidden="true"
 											className="size-full rounded-md object-cover"
 										/>

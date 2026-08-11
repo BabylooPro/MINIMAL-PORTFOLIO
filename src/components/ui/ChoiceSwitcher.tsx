@@ -53,7 +53,7 @@ export function ChoiceSwitcher(props: ChoiceSwitcherProps) {
 				<a
 					{...linkProps} aria-current={isSelected ? "page" : undefined}
 					className={[
-						"rounded-sm px-1 py-0.5",
+						"relative rounded-sm px-1 py-0.5 after:absolute after:inset-x-0 after:-inset-y-2 after:content-['']",
 						isSelected
 							? "bg-(--foreground-color) font-medium text-(--background-color)! no-underline"
 							: "hover:bg-(--inactive-hover-color)"
@@ -74,7 +74,7 @@ export function ChoiceSwitcher(props: ChoiceSwitcherProps) {
 					aria-label={label}
 					aria-pressed={isSelected}
 					className={[
-						"appearance-none cursor-pointer rounded-sm px-1 py-0.5",
+						"appearance-none cursor-pointer relative rounded-sm px-1 py-0.5 after:absolute after:inset-x-0 after:-inset-y-2 after:content-['']",
 						"aria-pressed:bg-(--foreground-color) aria-pressed:font-medium aria-pressed:text-(--background-color) aria-[pressed=false]:hover:bg-(--inactive-hover-color)",
 						"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:-outline-offset-2",
 					].join(" ")}
