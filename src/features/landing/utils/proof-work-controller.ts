@@ -148,7 +148,7 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("pointerdown", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
 		videoPlayer.addEventListener("pause", () => { if (programmaticPause) programmaticPause = false; else userPaused = !videoPlayer.ended });
-		videoPlayer.addEventListener("loadeddata", hideTransitionLoader);
+		videoPlayer.addEventListener("loadeddata", () => { hideTransitionLoader(); if (!shouldPlay()) hideTransitionPreview() });
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
 		videoPlayer.addEventListener("error", hideTransitionLoader);
 
