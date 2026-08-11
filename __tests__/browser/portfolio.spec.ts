@@ -145,9 +145,8 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/1.mp4`);
-	await expect(player).toHaveClass(/object-\[50%_67%\]/);
 	await expect(player).toHaveCSS("color-scheme", "dark");
-	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/1\.jpg$/);
+	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/1\.avif$/);
 	await expect(transitionLoader).toBeHidden();
 	await expect(transitionLoader.locator("span")).toHaveClass(/size-20/);
 
@@ -155,9 +154,8 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
-	await expect(player).toHaveClass(/object-\[50%_72%\]/);
 	await expect(player).toHaveAttribute("data-loading", "true");
-	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/2\.jpg$/);
+	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/2\.avif$/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
 	expect(
@@ -188,6 +186,43 @@ test("keeps the timelapse carousel paused on touch until an explicit gesture", a
 	).toBe(true);
 
 	await context.close();
+});
+
+test("keeps the timelapse card within the header and footer band on a landscape phone", async ({ page }) => {
+	await page.setViewportSize({ width: 812, height: 375 });
+	await page.goto("/en/");
+
+	await page.evaluate(() => scrollTo(0, 2_000));
+	await page.waitForTimeout(700);
+
+	const { card, band } = await page.evaluate(() => {
+		const header = document.querySelector("[data-page-header-shell]")?.getBoundingClientRect();
+		const footer = document.querySelector("[data-page-footer]")?.getBoundingClientRect();
+		const activeCard = document.querySelector("[data-proof-work-active-card]")?.getBoundingClientRect();
+		if (!header || !activeCard) throw new Error("The Proof Work card and the page header must be measurable.");
+
+		return { card: activeCard.height, band: (footer ? footer.top : innerHeight) - header.bottom };
+	});
+
+	expect(card).toBeLessThanOrEqual(band);
+});
+
+test("does not resume a clip the visitor paused", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+
+	await expect
+		.poll(async () => player.evaluate((element) => (element as HTMLVideoElement).paused), { timeout: 20_000 })
+		.toBe(false);
+
+	await player.evaluate((element) => (element as HTMLVideoElement).pause());
+	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+	await page.waitForTimeout(600);
+
+	expect(await player.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
 });
 
 test("does not advance the timelapse carousel when a clip ends", async ({ page }) => {
@@ -511,6 +546,12 @@ test("keeps the mobile role stable when reduced motion is requested", async ({ p
 
 	await page.waitForTimeout(5_100);
 	await expect(page.locator("[data-mobile-role]:not([hidden])")).toHaveText(initialRole);
+
+	const allRoles = page.locator("[data-mobile-role]");
+	const roleCount = await allRoles.count();
+	expect(roleCount).toBeGreaterThan(1);
+
+	for (let index = 0; index < roleCount; index += 1) await expect(allRoles.nth(index)).toBeVisible();
 });
 
 test("persists the theme and applies desktop and mobile header states", async ({ page }) => {

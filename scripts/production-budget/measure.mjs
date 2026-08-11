@@ -193,7 +193,7 @@ export async function measureProductionOutput({
 	const javascriptFiles = files.filter((filePath) => filePath.endsWith(".js"));
 	const cssFiles = files.filter((filePath) => filePath.endsWith(".css"));
 	const htmlPaths = files.filter((filePath) => filePath.endsWith(".html")).sort();
-	const previewPaths = files.filter((filePath) => /\/videos\/timelapse\/previews\/[^/]+\.jpg$/u.test(filePath)).sort();
+	const previewPaths = files.filter((filePath) => /\/videos\/timelapse\/previews\/[^/]+\.avif$/u.test(filePath)).sort();
 	const socialImagePath = path.join(resolvedOutputDirectory, "og-image.jpg");
 
 	const [javascript, css, previews, html] = await Promise.all([

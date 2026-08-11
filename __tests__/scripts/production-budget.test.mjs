@@ -59,7 +59,7 @@ async function createCompleteOutput(t, options = {}) {
 	]);
 
 	for (let index = 1; index <= performanceBudget.media.expectedPreviewCount; index += 1) {
-		await writeFixtureFile(outputDirectory, `videos/timelapse/previews/${index}.jpg`, Buffer.alloc(options.previewBytes ?? 1_000));
+		await writeFixtureFile(outputDirectory, `videos/timelapse/previews/${index}.avif`, Buffer.alloc(options.previewBytes ?? 1_000));
 	}
 
 	if (options.extraJavaScript) await writeFixtureFile(outputDirectory, "assets/extra.js", "console.log('extra');");
@@ -127,7 +127,7 @@ test("rejects previews that exceed their individual limits", async (t) => {
 	const output = await createCompleteOutput(t, { previewBytes: performanceBudget.media.maximumPreviewFileBytes + 1 });
 	const validation = validatePerformanceBudget(await measureProductionOutput(output));
 
-	assert.equal(validation.checks.find((check) => check.id === "preview-1.jpg")?.status, "FAIL");
+	assert.equal(validation.checks.find((check) => check.id === "preview-1.avif")?.status, "FAIL");
 });
 
 test("rejects MP4 files in the Cloudflare Pages output", async (t) => {

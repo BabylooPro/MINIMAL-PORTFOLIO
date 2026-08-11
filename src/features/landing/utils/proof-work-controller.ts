@@ -3,7 +3,6 @@ import { isDesktopPointer } from "@/src/components/utils/behavior/pointer-mode";
 type VideoDefinition = {
 	source: string;
 	preview: string;
-	squarePosition: string;
 };
 
 export function initializeProofWorkController(): void {
@@ -38,12 +37,12 @@ export function initializeProofWorkController(): void {
 		const videoSource = videoPlayer?.querySelector("source") as HTMLSourceElement;
 		const counterElement = carousel.querySelector("[data-proof-work-counter]") as HTMLElement;
 
-		const squarePositionClasses = [...new Set(videos.map((video) => video.squarePosition))];
-
 		let activeIndex = 0;
 		let isPlayerVisible = false;
 		let playbackRequest = 0;
 		let transitionSource: string | null = null;
+		let programmaticPause = false;
+		let userPaused = false;
 
 		const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -51,14 +50,8 @@ export function initializeProofWorkController(): void {
 			return videos[(index + videos.length) % videos.length] as VideoDefinition;
 		}
 
-		function setSquarePosition(element: HTMLElement, squarePosition: string): void {
-			element.classList.remove(...squarePositionClasses);
-			element.classList.add(squarePosition);
-		}
-
 		function setPreview(preview: HTMLImageElement, video: VideoDefinition): void {
 			preview.src = video.preview;
-			setSquarePosition(preview, video.squarePosition);
 		}
 
 		function showTransitionPreview(video: VideoDefinition): void {
@@ -88,13 +81,13 @@ export function initializeProofWorkController(): void {
 		}
 
 		function shouldPlay(): boolean {
-			if (!isPlayerVisible || document.hidden || reducedMotion.matches) return false;
+			if (!isPlayerVisible || document.hidden || reducedMotion.matches || userPaused) return false;
 			return isDesktopPointer() || videoPlayer.controls;
 		}
 
 		function stopPlayback(): void {
 			playbackRequest += 1;
-			videoPlayer.muted = true;
+			programmaticPause = !videoPlayer.paused;
 			videoPlayer.pause();
 		}
 
@@ -103,7 +96,7 @@ export function initializeProofWorkController(): void {
 			if (!videoPlayer.paused) return;
 
 			const request = ++playbackRequest;
-			videoPlayer.muted = true;
+			if (!videoPlayer.controls) videoPlayer.muted = true;
 			void videoPlayer.play().then(() => {
 				if (request !== playbackRequest || !shouldPlay()) stopPlayback();
 			}, () => undefined);
@@ -114,7 +107,6 @@ export function initializeProofWorkController(): void {
 
 			stopPlayback();
 			videoPlayer.setAttribute("aria-label", `${playerLabel} ${activeIndex + 1}`);
-			setSquarePosition(videoPlayer, activeVideo.squarePosition);
 			videoPlayer.poster = activeVideo.preview;
 
 			if (shouldReload) {
@@ -131,6 +123,7 @@ export function initializeProofWorkController(): void {
 
 		function switchVideo(offset: number): void {
 			activeIndex = (activeIndex + offset + videos.length) % videos.length;
+			userPaused = false;
 			showTransitionPreview(videoAt(activeIndex));
 			renderActiveVideo(true);
 		}
@@ -154,6 +147,7 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("pointerenter", enablePlayerControls);
 		videoPlayer.addEventListener("pointerdown", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
+		videoPlayer.addEventListener("pause", () => { if (programmaticPause) programmaticPause = false; else userPaused = !videoPlayer.ended });
 		videoPlayer.addEventListener("loadeddata", hideTransitionLoader);
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
 		videoPlayer.addEventListener("error", hideTransitionLoader);
