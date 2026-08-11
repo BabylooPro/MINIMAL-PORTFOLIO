@@ -44,18 +44,18 @@ jobs:
                   exit 1
 
             - name: Check out the release commit
-              uses: actions/checkout@v5
+              uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
               with:
                   ref: ${{ inputs.environment == 'staging' && inputs.branch || '' }}
                   fetch-depth: 0
 
             - name: Set up pnpm
-              uses: pnpm/action-setup@v4.4.0
+              uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v4.4.0
               with:
                   version: 11.13.1
 
             - name: Set up Node.js
-              uses: actions/setup-node@v5
+              uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
               with:
                   node-version-file: .node-version
                   cache: pnpm
