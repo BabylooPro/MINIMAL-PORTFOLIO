@@ -13,31 +13,31 @@ This portfolio is statically pre-rendered. React is used during the build only a
 | Site controller gzip                 | 3,856 B | ≤ 3,900 B | ✅ PASS |
 | Root executable JavaScript gzip      | 4,504 B | ≤ 4,600 B | ✅ PASS |
 | Localized executable JavaScript gzip | 4,211 B | ≤ 4,300 B | ✅ PASS |
-| CSS gzip                             | 7,361 B | ≤ 7,700 B | ✅ PASS |
+| CSS gzip                             | 7,388 B | ≤ 7,700 B | ✅ PASS |
 
 ## HTML
 
 | Route | Current | Budget     | Status  |
 | ----- | ------- | ---------- | ------- |
-| /     | 8,334 B | ≤ 10,000 B | ✅ PASS |
-| /en/  | 8,925 B | ≤ 10,000 B | ✅ PASS |
-| /fr/  | 9,230 B | ≤ 10,000 B | ✅ PASS |
-| /de/  | 9,195 B | ≤ 10,000 B | ✅ PASS |
+| /     | 8,364 B | ≤ 10,000 B | ✅ PASS |
+| /en/  | 8,983 B | ≤ 10,000 B | ✅ PASS |
+| /fr/  | 9,284 B | ≤ 10,000 B | ✅ PASS |
+| /de/  | 9,252 B | ≤ 10,000 B | ✅ PASS |
 
 ## Secondary HTML
 
 | Route        | Current | Budget     | Status  |
 | ------------ | ------- | ---------- | ------- |
-| /404.html    | 4,001 B | ≤ 10,000 B | ✅ PASS |
-| /de/404.html | 4,051 B | ≤ 10,000 B | ✅ PASS |
-| /de/legal/   | 4,864 B | ≤ 10,000 B | ✅ PASS |
-| /de/privacy/ | 5,644 B | ≤ 10,000 B | ✅ PASS |
-| /en/404.html | 4,001 B | ≤ 10,000 B | ✅ PASS |
-| /en/legal/   | 4,737 B | ≤ 10,000 B | ✅ PASS |
-| /en/privacy/ | 5,341 B | ≤ 10,000 B | ✅ PASS |
-| /fr/404.html | 4,082 B | ≤ 10,000 B | ✅ PASS |
-| /fr/legal/   | 4,892 B | ≤ 10,000 B | ✅ PASS |
-| /fr/privacy/ | 5,700 B | ≤ 10,000 B | ✅ PASS |
+| /404.html    | 4,042 B | ≤ 10,000 B | ✅ PASS |
+| /de/404.html | 4,091 B | ≤ 10,000 B | ✅ PASS |
+| /de/legal/   | 4,902 B | ≤ 10,000 B | ✅ PASS |
+| /de/privacy/ | 5,686 B | ≤ 10,000 B | ✅ PASS |
+| /en/404.html | 4,042 B | ≤ 10,000 B | ✅ PASS |
+| /en/legal/   | 4,772 B | ≤ 10,000 B | ✅ PASS |
+| /en/privacy/ | 5,377 B | ≤ 10,000 B | ✅ PASS |
+| /fr/404.html | 4,122 B | ≤ 10,000 B | ✅ PASS |
+| /fr/legal/   | 4,932 B | ≤ 10,000 B | ✅ PASS |
+| /fr/privacy/ | 5,745 B | ≤ 10,000 B | ✅ PASS |
 
 The HTML budget applies independently to every generated page, including legal and 404 pages.
 
