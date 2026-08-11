@@ -27,6 +27,8 @@ const homepageResponse = await fetch(siteUrl, { redirect: "manual" });
 if (!homepageResponse.ok) throw new Error(`Expected the homepage to return 2xx. Received: ${homepageResponse.status}.`);
 
 requireHeader(homepageResponse, "content-security-policy", "frame-ancestors 'none'");
+requireHeader(homepageResponse, "content-security-policy", "default-src 'self'");
+requireHeader(homepageResponse, "strict-transport-security", "max-age=");
 requireHeader(homepageResponse, "x-content-type-options", "nosniff");
 requireHeader(homepageResponse, "x-frame-options", "DENY");
 requireHeader(homepageResponse, "referrer-policy", "strict-origin-when-cross-origin");
