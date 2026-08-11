@@ -1,0 +1,4 @@
+Contact: mailto:maxremy.dev@gmail.com
+Expires: 2027-06-30T23:59:59.000Z
+Preferred-Languages: en, fr, de
+Canonical: https://maxremy.dev/.well-known/security.txt
