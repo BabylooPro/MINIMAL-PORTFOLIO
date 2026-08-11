@@ -23,8 +23,31 @@ async function requireLocalizedNotFound(pathname, expectedText) {
 	if (!body.includes(expectedText)) throw new Error(`The ${pathname} response does not contain the expected localized 404 page.`);
 }
 
-const homepageResponse = await fetch(siteUrl, { redirect: "manual" });
-if (!homepageResponse.ok) throw new Error(`Expected the homepage to return 2xx. Received: ${homepageResponse.status}.`);
+const builtHomepage = await readFile(path.join(defaultOutputDirectory, "index.html"), "utf8");
+const builtAssetPaths = [
+	builtHomepage.match(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/u)?.[1],
+	builtHomepage.match(/<script\b[^>]*\bsrc="([^"]+)"[^>]*\bdata-site-controller/u)?.[1],
+].filter((assetPath) => assetPath !== undefined);
+if (builtAssetPaths.length !== 2) throw new Error("The built homepage must reference a hashed stylesheet and a hashed site controller.");
+
+async function fetchPublishedHomepage() {
+	const attempts = 12;
+
+	for (let attempt = 1; attempt <= attempts; attempt += 1) {
+		const response = await fetch(siteUrl, { redirect: "manual", cache: "no-store" });
+		if (!response.ok) throw new Error(`Expected the homepage to return 2xx. Received: ${response.status}.`);
+
+		const html = await response.text();
+		if (builtAssetPaths.every((assetPath) => html.includes(assetPath))) return { response, html };
+		if (attempt === attempts) throw new Error(`The deployment is not serving the build that was just published: ${builtAssetPaths.join(", ")} missing from the live homepage after ${attempts} attempts.`);
+
+		await new Promise((resolve) => setTimeout(resolve, 5_000));
+	}
+
+	throw new Error("Unreachable.");
+}
+
+const { response: homepageResponse, html: homepageHtml } = await fetchPublishedHomepage();
 
 requireHeader(homepageResponse, "content-security-policy", "frame-ancestors 'none'");
 requireHeader(homepageResponse, "content-security-policy", "default-src 'self'");
@@ -34,23 +57,13 @@ requireHeader(homepageResponse, "x-frame-options", "DENY");
 requireHeader(homepageResponse, "referrer-policy", "strict-origin-when-cross-origin");
 requireHeader(homepageResponse, "permissions-policy", "camera=()");
 
-const homepageHtml = await homepageResponse.text();
 const allowedScriptOrigins = new Set([siteUrl.origin, ...performanceBudget.architecture.allowedRuntimeOrigins]);
 for (const [, scriptSource] of homepageHtml.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["']/gu)) {
 	const scriptOrigin = new URL(scriptSource, siteUrl).origin;
 	if (!allowedScriptOrigins.has(scriptOrigin)) throw new Error(`The deployed homepage loads a script from an unexpected origin: ${scriptSource}.`);
 }
 
-const builtHomepage = await readFile(path.join(defaultOutputDirectory, "index.html"), "utf8");
-const builtAssetPaths = [
-	builtHomepage.match(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/u)?.[1],
-	builtHomepage.match(/<script\b[^>]*\bsrc="([^"]+)"[^>]*\bdata-site-controller/u)?.[1],
-].filter((assetPath) => assetPath !== undefined);
-if (builtAssetPaths.length !== 2) throw new Error("The built homepage must reference a hashed stylesheet and a hashed site controller.");
-
 for (const assetPath of builtAssetPaths) {
-	if (!homepageHtml.includes(assetPath)) throw new Error(`The deployment is not serving the build that was just published: ${assetPath} is missing from the live homepage.`);
-
 	const assetResponse = await fetch(new URL(assetPath, siteUrl), { redirect: "manual" });
 	if (!assetResponse.ok) throw new Error(`Expected ${assetPath} to return 2xx. Received: ${assetResponse.status}.`);
 	requireHeader(assetResponse, "cache-control", "immutable");
