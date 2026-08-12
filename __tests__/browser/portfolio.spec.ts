@@ -1,8 +1,24 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Locator, test } from "@playwright/test";
 import { localeConfigs } from "@/src/lib/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
 const mediaOrigin = "https://media.maxremy.dev";
+
+async function revealBelowStickyHeader(target: Locator): Promise<void> {
+	await expect
+		.poll(() =>
+			target.evaluate((element) => {
+				const shell = document.querySelector("[data-page-header-shell]");
+				if (!shell) throw new Error("The page header shell must be rendered.");
+
+				const isClear = element.getBoundingClientRect().top >= shell.getBoundingClientRect().bottom;
+				if (!isClear) element.scrollIntoView({ block: "center", behavior: "instant" });
+
+				return isClear;
+			}),
+		)
+		.toBe(true);
+}
 
 const localizedNotFoundPages = [
 	{ locale: "en", title: "Page not found", backToPortfolio: "Back to portfolio" },
@@ -131,7 +147,7 @@ test("renders a localized static not-found page for every locale", async ({ page
 	}
 });
 
-test("updates the Proof Work carousel without autoplaying for reduced motion", async ({ page }) => {
+test("updates the Proof Work carousel and exposes pause controls for reduced motion", async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.goto("/en/");
 
@@ -139,8 +155,6 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	const transitionPreview = page.locator("[data-proof-work-transition-preview]");
 	const transitionLoader = page.locator("[data-proof-work-transition-loader]");
 
-	await expect(player).not.toHaveAttribute("controls");
-	await player.hover();
 	await expect(player).toHaveJSProperty("controls", true);
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
@@ -160,12 +174,45 @@ test("updates the Proof Work carousel without autoplaying for reduced motion", a
 	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/2\.jpg$/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
-	expect(
-		await player.evaluate((element) => {
+	await expect
+		.poll(() =>
+			player.evaluate((element) => {
+				if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
+				return element.paused;
+			}),
+		)
+		.toBe(false);
+});
+
+test("recovers the Proof Work player after a rejected autoplay request", async ({ page }) => {
+	await page.addInitScript(() => {
+		const originalPlay = HTMLMediaElement.prototype.play;
+		let blocked = true;
+
+		Object.assign(window, { allowProofWorkPlayback: () => { blocked = false } });
+
+		HTMLMediaElement.prototype.play = function play(this: HTMLMediaElement) {
+			if (!blocked) return originalPlay.call(this);
+			return Promise.reject(new DOMException("Autoplay blocked by test.", "NotAllowedError"));
+		};
+	});
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	const isPaused = () =>
+		player.evaluate((element) => {
 			if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
 			return element.paused;
-		}),
-	).toBe(true);
+		});
+
+	await player.scrollIntoViewIfNeeded();
+	await expect.poll(isPaused).toBe(true);
+
+	await page.evaluate(() => (window as unknown as { allowProofWorkPlayback: () => void }).allowProofWorkPlayback());
+	await page.keyboard.press("Escape");
+
+	await expect.poll(isPaused).toBe(false);
 });
 
 test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
@@ -173,7 +220,7 @@ test("keeps the mobile Proof Work popover above the sticky header and restores f
 	await page.goto("/en/");
 
 	const trigger = page.locator("[data-popover-trigger]");
-	await trigger.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await revealBelowStickyHeader(trigger);
 	await trigger.click();
 
 	const popover = page.locator("#proof-work");
