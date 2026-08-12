@@ -30,16 +30,15 @@ const builtAssetPaths = [
 ].filter((assetPath) => assetPath !== undefined);
 if (builtAssetPaths.length !== 2) throw new Error("The built homepage must reference a hashed stylesheet and a hashed site controller.");
 
-async function fetchPublishedHomepage() {
+async function fetchPublished(url, isPublished, describeFailure) {
 	const attempts = 12;
 
 	for (let attempt = 1; attempt <= attempts; attempt += 1) {
-		const response = await fetch(siteUrl, { redirect: "manual", cache: "no-store" });
-		if (!response.ok) throw new Error(`Expected the homepage to return 2xx. Received: ${response.status}.`);
+		const response = await fetch(url, { redirect: "manual", cache: "no-store" });
+		const body = await response.text();
 
-		const html = await response.text();
-		if (builtAssetPaths.every((assetPath) => html.includes(assetPath))) return { response, html };
-		if (attempt === attempts) throw new Error(`The deployment is not serving the build that was just published: ${builtAssetPaths.join(", ")} missing from the live homepage after ${attempts} attempts.`);
+		if (isPublished(response, body)) return { response, body };
+		if (attempt === attempts) throw new Error(`${describeFailure(response)} Gave up after ${attempts} attempts.`);
 
 		await new Promise((resolve) => setTimeout(resolve, 5_000));
 	}
@@ -47,7 +46,11 @@ async function fetchPublishedHomepage() {
 	throw new Error("Unreachable.");
 }
 
-const { response: homepageResponse, html: homepageHtml } = await fetchPublishedHomepage();
+const { response: homepageResponse, body: homepageHtml } = await fetchPublished(
+	siteUrl,
+	(response, html) => response.ok && builtAssetPaths.every((assetPath) => html.includes(assetPath)),
+	(response) => (response.ok ? `The deployment is not serving the build that was just published: ${builtAssetPaths.join(", ")} missing from the live homepage.` : `Expected the homepage to return 2xx. Received: ${response.status}.`),
+);
 
 requireHeader(homepageResponse, "content-security-policy", "frame-ancestors 'none'");
 requireHeader(homepageResponse, "content-security-policy", "default-src 'self'");
@@ -64,8 +67,12 @@ for (const [, scriptSource] of homepageHtml.matchAll(/<script\b[^>]*\bsrc=["']([
 }
 
 for (const assetPath of builtAssetPaths) {
-	const assetResponse = await fetch(new URL(assetPath, siteUrl), { redirect: "manual" });
-	if (!assetResponse.ok) throw new Error(`Expected ${assetPath} to return 2xx. Received: ${assetResponse.status}.`);
+	const { response: assetResponse } = await fetchPublished(
+		new URL(assetPath, siteUrl),
+		(response) => response.ok,
+		(response) => `Expected ${assetPath} to return 2xx. Received: ${response.status}.`,
+	);
+
 	requireHeader(assetResponse, "cache-control", "immutable");
 }
 const mediaSourceMatch = homepageHtml.match(/<source src="([^"]+)" type="video\/mp4"/u);
