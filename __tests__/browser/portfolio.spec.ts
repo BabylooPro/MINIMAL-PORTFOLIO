@@ -5,18 +5,28 @@ const locales = ["en", "fr", "de"] as const;
 const mediaOrigin = "https://media.maxremy.dev";
 
 async function revealBelowStickyHeader(target: Locator): Promise<void> {
+	const margin = 8;
+	let settledHeaderBottom = Number.NaN;
+
 	await expect
-		.poll(() =>
-			target.evaluate((element) => {
+		.poll(async () => {
+			const { isClear, headerBottom } = await target.evaluate((element, gap) => {
 				const shell = document.querySelector("[data-page-header-shell]");
 				if (!shell) throw new Error("The page header shell must be rendered.");
 
-				const isClear = element.getBoundingClientRect().top >= shell.getBoundingClientRect().bottom;
-				if (!isClear) element.scrollIntoView({ block: "center", behavior: "instant" });
+				const box = element.getBoundingClientRect();
+				const bottom = shell.getBoundingClientRect().bottom;
+				const isClear = box.top >= bottom + gap && box.bottom <= innerHeight - gap;
+				if (!isClear) scrollBy({ top: box.top - bottom - (innerHeight - bottom - box.height) / 2, behavior: "instant" });
 
-				return isClear;
-			}),
-		)
+				return { isClear, headerBottom: bottom };
+			}, margin);
+
+			const isSettled = isClear && headerBottom === settledHeaderBottom;
+			settledHeaderBottom = headerBottom;
+
+			return isSettled;
+		}, { timeout: 15_000 })
 		.toBe(true);
 }
 
