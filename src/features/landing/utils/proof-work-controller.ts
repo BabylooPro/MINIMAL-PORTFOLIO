@@ -154,6 +154,7 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("loadeddata", () => { hideTransitionLoader(); if (!shouldPlay()) hideTransitionPreview() });
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
 		videoSource?.addEventListener("error", hideTransitionLoader);
+		videoPlayer.addEventListener("error", hideTransitionLoader);
 
 		document.addEventListener("visibilitychange", syncPlayback);
 		observer.observe(videoPlayer);
