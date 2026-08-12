@@ -44,8 +44,7 @@ export function initializeProofWorkController(): void {
 		let programmaticPause = false;
 		let pendingLoad = false;
 		let userPaused = false;
-
-		const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+		let gestured = false;
 
 		function videoAt(index: number): VideoDefinition {
 			return videos[(index + videos.length) % videos.length] as VideoDefinition;
@@ -60,7 +59,7 @@ export function initializeProofWorkController(): void {
 			transitionPreviewImage.hidden = false;
 			transitionLoaderElement.hidden = false;
 			videoPlayer.dataset.loading = "true";
-			transitionSource = new URL(video.source, document.baseURI).href;
+			transitionSource = video.source; // NOTE: SOURCES ARE ALREADY ABSOLUTE MEDIA-ORIGIN URLS, SO THEY MATCH currentSrc VERBATIM
 		}
 
 		function isCurrentTransition(): boolean {
@@ -82,8 +81,8 @@ export function initializeProofWorkController(): void {
 		}
 
 		function shouldPlay(): boolean {
-			if (!isPlayerVisible || document.hidden || reducedMotion.matches || userPaused) return false;
-			return isDesktopPointer() || videoPlayer.controls;
+			if (!isPlayerVisible || document.hidden || userPaused) return false;
+			return isDesktopPointer() || gestured;
 		}
 
 		function stopPlayback(): void {
@@ -100,9 +99,12 @@ export function initializeProofWorkController(): void {
 
 			const request = ++playbackRequest;
 			if (!videoPlayer.controls) videoPlayer.muted = true;
+
 			void videoPlayer.play().then(() => {
 				if (request !== playbackRequest || !shouldPlay()) stopPlayback();
-			}, () => undefined);
+			}, () => {
+				for (const type of ["pointerdown", "keydown"]) document.addEventListener(type, syncPlayback, { once: true });
+			});
 		}
 
 		function renderActiveVideo(shouldReload = true): void {
@@ -133,16 +135,14 @@ export function initializeProofWorkController(): void {
 
 		function enablePlayerControls(): void {
 			videoPlayer.controls = true;
+			gestured = true;
 			syncPlayback();
 		}
 
-		const observer = new IntersectionObserver(
-			([entry]) => {
-				isPlayerVisible = Boolean(entry?.isIntersecting && entry.intersectionRatio >= 0.5);
-				syncPlayback();
-			},
-			{ threshold: 0.5 },
-		);
+		const observer = new IntersectionObserver(([entry]) => {
+			isPlayerVisible = (entry?.intersectionRatio ?? 0) >= 0.25;
+			syncPlayback();
+		}, { threshold: 0.25 });
 
 		previousControl.addEventListener("click", () => switchVideo(-1));
 		nextControl.addEventListener("click", () => switchVideo(1));
@@ -156,8 +156,8 @@ export function initializeProofWorkController(): void {
 		videoSource?.addEventListener("error", hideTransitionLoader);
 
 		document.addEventListener("visibilitychange", syncPlayback);
-		reducedMotion.addEventListener("change", syncPlayback);
 		observer.observe(videoPlayer);
+		if (matchMedia("(prefers-reduced-motion: reduce)").matches) videoPlayer.controls = true;
 		renderActiveVideo(false);
 	}
 

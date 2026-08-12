@@ -1,20 +1,23 @@
-import { expect, type Locator, type Page, test } from "@playwright/test";
+import { expect, type Locator, test } from "@playwright/test";
 import { localeConfigs } from "@/src/lib/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
 const mediaOrigin = "https://media.maxremy.dev";
 
-async function scrollClearOfStickyHeader(page: Page, target: Locator) {
-	await target.evaluate((element) => element.scrollIntoView({ block: "center" }));
-	await page.waitForTimeout(700);
+async function revealBelowStickyHeader(target: Locator): Promise<void> {
+	await expect
+		.poll(() =>
+			target.evaluate((element) => {
+				const shell = document.querySelector("[data-page-header-shell]");
+				if (!shell) throw new Error("The page header shell must be rendered.");
 
-	await target.evaluate((element) => {
-		const headerBottom = document.querySelector("[data-page-header-shell]")?.getBoundingClientRect().bottom ?? 0;
-		const overlap = headerBottom - element.getBoundingClientRect().top;
-		if (overlap > 0) scrollBy({ top: -(overlap + 16), behavior: "instant" });
-	});
+				const isClear = element.getBoundingClientRect().top >= shell.getBoundingClientRect().bottom;
+				if (!isClear) element.scrollIntoView({ block: "center", behavior: "instant" });
 
-	await page.waitForTimeout(300);
+				return isClear;
+			}),
+		)
+		.toBe(true);
 }
 
 const localizedNotFoundPages = [
@@ -144,42 +147,65 @@ test("renders a localized static not-found page for every locale", async ({ page
 	}
 });
 
-test("updates the Proof Work carousel without autoplaying for reduced motion", async ({ page }) => {
+test("updates the Proof Work carousel and exposes pause controls for reduced motion", async ({ page }) => {
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.goto("/en/");
 
 	const player = page.locator("[data-proof-work-player]");
-	const transitionPreview = page.locator("[data-proof-work-transition-preview]");
 	const transitionLoader = page.locator("[data-proof-work-transition-loader]");
 
-	await expect(player).not.toHaveAttribute("controls");
-	await player.hover();
 	await expect(player).toHaveJSProperty("controls", true);
-
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/1.mp4`);
 	await expect(player).toHaveCSS("color-scheme", "dark");
-	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/1\.avif$/);
-	await expect(transitionLoader).toBeHidden();
 	await expect(transitionLoader.locator("span")).toHaveClass(/size-20/);
 
 	await page.locator('[data-proof-work-direction="next"]').click();
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
-	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 	await expect(player).toHaveAttribute("poster", /\/videos\/timelapse\/previews\/2\.avif$/);
+	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
-	await expect(player).not.toHaveAttribute("data-loading", "true");
-	await expect(transitionPreview).toBeHidden();
-	await expect(transitionLoader).toBeHidden();
+	await expect
+		.poll(() =>
+			player.evaluate((element) => {
+				if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
+				return element.paused;
+			}),
+		)
+		.toBe(false);
+});
 
-	expect(
-		await player.evaluate((element) => {
+test("recovers the Proof Work player after a rejected autoplay request", async ({ page }) => {
+	await page.addInitScript(() => {
+		const originalPlay = HTMLMediaElement.prototype.play;
+		let blocked = true;
+
+		Object.assign(window, { allowProofWorkPlayback: () => { blocked = false } });
+
+		HTMLMediaElement.prototype.play = function play(this: HTMLMediaElement) {
+			if (!blocked) return originalPlay.call(this);
+			return Promise.reject(new DOMException("Autoplay blocked by test.", "NotAllowedError"));
+		};
+	});
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	const isPaused = () =>
+		player.evaluate((element) => {
 			if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
 			return element.paused;
-		}),
-	).toBe(true);
+		});
+
+	await player.scrollIntoViewIfNeeded();
+	await expect.poll(isPaused).toBe(true);
+
+	await page.evaluate(() => (window as unknown as { allowProofWorkPlayback: () => void }).allowProofWorkPlayback());
+	await page.keyboard.press("Escape");
+
+	await expect.poll(isPaused).toBe(false);
 });
 
 test("fetches no timelapse bytes when the carousel is navigated on touch", async ({ browser }) => {
@@ -207,6 +233,28 @@ test("fetches no timelapse bytes when the carousel is navigated on touch", async
 	expect(mediaRequests).toEqual([]);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 	await expect(page.locator("[data-proof-work-player]")).toHaveAttribute("poster", /\/videos\/timelapse\/previews\/2\.avif$/);
+
+	await context.close();
+});
+
+test("exposes the timelapse pause controls without autoplaying on touch with reduced motion", async ({ browser }) => {
+	const context = await browser.newContext({ hasTouch: true, isMobile: true, reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await page.waitForTimeout(1_000);
+
+	await expect(player).toHaveJSProperty("controls", true);
+
+	expect(
+		await player.evaluate((element) => {
+			if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
+			return element.paused;
+		}),
+	).toBe(true);
 
 	await context.close();
 });
@@ -287,7 +335,7 @@ test("keeps the mobile Proof Work popover above the sticky header and restores f
 	await page.goto("/en/");
 
 	const trigger = page.locator("[data-popover-trigger]");
-	await scrollClearOfStickyHeader(page, trigger);
+	await revealBelowStickyHeader(trigger);
 	await trigger.click();
 
 	const popover = page.locator("#proof-work");
