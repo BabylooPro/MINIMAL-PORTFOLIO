@@ -44,7 +44,6 @@ export function initializeProofWorkController(): void {
 		let programmaticPause = false;
 		let pendingLoad = false;
 		let userPaused = false;
-		let gestured = false;
 
 		function videoAt(index: number): VideoDefinition {
 			return videos[(index + videos.length) % videos.length] as VideoDefinition;
@@ -81,8 +80,7 @@ export function initializeProofWorkController(): void {
 		}
 
 		function shouldPlay(): boolean {
-			if (!isPlayerVisible || document.hidden || userPaused) return false;
-			return isDesktopPointer() || gestured;
+			return isPlayerVisible && !document.hidden && !userPaused;
 		}
 
 		function stopPlayback(): void {
@@ -135,7 +133,6 @@ export function initializeProofWorkController(): void {
 
 		function enablePlayerControls(): void {
 			videoPlayer.controls = true;
-			gestured = true;
 			syncPlayback();
 		}
 
@@ -158,7 +155,7 @@ export function initializeProofWorkController(): void {
 
 		document.addEventListener("visibilitychange", syncPlayback);
 		observer.observe(videoPlayer);
-		if (matchMedia("(prefers-reduced-motion: reduce)").matches) videoPlayer.controls = true;
+		if (!isDesktopPointer() || matchMedia("(prefers-reduced-motion: reduce)").matches) videoPlayer.controls = true;
 		renderActiveVideo(false);
 	}
 

@@ -218,58 +218,7 @@ test("recovers the Proof Work player after a rejected autoplay request", async (
 	await expect.poll(isPaused).toBe(false);
 });
 
-test("fetches no timelapse bytes when the carousel is navigated on touch", async ({ browser }) => {
-	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
-	const page = await context.newPage();
-	const mediaRequests: string[] = [];
-
-	page.on("request", (request) => { if (request.url().startsWith(mediaOrigin)) mediaRequests.push(request.url()) });
-
-	await page.goto("/en/");
-	await page.locator("[data-proof-work-player]").evaluate((element) => element.scrollIntoView({ block: "center" }));
-	await page.waitForTimeout(800);
-
-	const tapPoint = await page.evaluate(() => {
-		const next = document.querySelector('[data-proof-work-direction="next"]')?.getBoundingClientRect();
-		const card = document.querySelector("[data-proof-work-active-card]")?.getBoundingClientRect();
-		if (!next || !card) throw new Error("The Proof Work carousel controls must be measurable.");
-
-		return { x: Math.round((card.right + next.right) / 2), y: Math.round(next.top + next.height / 2) };
-	});
-
-	await page.touchscreen.tap(tapPoint.x, tapPoint.y);
-	await page.waitForTimeout(2_000);
-
-	expect(mediaRequests).toEqual([]);
-	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
-	await expect(page.locator("[data-proof-work-player]")).toHaveAttribute("poster", /\/videos\/timelapse\/previews\/2\.avif$/);
-
-	await context.close();
-});
-
-test("exposes the timelapse pause controls without autoplaying on touch with reduced motion", async ({ browser }) => {
-	const context = await browser.newContext({ hasTouch: true, isMobile: true, reducedMotion: "reduce", viewport: { width: 390, height: 844 } });
-	const page = await context.newPage();
-
-	await page.goto("/en/");
-
-	const player = page.locator("[data-proof-work-player]");
-	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
-	await page.waitForTimeout(1_000);
-
-	await expect(player).toHaveJSProperty("controls", true);
-
-	expect(
-		await player.evaluate((element) => {
-			if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
-			return element.paused;
-		}),
-	).toBe(true);
-
-	await context.close();
-});
-
-test("keeps the timelapse carousel paused on touch until an explicit gesture", async ({ browser }) => {
+test("autoplays the timelapse on touch and exposes a pause control", async ({ browser }) => {
 	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 	const page = await context.newPage();
 
@@ -277,16 +226,18 @@ test("keeps the timelapse carousel paused on touch until an explicit gesture", a
 
 	const player = page.locator("[data-proof-work-player]");
 	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
-	await page.waitForTimeout(1_000);
 
 	expect(await page.evaluate(() => matchMedia("(min-width: 40rem) and (hover: hover) and (pointer: fine)").matches)).toBe(false);
+	await expect(player).toHaveJSProperty("controls", true);
 
-	expect(
-		await player.evaluate((element) => {
-			if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
-			return element.paused;
-		}),
-	).toBe(true);
+	await expect
+		.poll(() =>
+			player.evaluate((element) => {
+				if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
+				return element.paused;
+			}),
+		)
+		.toBe(false);
 
 	await context.close();
 });
