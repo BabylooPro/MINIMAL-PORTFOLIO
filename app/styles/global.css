@@ -48,9 +48,28 @@
 	color-scheme: light;
 }
 
+::selection {
+	background: var(--active-hover-color);
+	color: var(--background-color);
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: var(--border-color) transparent;
+}
+
+li::marker {
+	color: var(--muted-color);
+}
+
+button {
+	user-select: none;
+}
+
 html {
 	background: var(--background-color);
 	scroll-behavior: smooth;
+	-webkit-tap-highlight-color: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
