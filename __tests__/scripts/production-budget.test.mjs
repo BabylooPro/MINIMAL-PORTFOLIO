@@ -37,11 +37,9 @@ async function writeFixtureFile(outputDirectory, relativePath, source) {
 
 async function createCompleteOutput(t, options = {}) {
 	const outputDirectory = await mkdtemp(path.join(tmpdir(), "test-production-budget-"));
-	const mediaSourceDirectory = await mkdtemp(path.join(tmpdir(), "test-production-budget-media-"));
 
 	t.after(async () => {
 		await rm(outputDirectory, { force: true, recursive: true });
-		await rm(mediaSourceDirectory, { force: true, recursive: true });
 	});
 
 	for (const relativePath of performanceBudget.html.expectedOutputPaths) {
@@ -61,16 +59,12 @@ async function createCompleteOutput(t, options = {}) {
 	]);
 
 	for (let index = 1; index <= performanceBudget.media.expectedPreviewCount; index += 1) {
-		await writeFixtureFile(outputDirectory, `videos/timelapse/previews/${index}.jpg`, Buffer.alloc(options.previewBytes ?? 1_000));
-	}
-
-	for (let index = 1; index <= performanceBudget.media.expectedVideoCount; index += 1) {
-		await writeFixtureFile(mediaSourceDirectory, `videos/timelapse/${index}.mp4`, Buffer.alloc(options.videoBytes ?? 1_000));
+		await writeFixtureFile(outputDirectory, `videos/timelapse/previews/${index}.avif`, Buffer.alloc(options.previewBytes ?? 1_000));
 	}
 
 	if (options.extraJavaScript) await writeFixtureFile(outputDirectory, "assets/extra.js", "console.log('extra');");
 
-	return { outputDirectory, mediaSourceDirectory };
+	return { outputDirectory };
 }
 
 test("measures gzip data and extracts exact inline scripts", async (t) => {
@@ -129,12 +123,11 @@ test("rejects an unexpected JavaScript file and a React runtime", async (t) => {
 	assert.equal(validation.checks.find((check) => check.id === "react-runtime")?.status, "FAIL");
 });
 
-test("rejects previews and videos that exceed their individual limits", async (t) => {
-	const output = await createCompleteOutput(t, { previewBytes: performanceBudget.media.maximumPreviewFileBytes + 1, videoBytes: performanceBudget.media.maximumVideoFileBytes + 1 });
+test("rejects previews that exceed their individual limits", async (t) => {
+	const output = await createCompleteOutput(t, { previewBytes: performanceBudget.media.maximumPreviewFileBytes + 1 });
 	const validation = validatePerformanceBudget(await measureProductionOutput(output));
 
-	assert.equal(validation.checks.find((check) => check.id === "preview-1.jpg")?.status, "FAIL");
-	assert.equal(validation.checks.find((check) => check.id === "video-1.mp4")?.status, "FAIL");
+	assert.equal(validation.checks.find((check) => check.id === "preview-1.avif")?.status, "FAIL");
 });
 
 test("rejects MP4 files in the Cloudflare Pages output", async (t) => {

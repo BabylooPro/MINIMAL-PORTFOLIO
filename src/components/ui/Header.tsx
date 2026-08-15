@@ -76,7 +76,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 
 											<img
 												src="/myface.jpg"
-												alt="My Face"
+												alt=""
 												aria-hidden="true"
 												className="size-full rounded-md object-cover"
 											/>
@@ -133,16 +133,14 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 									].join(" ")}
 									data-header-compact-identity
 								>
-									<a href={getLocalePath(currentLocale)} className="size-10 rounded-md sm:col-start-1 sm:row-span-2" >
-										<span className="sr-only">{portfolio.name}</span>
-
+									<div className="size-10 rounded-md sm:col-start-1 sm:row-span-2">
 										<img
 											src="/myface.jpg"
-											alt="My Face"
+											alt=""
 											aria-hidden="true"
 											className="size-full rounded-md object-cover"
 										/>
-									</a>
+									</div>
 
 									<div className="sm:col-start-2 sm:row-span-2 sm:grid sm:min-w-0 sm:grid-rows-2">
 										<p className="text-(--foreground-color) sm:self-start sm:text-xl sm:font-semibold sm:tracking-tight sm:leading-none">

@@ -15,43 +15,34 @@ type ProofWorkSectionProps = {
 	title: string;
 };
 
-type SquarePosition = `object-[${string}]`;
-
 const videos = [
 	{
 		source: getMediaUrl("/videos/timelapse/1.mp4"),
-		preview: "/videos/timelapse/previews/1.jpg",
-		squarePosition: "object-[50%_67%]",
+		preview: "/videos/timelapse/previews/1.avif",
 	},
 	{
 		source: getMediaUrl("/videos/timelapse/2.mp4"),
-		preview: "/videos/timelapse/previews/2.jpg",
-		squarePosition: "object-[50%_72%]",
+		preview: "/videos/timelapse/previews/2.avif",
 	},
 	{
 		source: getMediaUrl("/videos/timelapse/3.mp4"),
-		preview: "/videos/timelapse/previews/3.jpg",
-		squarePosition: "object-[50%_60%]",
+		preview: "/videos/timelapse/previews/3.avif",
 	},
 	{
 		source: getMediaUrl("/videos/timelapse/4.mp4"),
-		preview: "/videos/timelapse/previews/4.jpg",
-		squarePosition: "object-[50%_80%]",
+		preview: "/videos/timelapse/previews/4.avif",
 	},
 	{
 		source: getMediaUrl("/videos/timelapse/5.mp4"),
-		preview: "/videos/timelapse/previews/5.jpg",
-		squarePosition: "object-[50%_7%]",
+		preview: "/videos/timelapse/previews/5.avif",
 	},
 	{
 		source: getMediaUrl("/videos/timelapse/6.mp4"),
-		preview: "/videos/timelapse/previews/6.jpg",
-		squarePosition: "object-[50%_80%]",
+		preview: "/videos/timelapse/previews/6.avif",
 	},
 ] as const satisfies readonly {
 	source: string;
 	preview: string;
-	squarePosition: SquarePosition;
 }[];
 
 type Video = (typeof videos)[number];
@@ -69,7 +60,7 @@ function VideoPreviewButton({ direction, label, positionClassName, video }: Vide
 			aria-label={label}
 			className={[
 				// PREVIEW CARD LAYOUT
-				"absolute top-1/2 z-0 aspect-square w-[min(42vw,12rem)] -translate-y-1/2 overflow-hidden sm:w-[min(52vw,15rem)]",
+				"absolute top-1/2 z-0 aspect-square w-[min(42vw,12rem,45dvh)] -translate-y-1/2 overflow-hidden sm:w-[min(52vw,15rem,45dvh)]",
 				// PREVIEW CARD SURFACE
 				"rounded-lg border border-(--border-color) bg-black p-0",
 				// POINTER AND KEYBOARD FEEDBACK
@@ -85,7 +76,7 @@ function VideoPreviewButton({ direction, label, positionClassName, video }: Vide
 		>
 			<img
 				alt=""
-				className={`size-full object-cover grayscale ${video.squarePosition}`}
+				className="size-full object-cover grayscale"
 				data-proof-work-preview={direction}
 				loading="lazy"
 				src={video.preview}
@@ -145,7 +136,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 			</p>
 
 			<div className="mt-3">
-				<div className="relative mx-auto h-[min(56vw,17rem)] w-full max-w-2xl sm:h-[min(72vw,22rem)]">
+				<div className="relative mx-auto h-[min(56vw,17rem,60dvh)] w-full max-w-2xl sm:h-[min(72vw,22rem,60dvh)]">
 					<VideoPreviewButton
 						direction="previous"
 						label={content.previousVideo}
@@ -156,7 +147,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 					<div
 						className={[
 							// CENTERED ACTIVE CARD
-							"absolute left-1/2 top-1/2 z-10 w-[min(56vw,17rem)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(72vw,22rem)]",
+							"absolute left-1/2 top-1/2 z-10 w-[min(56vw,17rem,60dvh)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(72vw,22rem,60dvh)]",
 							// CARD SURFACE
 							"relative aspect-square rounded-lg border border-transparent",
 							"after:pointer-events-none after:absolute after:-inset-px after:z-10 after:rounded-[inherit] after:border after:border-(--border-color)",
@@ -167,7 +158,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 							<img
 								alt=""
 								aria-hidden="true"
-								className={`pointer-events-none absolute inset-0 z-10 size-full object-cover ${activeVideo.squarePosition}`}
+								className="pointer-events-none absolute inset-0 z-10 size-full object-cover"
 								data-proof-work-transition-preview
 								hidden
 								src={activeVideo.preview}
@@ -188,7 +179,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 									// NATIVE PLAYER UI
 									"scheme-dark",
 									// DEFAULT INLINE PLAYER
-									`block aspect-square w-full object-cover ${activeVideo.squarePosition}`,
+									"block aspect-square w-full object-cover",
 									"data-[loading=true]:opacity-0",
 									// FULLSCREEN PLAYER
 									"[&:fullscreen]:aspect-auto [&:fullscreen]:object-contain",
@@ -198,7 +189,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 								muted
 								playsInline
 								poster={activeVideo.preview}
-								preload="metadata" // NOTE: REQUIRED FOR FAST INITIAL LOAD
+								preload="none" // NOTE: THE POSTER ALREADY PAINTS THE FIRST FRAME, SO NOTHING IS FETCHED BEFORE PLAYBACK
 								tabIndex={0}
 							>
 								<source src={activeVideo.source} type="video/mp4" />

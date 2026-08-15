@@ -10,34 +10,34 @@ This portfolio is statically pre-rendered. React is used during the build only a
 | Client-side hydration                | None    | None      | ✅ PASS |
 | Theme bootstrap gzip                 | 355 B   | ≤ 1,000 B | ✅ PASS |
 | Locale redirect gzip                 | 293 B   | ≤ 500 B   | ✅ PASS |
-| Site controller gzip                 | 3,895 B | ≤ 3,900 B | ✅ PASS |
-| Root executable JavaScript gzip      | 4,543 B | ≤ 4,600 B | ✅ PASS |
-| Localized executable JavaScript gzip | 4,250 B | ≤ 4,300 B | ✅ PASS |
-| CSS gzip                             | 7,332 B | ≤ 7,700 B | ✅ PASS |
+| Site controller gzip                 | 3,878 B | ≤ 3,900 B | ✅ PASS |
+| Root executable JavaScript gzip      | 4,526 B | ≤ 4,600 B | ✅ PASS |
+| Localized executable JavaScript gzip | 4,233 B | ≤ 4,300 B | ✅ PASS |
+| CSS gzip                             | 7,457 B | ≤ 7,700 B | ✅ PASS |
 
 ## HTML
 
 | Route | Current | Budget     | Status  |
 | ----- | ------- | ---------- | ------- |
-| /     | 8,377 B | ≤ 10,000 B | ✅ PASS |
-| /en/  | 8,966 B | ≤ 10,000 B | ✅ PASS |
-| /fr/  | 9,276 B | ≤ 10,000 B | ✅ PASS |
-| /de/  | 9,231 B | ≤ 10,000 B | ✅ PASS |
+| /     | 8,365 B | ≤ 10,000 B | ✅ PASS |
+| /en/  | 8,982 B | ≤ 10,000 B | ✅ PASS |
+| /fr/  | 9,286 B | ≤ 10,000 B | ✅ PASS |
+| /de/  | 9,253 B | ≤ 10,000 B | ✅ PASS |
 
 ## Secondary HTML
 
 | Route        | Current | Budget     | Status  |
 | ------------ | ------- | ---------- | ------- |
-| /404.html    | 4,001 B | ≤ 10,000 B | ✅ PASS |
-| /de/404.html | 4,052 B | ≤ 10,000 B | ✅ PASS |
-| /de/legal/   | 4,864 B | ≤ 10,000 B | ✅ PASS |
-| /de/privacy/ | 5,643 B | ≤ 10,000 B | ✅ PASS |
-| /en/404.html | 4,001 B | ≤ 10,000 B | ✅ PASS |
-| /en/legal/   | 4,736 B | ≤ 10,000 B | ✅ PASS |
-| /en/privacy/ | 5,339 B | ≤ 10,000 B | ✅ PASS |
-| /fr/404.html | 4,081 B | ≤ 10,000 B | ✅ PASS |
-| /fr/legal/   | 4,891 B | ≤ 10,000 B | ✅ PASS |
-| /fr/privacy/ | 5,698 B | ≤ 10,000 B | ✅ PASS |
+| /404.html    | 4,044 B | ≤ 10,000 B | ✅ PASS |
+| /de/404.html | 4,093 B | ≤ 10,000 B | ✅ PASS |
+| /de/legal/   | 4,904 B | ≤ 10,000 B | ✅ PASS |
+| /de/privacy/ | 5,688 B | ≤ 10,000 B | ✅ PASS |
+| /en/404.html | 4,044 B | ≤ 10,000 B | ✅ PASS |
+| /en/legal/   | 4,774 B | ≤ 10,000 B | ✅ PASS |
+| /en/privacy/ | 5,378 B | ≤ 10,000 B | ✅ PASS |
+| /fr/404.html | 4,124 B | ≤ 10,000 B | ✅ PASS |
+| /fr/legal/   | 4,933 B | ≤ 10,000 B | ✅ PASS |
+| /fr/privacy/ | 5,746 B | ≤ 10,000 B | ✅ PASS |
 
 The HTML budget applies independently to every generated page, including legal and 404 pages.
 
@@ -51,38 +51,24 @@ The HTML budget applies independently to every generated page, including legal a
 
 ## Media during navigation
 
-| Metric                | Current          | Budget     | Status  |
-| --------------------- | ---------------- | ---------- | ------- |
-| Timelapse video count | 6                | 6          | ✅ PASS |
-| Timelapse videos      | 234.8 MB         | ≤ 250.0 MB | ✅ PASS |
-| Largest video         | 4.mp4 (62.4 MB)  | ≤ 70.0 MB  | ✅ PASS |
-| Preview image count   | 6                | 6          | ✅ PASS |
-| Preview images        | 103.9 kB         | ≤ 120.0 kB | ✅ PASS |
-| Largest preview       | 6.jpg (20,302 B) | ≤ 25.0 kB  | ✅ PASS |
-| Social image          | 115.7 kB         | ≤ 250.0 kB | ✅ PASS |
+| Metric              | Current           | Budget     | Status  |
+| ------------------- | ----------------- | ---------- | ------- |
+| Preview image count | 6                 | 6          | ✅ PASS |
+| Preview images      | 101.7 kB          | ≤ 120.0 kB | ✅ PASS |
+| Largest preview     | 3.avif (23,300 B) | ≤ 25.0 kB  | ✅ PASS |
+| Social image        | 115.7 kB          | ≤ 250.0 kB | ✅ PASS |
 
-The active poster may load immediately. Side previews use `loading="lazy"`, but the browser decides when to fetch them. The active video uses `preload="metadata"`, so it may start a media request before playback; that request can be partial, but a `Range` request is not guaranteed.
+The active poster may load immediately. Side previews use `loading="lazy"`, but the browser decides when to fetch them. Timelapse renditions are served from the media origin and are not measured here.
 
 ### Preview files
 
-| File  | Current | Budget    | Status  |
-| ----- | ------- | --------- | ------- |
-| 1.jpg | 15.4 kB | ≤ 25.0 kB | ✅ PASS |
-| 2.jpg | 14.8 kB | ≤ 25.0 kB | ✅ PASS |
-| 3.jpg | 18.6 kB | ≤ 25.0 kB | ✅ PASS |
-| 4.jpg | 18.3 kB | ≤ 25.0 kB | ✅ PASS |
-| 5.jpg | 16.5 kB | ≤ 25.0 kB | ✅ PASS |
-| 6.jpg | 20.3 kB | ≤ 25.0 kB | ✅ PASS |
-
-### Video files
-
-| File  | Current | Budget    | Status  |
-| ----- | ------- | --------- | ------- |
-| 1.mp4 | 16.9 MB | ≤ 70.0 MB | ✅ PASS |
-| 2.mp4 | 54.7 MB | ≤ 70.0 MB | ✅ PASS |
-| 3.mp4 | 46.5 MB | ≤ 70.0 MB | ✅ PASS |
-| 4.mp4 | 62.4 MB | ≤ 70.0 MB | ✅ PASS |
-| 5.mp4 | 35.8 MB | ≤ 70.0 MB | ✅ PASS |
-| 6.mp4 | 18.4 MB | ≤ 70.0 MB | ✅ PASS |
+| File   | Current | Budget    | Status  |
+| ------ | ------- | --------- | ------- |
+| 1.avif | 12.6 kB | ≤ 25.0 kB | ✅ PASS |
+| 2.avif | 12.3 kB | ≤ 25.0 kB | ✅ PASS |
+| 3.avif | 23.3 kB | ≤ 25.0 kB | ✅ PASS |
+| 4.avif | 17.3 kB | ≤ 25.0 kB | ✅ PASS |
+| 5.avif | 14.1 kB | ≤ 25.0 kB | ✅ PASS |
+| 6.avif | 22.1 kB | ≤ 25.0 kB | ✅ PASS |
 
 Production budget passed.

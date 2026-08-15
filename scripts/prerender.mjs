@@ -127,6 +127,19 @@ const renderedPages = await Promise.all(
 const sitemap = renderSitemap(renderedPages);
 await writeFile(sitemapPath, sitemap, "utf8");
 
+const contentSecurityPolicy = templateHtml.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/u)?.[1];
+if (!contentSecurityPolicy) throw new Error("The built template does not declare a Content-Security-Policy meta tag.");
+
+const cloudflareHeaders = await readFile(cloudflareHeadersPath, "utf8");
+const frameAncestorsDirective = "  Content-Security-Policy: frame-ancestors 'none'\n";
+if (!cloudflareHeaders.includes(frameAncestorsDirective)) throw new Error("The Cloudflare Pages _headers file no longer declares the frame-ancestors policy to extend.");
+
+await writeFile(
+	cloudflareHeadersPath,
+	cloudflareHeaders.replace(frameAncestorsDirective, `  Content-Security-Policy: ${contentSecurityPolicy}; frame-ancestors 'none'\n`),
+	"utf8",
+);
+
 await rm(serverDirectory, { recursive: true, force: true });
 await rm(manifestDirectory, { recursive: true, force: true });
 await removeUnusedJavaScriptFiles({ distDirectory, allowedFiles: siteControllerAssets });

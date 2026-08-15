@@ -114,6 +114,11 @@ export async function validateStaticOutput({ renderedPages, files, sitemap, allo
 	if (!files.includes(cloudflareHeadersPath)) throw new Error("The Cloudflare Pages _headers configuration was not generated.");
 	if (files.some((filePath) => filePath.endsWith(".mp4"))) throw new Error("Cloudflare Pages output must not contain MP4 files.");
 
+	const cloudflareHeaders = await readFile(cloudflareHeadersPath, "utf8");
+	for (const directive of ["default-src 'self'", "script-src 'self'", "frame-ancestors 'none'"]) {
+		if (!cloudflareHeaders.includes(directive)) throw new Error(`The Cloudflare Pages _headers file must serve the full Content-Security-Policy, missing: ${directive}.`);
+	}
+
 	for (const { page, route, outputPath, html, siteControllerSrc, alternateLinks: pageAlternateLinks, languageSwitcherLinks } of renderedPages) {
 		if (!files.includes(outputPath)) throw new Error(`The ${route.kind} output file was not generated.`);
 		validatePageHtml({ page, route, indexHtml: html, siteControllerSrc, pageAlternateLinks, languageSwitcherLinks, siteName, ...markers });

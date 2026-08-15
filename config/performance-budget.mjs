@@ -34,11 +34,8 @@ export const performanceBudget = {
 	},
 	media: {
 		expectedPreviewCount: 6,
-		expectedVideoCount: 6,
 		maximumPreviewFileBytes: 25_000,
 		maximumPreviewTotalBytes: 120_000,
-		maximumVideoTotalBytes: 250_000_000,
-		maximumVideoFileBytes: 70_000_000,
 		maximumSocialImageBytes: 250_000,
 	},
 	architecture: {

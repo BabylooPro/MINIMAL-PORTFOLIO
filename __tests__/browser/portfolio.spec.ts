@@ -5,18 +5,28 @@ const locales = ["en", "fr", "de"] as const;
 const mediaOrigin = "https://media.maxremy.dev";
 
 async function revealBelowStickyHeader(target: Locator): Promise<void> {
+	const margin = 8;
+	let settledHeaderBottom = Number.NaN;
+
 	await expect
-		.poll(() =>
-			target.evaluate((element) => {
+		.poll(async () => {
+			const { isClear, headerBottom } = await target.evaluate((element, gap) => {
 				const shell = document.querySelector("[data-page-header-shell]");
 				if (!shell) throw new Error("The page header shell must be rendered.");
 
-				const isClear = element.getBoundingClientRect().top >= shell.getBoundingClientRect().bottom;
-				if (!isClear) element.scrollIntoView({ block: "center", behavior: "instant" });
+				const box = element.getBoundingClientRect();
+				const bottom = shell.getBoundingClientRect().bottom;
+				const isClear = box.top >= bottom + gap && box.bottom <= innerHeight - gap;
+				if (!isClear) scrollBy({ top: box.top - bottom - (innerHeight - bottom - box.height) / 2, behavior: "instant" });
 
-				return isClear;
-			}),
-		)
+				return { isClear, headerBottom: bottom };
+			}, margin);
+
+			const isSettled = isClear && headerBottom === settledHeaderBottom;
+			settledHeaderBottom = headerBottom;
+
+			return isSettled;
+		}, { timeout: 15_000 })
 		.toBe(true);
 }
 
@@ -152,26 +162,19 @@ test("updates the Proof Work carousel and exposes pause controls for reduced mot
 	await page.goto("/en/");
 
 	const player = page.locator("[data-proof-work-player]");
-	const transitionPreview = page.locator("[data-proof-work-transition-preview]");
 	const transitionLoader = page.locator("[data-proof-work-transition-loader]");
 
 	await expect(player).toHaveJSProperty("controls", true);
-
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/1.mp4`);
-	await expect(player).toHaveClass(/object-\[50%_67%\]/);
 	await expect(player).toHaveCSS("color-scheme", "dark");
-	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/1\.jpg$/);
-	await expect(transitionLoader).toBeHidden();
 	await expect(transitionLoader.locator("span")).toHaveClass(/size-20/);
 
 	await page.locator('[data-proof-work-direction="next"]').click();
 
 	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
-	await expect(player).toHaveClass(/object-\[50%_72%\]/);
-	await expect(player).toHaveAttribute("data-loading", "true");
-	await expect(transitionPreview).toHaveAttribute("src", /\/videos\/timelapse\/previews\/2\.jpg$/);
+	await expect(player).toHaveAttribute("poster", /\/videos\/timelapse\/previews\/2\.avif$/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
 
 	await expect
@@ -213,6 +216,79 @@ test("recovers the Proof Work player after a rejected autoplay request", async (
 	await page.keyboard.press("Escape");
 
 	await expect.poll(isPaused).toBe(false);
+});
+
+test("autoplays the timelapse on touch and exposes a pause control", async ({ browser }) => {
+	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+
+	expect(await page.evaluate(() => matchMedia("(min-width: 40rem) and (hover: hover) and (pointer: fine)").matches)).toBe(false);
+	await expect(player).toHaveJSProperty("controls", true);
+
+	await expect
+		.poll(() =>
+			player.evaluate((element) => {
+				if (!(element instanceof HTMLVideoElement)) throw new TypeError("Proof Work player must be a video element.");
+				return element.paused;
+			}),
+		)
+		.toBe(false);
+
+	await context.close();
+});
+
+test("keeps the timelapse card within the header and footer band on a landscape phone", async ({ page }) => {
+	await page.setViewportSize({ width: 812, height: 375 });
+	await page.goto("/en/");
+
+	await page.evaluate(() => scrollTo(0, 2_000));
+	await page.waitForTimeout(700);
+
+	const { card, band } = await page.evaluate(() => {
+		const header = document.querySelector("[data-page-header-shell]")?.getBoundingClientRect();
+		const footer = document.querySelector("[data-page-footer]")?.getBoundingClientRect();
+		const activeCard = document.querySelector("[data-proof-work-active-card]")?.getBoundingClientRect();
+		if (!header || !activeCard) throw new Error("The Proof Work card and the page header must be measurable.");
+
+		return { card: activeCard.height, band: (footer ? footer.top : innerHeight) - header.bottom };
+	});
+
+	expect(card).toBeLessThanOrEqual(band);
+});
+
+test("does not resume a clip the visitor paused", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+
+	await expect
+		.poll(async () => player.evaluate((element) => (element as HTMLVideoElement).paused), { timeout: 20_000 })
+		.toBe(false);
+
+	await player.evaluate((element) => (element as HTMLVideoElement).pause());
+	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+	await page.waitForTimeout(600);
+
+	expect(await player.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
+});
+
+test("does not advance the timelapse carousel when a clip ends", async ({ page }) => {
+	await page.goto("/en/");
+
+	const counter = page.locator("[data-proof-work-counter]");
+	await expect(counter).toHaveText("Video 1 of 6");
+
+	await page.locator("[data-proof-work-player]").evaluate((element) => element.dispatchEvent(new Event("ended")));
+	await page.waitForTimeout(300);
+
+	await expect(counter).toHaveText("Video 1 of 6");
 });
 
 test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
@@ -524,6 +600,12 @@ test("keeps the mobile role stable when reduced motion is requested", async ({ p
 
 	await page.waitForTimeout(5_100);
 	await expect(page.locator("[data-mobile-role]:not([hidden])")).toHaveText(initialRole);
+
+	const allRoles = page.locator("[data-mobile-role]");
+	const roleCount = await allRoles.count();
+	expect(roleCount).toBeGreaterThan(1);
+
+	for (let index = 0; index < roleCount; index += 1) await expect(allRoles.nth(index)).toBeVisible();
 });
 
 test("persists the theme and applies desktop and mobile header states", async ({ page }) => {
