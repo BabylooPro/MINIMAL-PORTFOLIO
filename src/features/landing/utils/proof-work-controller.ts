@@ -39,10 +39,7 @@ export function initializeProofWorkController(): void {
 
 		let activeIndex = 0;
 		let isPlayerVisible = false;
-		let playbackRequest = 0;
 		let transitionSource: string | null = null;
-		let programmaticPause = false;
-		let pendingLoad = false;
 		let userPaused = false;
 
 		function videoAt(index: number): VideoDefinition {
@@ -74,33 +71,26 @@ export function initializeProofWorkController(): void {
 			transitionSource = null;
 		}
 
-		function hideTransitionLoader(): void {
-			if (!isCurrentTransition()) return;
-			transitionLoaderElement.hidden = true;
-		}
-
 		function shouldPlay(): boolean {
-			return isPlayerVisible && !document.hidden && !userPaused;
+			return (
+				(isPlayerVisible && !document.hidden) ||
+				document.pictureInPictureElement === videoPlayer
+			) && !userPaused;
 		}
 
 		function stopPlayback(): void {
-			playbackRequest += 1;
-			programmaticPause = !videoPlayer.paused;
 			videoPlayer.pause();
 		}
 
 		function syncPlayback(): void {
 			if (!shouldPlay()) { stopPlayback(); return; }
-
-			if (pendingLoad) { pendingLoad = false; videoPlayer.load() }
 			if (!videoPlayer.paused) return;
-
-			const request = ++playbackRequest;
 			if (!videoPlayer.controls) videoPlayer.muted = true;
 
 			void videoPlayer.play().then(() => {
-				if (request !== playbackRequest || !shouldPlay()) stopPlayback();
+				if (!shouldPlay()) stopPlayback();
 			}, () => {
+				if (!videoPlayer.muted) return;
 				for (const type of ["pointerdown", "keydown"]) document.addEventListener(type, syncPlayback, { once: true });
 			});
 		}
@@ -108,13 +98,12 @@ export function initializeProofWorkController(): void {
 		function renderActiveVideo(shouldReload = true): void {
 			const activeVideo = videoAt(activeIndex);
 
-			stopPlayback();
 			videoPlayer.setAttribute("aria-label", `${playerLabel} ${activeIndex + 1}`);
 			videoPlayer.poster = activeVideo.preview;
 
 			if (shouldReload) {
 				videoSource.src = activeVideo.source;
-				pendingLoad = true;
+				videoPlayer.load();
 			}
 
 			setPreview(previousPreviewImage, videoAt(activeIndex - 1));
@@ -147,11 +136,14 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("pointerenter", enablePlayerControls);
 		videoPlayer.addEventListener("pointerdown", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
-		videoPlayer.addEventListener("pause", () => { if (programmaticPause) programmaticPause = false; else userPaused = !videoPlayer.ended });
-		videoPlayer.addEventListener("loadeddata", () => { hideTransitionLoader(); if (!shouldPlay()) hideTransitionPreview() });
+
+		videoPlayer.addEventListener("play", () => { userPaused = false });
+		videoPlayer.addEventListener("pause", () => { if (shouldPlay()) userPaused = true });
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
-		videoSource?.addEventListener("error", hideTransitionLoader);
-		videoPlayer.addEventListener("error", hideTransitionLoader);
+
+		videoPlayer.addEventListener("loadeddata", hideTransitionPreview);
+		videoSource?.addEventListener("error", hideTransitionPreview);
+		videoPlayer.addEventListener("error", hideTransitionPreview);
 
 		document.addEventListener("visibilitychange", syncPlayback);
 		observer.observe(videoPlayer);

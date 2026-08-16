@@ -60,12 +60,12 @@ function VideoPreviewButton({ direction, label, positionClassName, video }: Vide
 			aria-label={label}
 			className={[
 				// PREVIEW CARD LAYOUT
-				"absolute top-1/2 z-0 aspect-square w-[min(42vw,12rem,45dvh)] -translate-y-1/2 overflow-hidden sm:w-[min(52vw,15rem,45dvh)]",
+				"absolute top-1/2 z-0 aspect-square w-[min(42vw,12rem,45svh)] -translate-y-1/2 overflow-hidden sm:w-[min(52vw,15rem,45svh)]",
 				// PREVIEW CARD SURFACE
 				"rounded-lg border border-(--border-color) bg-black p-0",
 				// POINTER AND KEYBOARD FEEDBACK
 				"cursor-pointer opacity-70 transition-[opacity,scale] hover:scale-[1.1] hover:opacity-100",
-				"focus-visible:scale-[1.1] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
+				"focus-visible:scale-[1.1] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:-outline-offset-2",
 				// SCALE TOWARD THE ACTIVE CARD
 				direction === "previous" ? "origin-left" : "origin-right",
 				// POSITION PARAMS CHOOSE
@@ -136,7 +136,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 			</p>
 
 			<div className="mt-3">
-				<div className="relative mx-auto h-[min(56vw,17rem,60dvh)] w-full max-w-2xl sm:h-[min(72vw,22rem,60dvh)]">
+				<div className="relative mx-auto h-[min(56vw,17rem,60svh)] w-full max-w-2xl sm:h-[min(72vw,22rem,60svh)]">
 					<VideoPreviewButton
 						direction="previous"
 						label={content.previousVideo}
@@ -147,7 +147,7 @@ export function ProofWorkSection({ content, links, locale, title }: ProofWorkSec
 					<div
 						className={[
 							// CENTERED ACTIVE CARD
-							"absolute left-1/2 top-1/2 z-10 w-[min(56vw,17rem,60dvh)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(72vw,22rem,60dvh)]",
+							"absolute left-1/2 top-1/2 z-10 w-[min(56vw,17rem,60svh)] -translate-x-1/2 -translate-y-1/2 sm:w-[min(72vw,22rem,60svh)]",
 							// CARD SURFACE
 							"relative aspect-square rounded-lg border border-transparent",
 							"after:pointer-events-none after:absolute after:-inset-px after:z-10 after:rounded-[inherit] after:border after:border-(--border-color)",

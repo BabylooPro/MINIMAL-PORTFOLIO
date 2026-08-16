@@ -1,4 +1,4 @@
-import { expect, type Locator, test } from "@playwright/test";
+import { expect, type Locator, type Page, test } from "@playwright/test";
 import { localeConfigs } from "@/src/lib/i18n/config";
 
 const locales = ["en", "fr", "de"] as const;
@@ -218,7 +218,7 @@ test("recovers the Proof Work player after a rejected autoplay request", async (
 	await expect.poll(isPaused).toBe(false);
 });
 
-test("autoplays the timelapse on touch and exposes a pause control", async ({ browser }) => {
+test("autoplays the Proof Work timelapse on touch and exposes a pause control", async ({ browser }) => {
 	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 	const page = await context.newPage();
 
@@ -242,7 +242,7 @@ test("autoplays the timelapse on touch and exposes a pause control", async ({ br
 	await context.close();
 });
 
-test("keeps the timelapse card within the header and footer band on a landscape phone", async ({ page }) => {
+test("keeps the Proof Work card within the header and footer band on a landscape phone", async ({ page }) => {
 	await page.setViewportSize({ width: 812, height: 375 });
 	await page.goto("/en/");
 
@@ -261,7 +261,7 @@ test("keeps the timelapse card within the header and footer band on a landscape 
 	expect(card).toBeLessThanOrEqual(band);
 });
 
-test("does not resume a clip the visitor paused", async ({ page }) => {
+test("does not resume a Proof Work clip the visitor paused", async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.goto("/en/");
 
@@ -279,7 +279,7 @@ test("does not resume a clip the visitor paused", async ({ page }) => {
 	expect(await player.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
 });
 
-test("does not advance the timelapse carousel when a clip ends", async ({ page }) => {
+test("does not advance the Proof Work carousel when a clip ends", async ({ page }) => {
 	await page.goto("/en/");
 
 	const counter = page.locator("[data-proof-work-counter]");
@@ -289,6 +289,171 @@ test("does not advance the timelapse carousel when a clip ends", async ({ page }
 	await page.waitForTimeout(300);
 
 	await expect(counter).toHaveText("Video 1 of 6");
+});
+
+async function scrollProofWorkPlayerOutOfView(page: Page): Promise<void> {
+	await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+	await page.waitForTimeout(600);
+}
+
+function proofWorkPlayer(page: Page) {
+	const player = page.locator("[data-proof-work-player]");
+	const isPaused = () => player.evaluate((element) => (element as HTMLVideoElement).paused);
+
+	return {
+		player,
+		isPaused,
+		currentSource: () => player.evaluate((element) => (element as HTMLVideoElement).currentSrc),
+		settle: async () => {
+			await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+			await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+		},
+	};
+}
+
+test("keeps the Proof Work clip playing after the visitor presses the native play button", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const { player, isPaused, settle } = proofWorkPlayer(page);
+	await settle();
+
+	await player.evaluate((element) => (element as HTMLVideoElement).pause());
+	await expect.poll(isPaused).toBe(true);
+
+	await player.evaluate(async (element) => { await (element as HTMLVideoElement).play() });
+	await expect.poll(isPaused).toBe(false);
+
+	await player.dispatchEvent("pointerenter");
+	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+	await page.waitForTimeout(600);
+
+	expect(await isPaused()).toBe(false);
+});
+
+test("honours a Proof Work pause taken after switching clips", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const { player, isPaused, currentSource, settle } = proofWorkPlayer(page);
+	await settle();
+
+	await page.locator('[data-proof-work-direction="next"]').click();
+	await expect.poll(currentSource).toContain("/videos/timelapse/2.mp4");
+	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+
+	await player.evaluate((element) => (element as HTMLVideoElement).pause());
+	await player.dispatchEvent("pointerenter");
+	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+	await page.waitForTimeout(600);
+
+	expect(await isPaused()).toBe(true);
+});
+
+test("restores a visible Proof Work player when a clip fails to load", async ({ page }) => {
+	await page.route("**/videos/timelapse/2.mp4", (route) => route.abort());
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const { player, settle } = proofWorkPlayer(page);
+	await settle();
+
+	await page.locator('[data-proof-work-direction="next"]').click();
+
+	await expect.poll(() => player.evaluate((element) => element.dataset.loading)).toBeUndefined();
+	expect(await player.evaluate((element) => getComputedStyle(element).opacity)).toBe("1");
+	await expect(page.locator("[data-proof-work-transition-loader]")).toBeHidden();
+});
+
+test("keeps the Proof Work player visible when a clip switch cannot autoplay", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const { player, settle } = proofWorkPlayer(page);
+	await settle();
+
+	// BLOCK PLAYBACK ONLY FROM HERE, SO IT IS THE SWITCH ITSELF THAT GETS REFUSED
+	await page.evaluate(() => {
+		HTMLMediaElement.prototype.play = function play() {
+			return Promise.reject(new DOMException("Autoplay blocked by test.", "NotAllowedError"));
+		};
+	});
+
+	await page.locator('[data-proof-work-direction="next"]').click();
+
+	await expect.poll(() => player.evaluate((element) => element.dataset.loading)).toBeUndefined();
+	expect(await player.evaluate((element) => getComputedStyle(element).opacity)).toBe("1");
+	await expect(page.locator("[data-proof-work-transition-preview]")).toBeHidden();
+	await expect(page.locator("[data-proof-work-transition-loader]")).toBeHidden();
+});
+
+test("loads the selected Proof Work clip while the card is below the visibility threshold", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const { currentSource, isPaused, settle } = proofWorkPlayer(page);
+	await settle();
+
+	await scrollProofWorkPlayerOutOfView(page);
+	await expect.poll(isPaused).toBe(true);
+
+	await page.locator('[data-proof-work-direction="next"]').dispatchEvent("click");
+
+	await expect.poll(currentSource, { timeout: 20_000 }).toContain("/videos/timelapse/2.mp4");
+	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
+});
+
+test("does not restart a finished Proof Work clip when the pointer returns", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const { player, isPaused, settle } = proofWorkPlayer(page);
+	await settle();
+
+	await expect.poll(() => player.evaluate((element) => (element as HTMLVideoElement).readyState)).toBeGreaterThanOrEqual(1);
+
+	await player.evaluate(
+		(element) =>
+			new Promise<void>((resolve) => {
+				const video = element as HTMLVideoElement;
+				video.addEventListener("ended", () => resolve(), { once: true });
+				video.currentTime = Math.max(0, video.duration - 0.2);
+			}),
+	);
+
+	await expect.poll(isPaused).toBe(true);
+
+	await player.dispatchEvent("pointerenter");
+	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+	await page.waitForTimeout(600);
+
+	expect(await player.evaluate((element) => (element as HTMLVideoElement).ended)).toBe(true);
+});
+
+test("keeps the Proof Work clip playing while it reports as the picture-in-picture element", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.addInitScript(() => {
+		Object.defineProperty(document, "pictureInPictureElement", {
+			configurable: true,
+			get: () =>
+				(window as unknown as { proofWorkPictureInPicture?: boolean }).proofWorkPictureInPicture
+					? document.querySelector("[data-proof-work-player]")
+					: null,
+		});
+	});
+	await page.goto("/en/");
+
+	const { player, isPaused, settle } = proofWorkPlayer(page);
+	await settle();
+
+	await page.evaluate(() => { (window as unknown as { proofWorkPictureInPicture: boolean }).proofWorkPictureInPicture = true });
+
+	await scrollProofWorkPlayerOutOfView(page);
+	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+	await page.waitForTimeout(800);
+
+	expect(await player.evaluate((element) => element.getBoundingClientRect().bottom < 0)).toBe(true);
+	expect(await isPaused()).toBe(false);
 });
 
 test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
