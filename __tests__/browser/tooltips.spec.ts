@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { revealBelowStickyHeader } from "./helpers";
 
 test("uses a single standard desktop trigger for language tooltips", async ({ page }) => {
 	await page.setViewportSize({ width: 1_280, height: 800 });
@@ -69,7 +70,7 @@ test("keeps language tooltips inside every touch viewport", async ({ browser }) 
 		await page.goto(`/${locale}/`);
 
 		const trigger = page.locator('[data-tooltip-trigger][aria-controls="language-0-writing"]');
-		await trigger.scrollIntoViewIfNeeded();
+		await revealBelowStickyHeader(trigger);
 		await trigger.click();
 
 		const tooltip = page.locator("#language-0-writing");
