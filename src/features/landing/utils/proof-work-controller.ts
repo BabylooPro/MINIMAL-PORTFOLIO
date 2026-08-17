@@ -1,5 +1,3 @@
-import { isDesktopPointer } from "@/src/components/utils/behavior/pointer-mode";
-
 type VideoDefinition = {
 	source: string;
 	preview: string;
@@ -121,7 +119,7 @@ export function initializeProofWorkController(): void {
 		}
 
 		function enablePlayerControls(): void {
-			videoPlayer.controls = true;
+			if (!videoPlayer.controls) videoPlayer.controls = true;
 			syncPlayback();
 		}
 
@@ -147,7 +145,7 @@ export function initializeProofWorkController(): void {
 
 		document.addEventListener("visibilitychange", syncPlayback);
 		observer.observe(videoPlayer);
-		if (!isDesktopPointer() || matchMedia("(prefers-reduced-motion: reduce)").matches) videoPlayer.controls = true;
+		if (matchMedia("(prefers-reduced-motion: reduce)").matches) videoPlayer.controls = true;
 		renderActiveVideo(false);
 	}
 

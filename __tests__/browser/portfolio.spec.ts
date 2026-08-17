@@ -218,7 +218,7 @@ test("recovers the Proof Work player after a rejected autoplay request", async (
 	await expect.poll(isPaused).toBe(false);
 });
 
-test("autoplays the Proof Work timelapse on touch and exposes a pause control", async ({ browser }) => {
+test("reveals Proof Work pause controls on tap while autoplaying on touch", async ({ browser }) => {
 	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 	const page = await context.newPage();
 
@@ -228,7 +228,7 @@ test("autoplays the Proof Work timelapse on touch and exposes a pause control", 
 	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
 
 	expect(await page.evaluate(() => matchMedia("(min-width: 40rem) and (hover: hover) and (pointer: fine)").matches)).toBe(false);
-	await expect(player).toHaveJSProperty("controls", true);
+	await expect(player).toHaveJSProperty("controls", false);
 
 	await expect
 		.poll(() =>
@@ -238,6 +238,9 @@ test("autoplays the Proof Work timelapse on touch and exposes a pause control", 
 			}),
 		)
 		.toBe(false);
+
+	await player.tap();
+	await expect(player).toHaveJSProperty("controls", true);
 
 	await context.close();
 });
