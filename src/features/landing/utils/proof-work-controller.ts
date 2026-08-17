@@ -42,6 +42,12 @@ export function initializeProofWorkController(): void {
 		let transitionSource: string | null = null;
 		let userPaused = false;
 
+		const forceControls = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+		function resetPlayerControls(): void {
+			if (!forceControls && !userPaused) videoPlayer.controls = false;
+		}
+
 		function videoAt(index: number): VideoDefinition {
 			return videos[(index + videos.length) % videos.length] as VideoDefinition;
 		}
@@ -116,6 +122,7 @@ export function initializeProofWorkController(): void {
 		function switchVideo(offset: number): void {
 			activeIndex = (activeIndex + offset + videos.length) % videos.length;
 			userPaused = false;
+			resetPlayerControls();
 			if (shouldPlay()) showTransitionPreview(videoAt(activeIndex));
 			renderActiveVideo(true);
 		}
@@ -124,11 +131,9 @@ export function initializeProofWorkController(): void {
 			if (!videoPlayer.controls) videoPlayer.controls = true;
 		}
 
-		const forceControls = matchMedia("(prefers-reduced-motion: reduce)").matches;
-
 		const observer = new IntersectionObserver(([entry]) => {
 			isPlayerVisible = (entry?.intersectionRatio ?? 0) >= 0.25;
-			if (!isPlayerVisible && !forceControls && !userPaused) videoPlayer.controls = false;
+			if (!isPlayerVisible) resetPlayerControls();
 			syncPlayback();
 		}, { threshold: 0.25 });
 

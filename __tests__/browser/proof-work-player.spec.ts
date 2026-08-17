@@ -89,6 +89,35 @@ test("reveals Proof Work pause controls on tap while autoplaying on touch", asyn
 	await context.close();
 });
 
+test("hides Proof Work controls again once the visitor switches clips", async ({ browser }) => {
+	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 1_024, height: 768 } });
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	const isPaused = () => player.evaluate((element) => (element as HTMLVideoElement).paused);
+
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+
+	await player.tap();
+	await expect(player).toHaveJSProperty("controls", true);
+
+	const nextControl = page.locator('[data-proof-work-direction="next"]');
+	const box = await nextControl.boundingBox();
+	if (!box) throw new Error("The Proof Work next control must be laid out.");
+	await page.touchscreen.tap(box.x + box.width - 20, box.y + box.height / 2);
+
+	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
+	await expect(player).toHaveJSProperty("controls", false);
+
+	await player.tap();
+	await expect(player).toHaveJSProperty("controls", true);
+
+	await context.close();
+});
+
 test("hides Proof Work controls again once the clip scrolls out of view", async ({ browser }) => {
 	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
 	const page = await context.newPage();
