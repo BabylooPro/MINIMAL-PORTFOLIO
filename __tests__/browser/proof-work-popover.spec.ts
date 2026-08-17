@@ -71,7 +71,7 @@ test("blurs only the header details behind the touch Proof Work popover backdrop
 
 	await expect(headerBackdrop).toBeHidden();
 
-	await trigger.scrollIntoViewIfNeeded();
+	await revealBelowStickyHeader(trigger);
 	await trigger.click();
 	await expect(page.locator("#proof-work")).toBeVisible();
 
@@ -170,7 +170,7 @@ test("keeps the touch Proof Work popover inside the content column", async ({ br
 	await page.goto("/en/");
 
 	const trigger = page.locator("[data-popover-trigger]");
-	await trigger.scrollIntoViewIfNeeded();
+	await revealBelowStickyHeader(trigger);
 	await trigger.click();
 
 	const popover = page.locator("#proof-work");

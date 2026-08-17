@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { localeConfigs } from "@/src/lib/i18n/config";
-import { mediaOrigin } from "./helpers";
+import { mediaOrigin, revealBelowStickyHeader } from "./helpers";
 
 const locales = ["en", "fr", "de"] as const;
 
@@ -59,8 +59,9 @@ test("keeps runtime resources on first-party origins", async ({ browser }) => {
 	await page.goto(`${siteOrigin}/en/`, { waitUntil: "domcontentloaded" });
 	const carousel = page.locator("[data-proof-work-carousel]");
 
-	await carousel.scrollIntoViewIfNeeded();
-	await page.locator('[data-proof-work-direction="next"]').click();
+	const nextControl = page.locator('[data-proof-work-direction="next"]');
+	await revealBelowStickyHeader(nextControl);
+	await nextControl.click();
 	await expect(page.locator("[data-proof-work-player] source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
 
 	const carouselResourceOrigins = await carousel.evaluate((element) => {
