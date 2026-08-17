@@ -1,3 +1,5 @@
+import { isDesktopGesture } from "@/src/components/utils/behavior/pointer-mode";
+
 type VideoDefinition = {
 	source: string;
 	preview: string;
@@ -120,19 +122,21 @@ export function initializeProofWorkController(): void {
 
 		function enablePlayerControls(): void {
 			if (!videoPlayer.controls) videoPlayer.controls = true;
-			syncPlayback();
 		}
+
+		const forceControls = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 		const observer = new IntersectionObserver(([entry]) => {
 			isPlayerVisible = (entry?.intersectionRatio ?? 0) >= 0.25;
+			if (!isPlayerVisible && !forceControls && !userPaused) videoPlayer.controls = false;
 			syncPlayback();
 		}, { threshold: 0.25 });
 
 		previousControl.addEventListener("click", () => switchVideo(-1));
 		nextControl.addEventListener("click", () => switchVideo(1));
 
-		videoPlayer.addEventListener("pointerenter", enablePlayerControls);
-		videoPlayer.addEventListener("pointerdown", enablePlayerControls);
+		videoPlayer.addEventListener("pointerenter", () => { if (isDesktopGesture()) enablePlayerControls() });
+		videoPlayer.addEventListener("pointerup", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
 
 		videoPlayer.addEventListener("play", () => { userPaused = false });
@@ -145,7 +149,7 @@ export function initializeProofWorkController(): void {
 
 		document.addEventListener("visibilitychange", syncPlayback);
 		observer.observe(videoPlayer);
-		if (matchMedia("(prefers-reduced-motion: reduce)").matches) videoPlayer.controls = true;
+		if (forceControls) videoPlayer.controls = true;
 		renderActiveVideo(false);
 	}
 

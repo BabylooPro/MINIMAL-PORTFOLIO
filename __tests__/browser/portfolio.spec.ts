@@ -245,6 +245,74 @@ test("reveals Proof Work pause controls on tap while autoplaying on touch", asyn
 	await context.close();
 });
 
+test("hides Proof Work controls again once the clip scrolls out of view", async ({ browser }) => {
+	const context = await browser.newContext({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	const isPaused = () => player.evaluate((element) => (element as HTMLVideoElement).paused);
+
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+
+	await player.tap();
+	await expect(player).toHaveJSProperty("controls", true);
+
+	await player.evaluate(async (element) => { await (element as HTMLVideoElement).play() });
+	await expect.poll(isPaused).toBe(false);
+
+	await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
+	await expect(player).toHaveJSProperty("controls", false);
+
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+	await expect(player).toHaveJSProperty("controls", false);
+
+	await player.evaluate((element) => {
+		const options = { bubbles: true, cancelable: true, pointerType: "touch", pointerId: 1 };
+		element.dispatchEvent(new PointerEvent("pointerenter", options));
+		element.dispatchEvent(new PointerEvent("pointerdown", options));
+		element.dispatchEvent(new PointerEvent("pointercancel", options));
+	});
+	await expect(player).toHaveJSProperty("controls", false);
+
+	await player.evaluate((element) => {
+		element.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, pointerType: "touch", pointerId: 1 }));
+	});
+	await expect(player).toHaveJSProperty("controls", true);
+
+	await context.close();
+});
+
+test("keeps a Proof Work clip paused when the visitor uses the native pause control", async ({ browser }) => {
+	const context = await browser.newContext({ hasTouch: true, viewport: { width: 390, height: 844 } });
+	const page = await context.newPage();
+
+	await page.goto("/en/");
+
+	const player = page.locator("[data-proof-work-player]");
+	const isPaused = () => player.evaluate((element) => (element as HTMLVideoElement).paused);
+
+	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
+	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+
+	await player.tap();
+	await expect(player).toHaveJSProperty("controls", true);
+
+	await player.evaluate((element) => {
+		const video = element as HTMLVideoElement;
+		video.pause();
+		video.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, pointerType: "touch", pointerId: 1 }));
+	});
+
+	await page.waitForTimeout(900);
+	expect(await isPaused()).toBe(true);
+
+	await context.close();
+});
+
 test("keeps the Proof Work card within the header and footer band on a landscape phone", async ({ page }) => {
 	await page.setViewportSize({ width: 812, height: 375 });
 	await page.goto("/en/");
