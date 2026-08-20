@@ -152,6 +152,7 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("pointerup", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
 
+		videoPlayer.addEventListener("ended", () => switchVideo(1));
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
 
 		videoPlayer.addEventListener("loadeddata", hideTransitionPreview);

@@ -223,16 +223,27 @@ test("does not resume a Proof Work clip the visitor paused", async ({ page }) =>
 	expect(await player.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
 });
 
-test("does not advance the Proof Work carousel when a clip ends", async ({ page }) => {
+test("advances the Proof Work carousel when a clip ends", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.goto("/en/");
 
-	const counter = page.locator("[data-proof-work-counter]");
-	await expect(counter).toHaveText("Video 1 of 6");
+	const { player, isPaused, currentSource, settle } = proofWorkPlayer(page);
+	await settle();
 
-	await page.locator("[data-proof-work-player]").evaluate((element) => element.dispatchEvent(new Event("ended")));
-	await page.waitForTimeout(300);
+	await expect.poll(() => player.evaluate((element) => (element as HTMLVideoElement).readyState)).toBeGreaterThanOrEqual(1);
 
-	await expect(counter).toHaveText("Video 1 of 6");
+	await player.evaluate(
+		(element) =>
+			new Promise<void>((resolve) => {
+				const video = element as HTMLVideoElement;
+				video.addEventListener("ended", () => resolve(), { once: true });
+				video.currentTime = Math.max(0, video.duration - 0.2);
+			}),
+	);
+
+	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
+	await expect.poll(currentSource, { timeout: 20_000 }).toContain("/videos/timelapse/2.mp4");
+	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
 });
 
 test("keeps the Proof Work clip playing after the visitor presses the native play button", async ({ page }) => {
@@ -343,33 +354,6 @@ test("loads the selected Proof Work clip while the card is below the visibility 
 
 	await expect.poll(currentSource, { timeout: 20_000 }).toContain("/videos/timelapse/2.mp4");
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");
-});
-
-test("does not restart a finished Proof Work clip when the pointer returns", async ({ page }) => {
-	await page.setViewportSize({ width: 1280, height: 800 });
-	await page.goto("/en/");
-
-	const { player, isPaused, settle } = proofWorkPlayer(page);
-	await settle();
-
-	await expect.poll(() => player.evaluate((element) => (element as HTMLVideoElement).readyState)).toBeGreaterThanOrEqual(1);
-
-	await player.evaluate(
-		(element) =>
-			new Promise<void>((resolve) => {
-				const video = element as HTMLVideoElement;
-				video.addEventListener("ended", () => resolve(), { once: true });
-				video.currentTime = Math.max(0, video.duration - 0.2);
-			}),
-	);
-
-	await expect.poll(isPaused).toBe(true);
-
-	await player.dispatchEvent("pointerenter");
-	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
-	await page.waitForTimeout(600);
-
-	expect(await player.evaluate((element) => (element as HTMLVideoElement).ended)).toBe(true);
 });
 
 test("keeps the Proof Work clip playing while it reports as the picture-in-picture element", async ({ page }) => {
