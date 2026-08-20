@@ -49,7 +49,7 @@ export const frMessages = {
 			cvDownloadTitle: "Téléchargement du CV",
 			cvDownloadDescription: "Le lien « Télécharger le CV » met à disposition un fichier PDF statique. Le portfolio n’utilise ni formulaire, ni outil de mesure pour identifier les téléchargements.",
 			hostingTitle: "Hébergement",
-			hostingDescription: "Ce site et ses fichiers statiques, y compris le CV, sont hébergés sur Cloudflare Pages. Cloudflare agit comme sous-traitant pour l’hébergement et la diffusion du contenu. Dans le cadre de ces services, Cloudflare peut traiter des données techniques de connexion, notamment l’adresse IP, les informations du navigateur, la date et l’heure de la requête ainsi que la ressource demandée. Selon le service et sa configuration, ces données peuvent être traitées aux États-Unis et dans d’autres pays.",
+			hostingDescription: "Ce site et ses fichiers statiques sont hébergés sur Cloudflare Pages, et ses fichiers média, y compris le CV, sont diffusés depuis Cloudflare R2. Cloudflare agit comme sous-traitant pour l’hébergement et la diffusion du contenu. Dans le cadre de ces services, Cloudflare peut traiter des données techniques de connexion, notamment l’adresse IP, les informations du navigateur, la date et l’heure de la requête ainsi que la ressource demandée. Selon le service et sa configuration, ces données peuvent être traitées aux États-Unis et dans d’autres pays.",
 			hostingPrivacyPolicyLabel: "Politique de confidentialité de Cloudflare",
 			externalLinksTitle: "Liens externes",
 			externalLinksDescription: "Les liens vers des services externes ne s’ouvrent que lorsque vous les sélectionnez. Ces services traitent les données selon leurs propres politiques de confidentialité.",

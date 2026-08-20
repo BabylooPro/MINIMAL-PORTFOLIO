@@ -19,25 +19,25 @@ This portfolio is statically pre-rendered. React is used during the build only a
 
 | Route | Current | Budget     | Status  |
 | ----- | ------- | ---------- | ------- |
-| /     | 8,393 B | ≤ 10,000 B | ✅ PASS |
-| /en/  | 9,012 B | ≤ 10,000 B | ✅ PASS |
-| /fr/  | 9,328 B | ≤ 10,000 B | ✅ PASS |
-| /de/  | 9,279 B | ≤ 10,000 B | ✅ PASS |
+| /     | 8,387 B | ≤ 10,000 B | ✅ PASS |
+| /en/  | 9,005 B | ≤ 10,000 B | ✅ PASS |
+| /fr/  | 9,319 B | ≤ 10,000 B | ✅ PASS |
+| /de/  | 9,271 B | ≤ 10,000 B | ✅ PASS |
 
 ## Secondary HTML
 
 | Route        | Current | Budget     | Status  |
 | ------------ | ------- | ---------- | ------- |
-| /404.html    | 4,067 B | ≤ 10,000 B | ✅ PASS |
-| /de/404.html | 4,113 B | ≤ 10,000 B | ✅ PASS |
-| /de/legal/   | 4,925 B | ≤ 10,000 B | ✅ PASS |
-| /de/privacy/ | 5,711 B | ≤ 10,000 B | ✅ PASS |
-| /en/404.html | 4,067 B | ≤ 10,000 B | ✅ PASS |
-| /en/legal/   | 4,798 B | ≤ 10,000 B | ✅ PASS |
-| /en/privacy/ | 5,402 B | ≤ 10,000 B | ✅ PASS |
-| /fr/404.html | 4,153 B | ≤ 10,000 B | ✅ PASS |
-| /fr/legal/   | 4,961 B | ≤ 10,000 B | ✅ PASS |
-| /fr/privacy/ | 5,776 B | ≤ 10,000 B | ✅ PASS |
+| /404.html    | 4,062 B | ≤ 10,000 B | ✅ PASS |
+| /de/404.html | 4,105 B | ≤ 10,000 B | ✅ PASS |
+| /de/legal/   | 4,918 B | ≤ 10,000 B | ✅ PASS |
+| /de/privacy/ | 5,728 B | ≤ 10,000 B | ✅ PASS |
+| /en/404.html | 4,062 B | ≤ 10,000 B | ✅ PASS |
+| /en/legal/   | 4,791 B | ≤ 10,000 B | ✅ PASS |
+| /en/privacy/ | 5,413 B | ≤ 10,000 B | ✅ PASS |
+| /fr/404.html | 4,146 B | ≤ 10,000 B | ✅ PASS |
+| /fr/legal/   | 4,954 B | ≤ 10,000 B | ✅ PASS |
+| /fr/privacy/ | 5,787 B | ≤ 10,000 B | ✅ PASS |
 
 The HTML budget applies independently to every generated page, including legal and 404 pages.
 

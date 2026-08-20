@@ -26,9 +26,6 @@
   ! Cross-Origin-Resource-Policy
   Cross-Origin-Resource-Policy: cross-origin
 
-/CV_Developer_Max_Remy.pdf
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
-
 https://:project.pages.dev/*
   X-Robots-Tag: noindex
 

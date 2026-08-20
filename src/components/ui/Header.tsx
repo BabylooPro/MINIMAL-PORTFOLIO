@@ -3,6 +3,7 @@ import { LanguageSwitcher } from "@/src/components/ui/LanguageSwitcher";
 
 import { getLocalePath, type LegalPageId, type Locale } from "@/src/lib/i18n/config";
 import type { Messages } from "@/src/lib/i18n/messages/types";
+import { getMediaUrl } from "@/src/lib/media-origin";
 import type { Portfolio } from "@/src/types/portfolio";
 
 import { isExternalHttpLink } from "@/src/utils/isExternalHttpLink";
@@ -221,8 +222,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 
 									<a
 										className="mt-1 inline-flex underline underline-offset-2"
-										download="CV_Developer_Max_Remy.pdf"
-										href="/CV_Developer_Max_Remy.pdf"
+										href={getMediaUrl("/CV_Developer_Max_Remy.pdf")}
 									>
 										{labels.downloadCv}
 									</a>

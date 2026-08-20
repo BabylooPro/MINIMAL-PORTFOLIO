@@ -50,7 +50,7 @@ export const deMessages = {
 			cvDownloadDescription: "Der Link zum Herunterladen des Lebenslaufs stellt eine statische PDF-Datei bereit. Dieses Portfolio verwendet weder ein Formular noch ein Analyse-Tool, um Downloads zu identifizieren.",
 			hostingTitle: "Hosting",
 			hostingDescription:
-				"Diese Website und ihre statischen Dateien, einschliesslich des Lebenslaufs, werden auf Cloudflare Pages gehostet. Cloudflare handelt als Auftragsverarbeiter für das Hosting und die Bereitstellung der Inhalte. Im Rahmen dieser Dienste kann Cloudflare technische Verbindungsdaten verarbeiten, darunter die IP-Adresse, Browserinformationen, Datum und Uhrzeit der Anfrage sowie die angeforderte Ressource. Je nach Dienst und Konfiguration können diese Daten in den USA und anderen Ländern verarbeitet werden.",
+				"Diese Website und ihre statischen Dateien werden auf Cloudflare Pages gehostet, ihre Mediendateien, einschliesslich des Lebenslaufs, werden über Cloudflare R2 bereitgestellt. Cloudflare handelt als Auftragsverarbeiter für das Hosting und die Bereitstellung der Inhalte. Im Rahmen dieser Dienste kann Cloudflare technische Verbindungsdaten verarbeiten, darunter die IP-Adresse, Browserinformationen, Datum und Uhrzeit der Anfrage sowie die angeforderte Ressource. Je nach Dienst und Konfiguration können diese Daten in den USA und anderen Ländern verarbeitet werden.",
 			hostingPrivacyPolicyLabel: "Datenschutzerklärung von Cloudflare",
 			externalLinksTitle: "Externe Links",
 			externalLinksDescription: "Links zu externen Diensten öffnen sich nur, wenn Sie sie auswählen. Diese Dienste verarbeiten Daten gemäss ihren eigenen Datenschutzbestimmungen.",

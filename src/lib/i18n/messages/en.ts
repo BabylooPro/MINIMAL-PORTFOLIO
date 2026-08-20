@@ -50,7 +50,7 @@ export const enMessages = {
 			cvDownloadDescription: "The Download CV link provides a static PDF file. This portfolio uses no form or analytics tool to identify downloads.",
 			hostingTitle: "Hosting",
 			hostingDescription:
-				"This site and its static files, including the CV, are hosted on Cloudflare Pages. Cloudflare acts as the data processor for hosting and content delivery. In providing these services, Cloudflare may process technical connection data, including the IP address, browser information, the date and time of the request, and the requested resource. Depending on the service and its configuration, this data may be processed in the United States and other countries.",
+				"This site and its static files are hosted on Cloudflare Pages, and its media files, including the CV, are delivered from Cloudflare R2. Cloudflare acts as the data processor for hosting and content delivery. In providing these services, Cloudflare may process technical connection data, including the IP address, browser information, the date and time of the request, and the requested resource. Depending on the service and its configuration, this data may be processed in the United States and other countries.",
 			hostingPrivacyPolicyLabel: "Cloudflare privacy policy",
 			externalLinksTitle: "External links",
 			externalLinksDescription: "Links to external services open only when you select them. Those services process data under their own privacy policies.",
