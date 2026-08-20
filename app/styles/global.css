@@ -107,8 +107,13 @@ main > * {
 	overflow-x: clip;
 }
 
+@layer base {
+	a {
+		color: inherit;
+	}
+}
+
 a {
-	color: inherit;
 	text-decoration-thickness: from-font;
 	text-underline-offset: 0.2em;
 }

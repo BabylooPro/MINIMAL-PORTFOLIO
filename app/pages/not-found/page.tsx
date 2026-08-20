@@ -29,9 +29,9 @@ export function NotFoundPage({ dictionary, locale }: NotFoundPageProps) {
 							// BASE
 							"mt-6 inline-flex rounded-md px-4 py-2 border border-(--border-color) bg-(--background-color)",
 							// TYPOGRAPHY
-							"text-sm font-medium text-(--foreground-color)!",
+							"text-sm font-medium text-(--foreground-color)",
 							// EFFECTS
-							"transition-[background-color,color,transform] hover:bg-(--foreground-color) hover:text-(--background-color)! active:translate-y-px",
+							"transition-[background-color,color,transform] hover:bg-(--foreground-color) hover:text-(--background-color) active:translate-y-px",
 							// FOCUS
 							"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
 						].join(" ")}
