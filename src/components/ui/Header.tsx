@@ -147,7 +147,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 											{portfolio.name}
 										</p>
 
-										<p className="text-(--foreground-color) sm:self-end sm:text-sm sm:font-medium sm:leading-none">
+										<p className="text-(--foreground-color) sm:self-end sm:truncate sm:text-sm sm:font-medium sm:leading-none">
 											{portfolio.role}
 										</p>
 									</div>

@@ -49,7 +49,7 @@ const skillGroupLabels = {
 
 export const portfolioDe = {
 	...sharedPortfolioDetails,
-	role: "Softwareentwickler | Full-Stack-Entwickler",
+	role: "Softwareentwickler | Full-Stack-Entwickler | Bergsportler",
 	location: "Moudon, Waadt, Schweiz",
 	summary: "Ein Schweizer Taschenmesser-Entwickler mit 10 Jahren Erfahrung als Freiberufler.\nVollständig autodidaktisch, ohne formalen Abschluss.",
 	languages: [

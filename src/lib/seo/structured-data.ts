@@ -8,6 +8,8 @@ import { isExternalHttpLink } from "@/src/utils/isExternalHttpLink";
 export function createStructuredData(locale: Locale, dictionary: Dictionary, pageUrl = localeConfigs[locale].absoluteUrl): object {
 	const email = dictionary.portfolio.links.find((link) => link.href.startsWith("mailto:"));
 	const telephone = dictionary.portfolio.links.find((link) => link.href.startsWith("tel:"));
+	const jobTitle = dictionary.portfolio.role.split("|")[0]?.trim() ?? dictionary.portfolio.role;
+
 	const image = {
 		"@type": "ImageObject",
 		url: socialImage.url,
@@ -30,7 +32,7 @@ export function createStructuredData(locale: Locale, dictionary: Dictionary, pag
 			"@type": "Person",
 			"@id": `${rootUrl}#max-remy`,
 			name: dictionary.portfolio.name,
-			jobTitle: dictionary.portfolio.role,
+			jobTitle,
 			url: pageUrl,
 			...(email ? { email: email.href.replace("mailto:", "") } : {}),
 			...(telephone ? { telephone: telephone.href.replace("tel:", "") } : {}),
