@@ -40,12 +40,16 @@ export function initializeProofWorkController(): void {
 		let activeIndex = 0;
 		let isPlayerVisible = false;
 		let transitionSource: string | null = null;
-		let userPaused = false;
+		let controllerPaused = true;
 
 		const forceControls = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+		function isUserPaused(): boolean {
+			return videoPlayer.paused && !controllerPaused;
+		}
+
 		function resetPlayerControls(): void {
-			if (!forceControls && !userPaused) videoPlayer.controls = false;
+			if (!forceControls && !isUserPaused()) videoPlayer.controls = false;
 		}
 
 		function videoAt(index: number): VideoDefinition {
@@ -61,11 +65,11 @@ export function initializeProofWorkController(): void {
 			transitionPreviewImage.hidden = false;
 			transitionLoaderElement.hidden = false;
 			videoPlayer.dataset.loading = "true";
-			transitionSource = video.source; // NOTE: SOURCES ARE ALREADY ABSOLUTE MEDIA-ORIGIN URLS, SO THEY MATCH currentSrc VERBATIM
+			transitionSource = video.source;
 		}
 
 		function isCurrentTransition(): boolean {
-			return transitionSource !== null && transitionSource === videoPlayer.currentSrc;
+			return transitionSource === videoPlayer.currentSrc;
 		}
 
 		function hideTransitionPreview(): void {
@@ -81,10 +85,11 @@ export function initializeProofWorkController(): void {
 			return (
 				(isPlayerVisible && !document.hidden) ||
 				document.pictureInPictureElement === videoPlayer
-			) && !userPaused;
+			) && !isUserPaused();
 		}
 
 		function stopPlayback(): void {
+			if (!videoPlayer.paused) controllerPaused = true;
 			videoPlayer.pause();
 		}
 
@@ -92,16 +97,19 @@ export function initializeProofWorkController(): void {
 			if (!shouldPlay()) { stopPlayback(); return; }
 			if (!videoPlayer.paused) return;
 			if (!videoPlayer.controls) videoPlayer.muted = true;
+			controllerPaused = false;
 
 			void videoPlayer.play().then(() => {
 				if (!shouldPlay()) stopPlayback();
-			}, () => {
+			}, (error: DOMException) => {
+				if (error.name !== "NotAllowedError") return;
+				controllerPaused = true;
 				if (!videoPlayer.muted) return;
 				for (const type of ["pointerdown", "keydown"]) document.addEventListener(type, syncPlayback, { once: true });
 			});
 		}
 
-		function renderActiveVideo(shouldReload = true): void {
+		function renderActiveVideo(shouldReload: boolean): void {
 			const activeVideo = videoAt(activeIndex);
 
 			videoPlayer.setAttribute("aria-label", `${playerLabel} ${activeIndex + 1}`);
@@ -121,7 +129,7 @@ export function initializeProofWorkController(): void {
 
 		function switchVideo(offset: number): void {
 			activeIndex = (activeIndex + offset + videos.length) % videos.length;
-			userPaused = false;
+			controllerPaused = true;
 			resetPlayerControls();
 			if (shouldPlay()) showTransitionPreview(videoAt(activeIndex));
 			renderActiveVideo(true);
@@ -144,8 +152,6 @@ export function initializeProofWorkController(): void {
 		videoPlayer.addEventListener("pointerup", enablePlayerControls);
 		videoPlayer.addEventListener("focus", enablePlayerControls);
 
-		videoPlayer.addEventListener("play", () => { userPaused = false });
-		videoPlayer.addEventListener("pause", () => { if (shouldPlay()) userPaused = true });
 		videoPlayer.addEventListener("playing", hideTransitionPreview);
 
 		videoPlayer.addEventListener("loadeddata", hideTransitionPreview);

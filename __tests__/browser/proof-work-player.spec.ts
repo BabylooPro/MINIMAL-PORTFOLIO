@@ -255,6 +255,25 @@ test("keeps the Proof Work clip playing after the visitor presses the native pla
 	expect(await isPaused()).toBe(false);
 });
 
+test("honours a Proof Work pause taken in the same tick as a visibility change", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto("/en/");
+
+	const { player, isPaused, settle } = proofWorkPlayer(page);
+	await settle();
+
+	const stayedPaused = await player.evaluate(async (element) => {
+		const video = element as HTMLVideoElement;
+		video.pause();
+		document.dispatchEvent(new Event("visibilitychange"));
+		await new Promise((resolve) => setTimeout(resolve, 800));
+		return video.paused;
+	});
+
+	expect(stayedPaused).toBe(true);
+	expect(await isPaused()).toBe(true);
+});
+
 test("honours a Proof Work pause taken after switching clips", async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.goto("/en/");
