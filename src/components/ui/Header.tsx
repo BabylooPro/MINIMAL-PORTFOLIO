@@ -190,7 +190,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 															<a
 																aria-label={getContactLinkLabel(link, labels)}
 																href={link.href}
-																className="underline underline-offset-2"
+																className="underline underline-offset-2 hover:text-(--muted-color)"
 															>
 																{link.label}
 															</a>
@@ -206,7 +206,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 															{index > 0 ? " - " : ""}
 
 															<a
-																className="underline underline-offset-2"
+																className="underline underline-offset-2 hover:text-(--muted-color)"
 																href={link.href}
 																rel="noreferrer"
 																target="_blank"
@@ -221,7 +221,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 									) : null}
 
 									<a
-										className="mt-1 inline-flex underline underline-offset-2"
+										className="mt-1 inline-flex underline underline-offset-2 hover:text-(--muted-color)"
 										href={getMediaUrl("/CV_Developer_Max_Remy.pdf")}
 									>
 										{labels.downloadCv}

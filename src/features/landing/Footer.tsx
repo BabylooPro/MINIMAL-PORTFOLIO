@@ -40,7 +40,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: F
 								<li>
 									<a
 										aria-current={currentPage === "privacy" ? "page" : undefined}
-										className="hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)!"
+										className="not-aria-[current=page]:hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)"
 										href={getLegalPagePath(currentLocale, "privacy")}
 									>
 										{footer.privacy}
@@ -50,7 +50,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: F
 								<li>
 									<a
 										aria-current={currentPage === "legal" ? "page" : undefined}
-										className="hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)!"
+										className="not-aria-[current=page]:hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)"
 										href={getLegalPagePath(currentLocale, "legal")}
 									>
 										{footer.legal}
