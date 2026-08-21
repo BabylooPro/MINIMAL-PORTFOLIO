@@ -8,7 +8,7 @@ import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 type LegalPageProps = { dictionary: Dictionary; locale: Locale; page: LegalPageId };
 
-export function LegalPage({ dictionary, locale, page }: LegalPageProps) {
+export function LegalPage({ dictionary, locale, page }: Readonly<LegalPageProps>) {
 	const { messages, portfolio } = dictionary;
 	const content = messages.legalPages[page];
 	const email = portfolio.links.find((link) => link.href.startsWith("mailto:"))?.href.replace("mailto:", "");

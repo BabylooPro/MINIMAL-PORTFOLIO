@@ -14,11 +14,9 @@ test("uses a single standard desktop trigger for language tooltips", async ({ pa
 	await expect(tooltip.locator("a, button, input, select, textarea")).toHaveCount(0);
 	await expect(page.locator("[data-tooltip] summary")).toHaveCount(0);
 
-	await trigger.scrollIntoViewIfNeeded();
-	await page.waitForTimeout(200);
+	await revealBelowStickyHeader(trigger);
 	await trigger.hover();
 	await expect(tooltip).toHaveCSS("opacity", "0");
-	await page.waitForTimeout(750);
 	await expect(tooltip).toHaveCSS("opacity", "1");
 	await tooltip.hover();
 	await page.waitForTimeout(200);
@@ -132,8 +130,7 @@ test("opens overlays by tap on a device that reports desktop pointer capabilitie
 	expect(await page.evaluate(() => matchMedia("(min-width: 40rem) and (hover: hover) and (pointer: fine)").matches)).toBe(true);
 
 	async function tap(locator: ReturnType<typeof page.locator>): Promise<void> {
-		await locator.scrollIntoViewIfNeeded();
-		await page.waitForTimeout(200);
+		await revealBelowStickyHeader(locator);
 
 		const box = await locator.boundingBox();
 		if (!box) throw new Error("The tap target must be laid out.");

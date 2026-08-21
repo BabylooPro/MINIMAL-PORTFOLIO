@@ -13,7 +13,7 @@ type ThemeSwitcherProps = {
 
 const defaultPreference: ThemePreference = "system";
 
-export function ThemeSwitcher({ theme }: ThemeSwitcherProps) {
+export function ThemeSwitcher({ theme }: Readonly<ThemeSwitcherProps>) {
 	const preferences = [
 		{
 			buttonProps: { "data-theme-preference": "system" },

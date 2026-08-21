@@ -7,7 +7,7 @@ import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 type PageRendererProps = { dictionary: Dictionary; route: AppRoute };
 
-export function PageRenderer({ dictionary, route }: PageRendererProps) {
+export function PageRenderer({ dictionary, route }: Readonly<PageRendererProps>) {
 	const locale = getRouteLocale(route);
 
 	if (route.kind === "not-found") return <NotFoundPage dictionary={dictionary} locale={locale} />;

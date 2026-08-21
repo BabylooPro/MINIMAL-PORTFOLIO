@@ -14,13 +14,13 @@ export function initializeMobileRoleRotator(): void {
 			const fadeDuration = reducedMotion.matches ? 0 : 500;
 
 			timeout = setTimeout(() => {
-				element.setAttribute("data-role-fading", "");
+				element.dataset.roleFading = "";
 
 				timeout = setTimeout(() => {
 					roles[activeIndex]?.setAttribute("hidden", "");
 					activeIndex = (activeIndex + 1) % roles.length;
 					roles[activeIndex]?.removeAttribute("hidden");
-					element.removeAttribute("data-role-fading");
+					delete element.dataset.roleFading;
 					queueRoleChange();
 				}, fadeDuration);
 			}, 5000 - fadeDuration);
@@ -30,7 +30,7 @@ export function initializeMobileRoleRotator(): void {
 			clearTimeout(timeout);
 			timeout = undefined;
 
-			element.removeAttribute("data-role-fading");
+			delete element.dataset.roleFading;
 
 			if (mobileViewport.matches && !document.hidden && !reducedMotion.matches) queueRoleChange();
 		}];

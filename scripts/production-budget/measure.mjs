@@ -45,18 +45,18 @@ async function measureFile(filePath) {
 }
 
 function getAttribute(element, attribute) {
-	const escapedAttribute = attribute.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-	const match = element.match(new RegExp(`\\b${escapedAttribute}=(['"])([\\s\\S]*?)\\1`, "i"));
+	const escapedAttribute = attribute.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+	const match = element.match(new RegExp(String.raw`\b${escapedAttribute}=(['"])([\s\S]*?)\1`, "i"));
 	return match?.[2] ?? null;
 }
 
 function hasAttribute(element, attribute) {
-	const escapedAttribute = attribute.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-	return new RegExp(`\\b${escapedAttribute}\\b`, "i").test(element);
+	const escapedAttribute = attribute.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+	return new RegExp(String.raw`\b${escapedAttribute}\b`, "i").test(element);
 }
 
 function getElements(html, tagName) {
-	return html.match(new RegExp(`<${tagName}\\b[^>]*>`, "gi")) ?? [];
+	return html.match(new RegExp(String.raw`<${tagName}\b[^>]*>`, "gi")) ?? [];
 }
 
 function getScriptElements(html) {
@@ -87,36 +87,38 @@ function getCanonicalOrigin(html) {
 	}
 }
 
-function getHtmlResourceReferences(html) {
-	const references = [];
-
-	for (const element of getElements(html, "script")) {
+function getHtmlScriptReferences(html) {
+	return getElements(html, "script").flatMap((element) => {
 		const src = getAttribute(element, "src");
-		if (src) references.push({ kind: "script", url: src, isFont: false });
-	}
+		return src ? [{ kind: "script", url: src, isFont: false }] : [];
+	});
+}
 
-	for (const element of getElements(html, "link")) {
+function getHtmlLinkReferences(html) {
+	return getElements(html, "link").flatMap((element) => {
 		const rel = getAttribute(element, "rel")?.toLowerCase().split(/\s+/) ?? [];
 		const href = getAttribute(element, "href");
+		if (!href || !(rel.includes("stylesheet") || rel.includes("preload"))) return [];
 
-		if (href && (rel.includes("stylesheet") || rel.includes("preload"))) {
-			references.push({ kind: `link ${rel.join(" ")}`, url: href, isFont: getAttribute(element, "as")?.toLowerCase() === "font" });
-		}
-	}
+		return [{ kind: `link ${rel.join(" ")}`, url: href, isFont: getAttribute(element, "as")?.toLowerCase() === "font" }];
+	});
+}
 
-	for (const tagName of ["img", "video", "source"]) {
-		for (const element of getElements(html, tagName)) {
-			const src = getAttribute(element, "src");
-			if (src) references.push({ kind: tagName, url: src, isFont: false });
+function getHtmlMediaReferences(html) {
+	return ["img", "video", "source"].flatMap((tagName) => getElements(html, tagName).flatMap((element) => {
+		const references = [];
+		const src = getAttribute(element, "src");
+		if (src) references.push({ kind: tagName, url: src, isFont: false });
 
-			if (tagName === "video") {
-				const poster = getAttribute(element, "poster");
-				if (poster) references.push({ kind: "video poster", url: poster, isFont: false });
-			}
-		}
-	}
+		const poster = tagName === "video" ? getAttribute(element, "poster") : null;
+		if (poster) references.push({ kind: "video poster", url: poster, isFont: false });
 
-	return references;
+		return references;
+	}));
+}
+
+function getHtmlResourceReferences(html) {
+	return [...getHtmlScriptReferences(html), ...getHtmlLinkReferences(html), ...getHtmlMediaReferences(html)];
 }
 
 export function getCssResourceReferences(source) {
@@ -133,11 +135,15 @@ export function getCssResourceReferences(source) {
 
 export function getJavaScriptResourceReferences(source) {
 	const references = [];
-	const pattern = /\b(?:fetch|importScripts|Worker|EventSource|WebSocket)\s*\(\s*(['"])([^'"]+)\1|\b(?:src|href)\s*=\s*(['"])([^'"]+)\3/gi;
+	const patterns = [
+		/\b(?:fetch|importScripts|Worker|EventSource|WebSocket)\s*\(\s*(['"])([^'"]+)\1/gi,
+		/\b(?:src|href)\s*=\s*(['"])([^'"]+)\1/gi,
+	];
 
-	for (const match of source.matchAll(pattern)) {
-		const url = match[2] ?? match[4];
-		if (url) references.push({ kind: "javascript", url, isFont: false });
+	for (const pattern of patterns) {
+		for (const match of source.matchAll(pattern)) {
+			if (match[2]) references.push({ kind: "javascript", url: match[2], isFont: false });
+		}
 	}
 
 	return references;
@@ -152,7 +158,8 @@ export function classifyResourceReference(reference, siteOrigin, allowedOrigins 
 	try {
 		const origin = new URL(url, siteOrigin ?? "https://invalid.local").origin;
 		const isAllowedOrigin = origin === siteOrigin || allowedOrigins.includes(origin);
-		return { ...reference, scope: origin === siteOrigin ? "same-origin" : isAllowedOrigin ? "first-party" : "third-party", isThirdParty: !isAllowedOrigin };
+		if (origin === siteOrigin) return { ...reference, scope: "same-origin", isThirdParty: false };
+		return { ...reference, scope: isAllowedOrigin ? "first-party" : "third-party", isThirdParty: !isAllowedOrigin };
 	} catch {
 		return { ...reference, scope: "unsupported", isThirdParty: true };
 	}

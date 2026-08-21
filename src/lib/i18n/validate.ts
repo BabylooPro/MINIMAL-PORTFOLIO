@@ -5,8 +5,6 @@ import { validateSideProjectTranslations } from "@/src/lib/i18n/side-projects-va
 
 import type { Portfolio } from "@/src/types/portfolio";
 
-type Scalar = string | number | boolean | null | undefined;
-
 function assertNoEmptyStrings(value: unknown, path: string): void {
 	if (typeof value === "string" && value.trim().length === 0) throw new Error(`Empty string in ${path}.`);
 
@@ -16,7 +14,7 @@ function assertNoEmptyStrings(value: unknown, path: string): void {
 	}
 
 	if (value && typeof value === "object")
-		Object.entries(value as Record<string, Scalar | unknown>).forEach(([key, item]) => { assertNoEmptyStrings(item, `${path}.${key}`); });
+		Object.entries(value as Record<string, unknown>).forEach(([key, item]) => { assertNoEmptyStrings(item, `${path}.${key}`); });
 
 }
 
@@ -35,10 +33,9 @@ function assertEqualDateData(expected: Portfolio, actual: Portfolio, locale: str
 		const translatedExperience = actual.experiences[index];
 
 		return (
-			translatedExperience !== undefined &&
-			experience.startDate === translatedExperience.startDate &&
-			experience.endDate === translatedExperience.endDate &&
-			experience.datePrecision === translatedExperience.datePrecision
+			experience.startDate === translatedExperience?.startDate &&
+			experience.endDate === translatedExperience?.endDate &&
+			experience.datePrecision === translatedExperience?.datePrecision
 		);
 	});
 

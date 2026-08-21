@@ -22,7 +22,7 @@ function getContactLinkLabel(link: Portfolio["links"][number], labels: HeaderPro
 	return undefined;
 }
 
-export function Header({ currentLocale, labels, page, portfolio, usePageHeading = true }: HeaderProps) {
+export function Header({ currentLocale, labels, page, portfolio, usePageHeading = true }: Readonly<HeaderProps>) {
 	const IdentityHeading = usePageHeading ? "h1" : "p";
 	const contactLinks = portfolio.links.filter((link) => !isExternalHttpLink(link.href));
 	const mobileRoles = portfolio.role.split("|").map((role) => role.trim()).filter(Boolean);

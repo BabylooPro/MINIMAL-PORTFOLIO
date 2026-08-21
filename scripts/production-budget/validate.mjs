@@ -25,7 +25,7 @@ function getOutputIntegrityFailures(measurement, budget) {
 	}
 
 	const actualHtmlPaths = measurement.html.map((page) => page.relativePath).sort();
-	const expectedHtmlPaths = [...budget.html.expectedOutputPaths].sort();
+	const expectedHtmlPaths = [...budget.html.expectedOutputPaths].sort((first, second) => Number(first > second) - Number(first < second));
 	const missingHtmlPaths = expectedHtmlPaths.filter((filePath) => !actualHtmlPaths.includes(filePath));
 	const unexpectedHtmlPaths = actualHtmlPaths.filter((filePath) => !expectedHtmlPaths.includes(filePath));
 
@@ -117,9 +117,7 @@ export function validatePerformanceBudget(measurement, budget = performanceBudge
 			current: cssGzipBytes,
 			maximum: budget.css.maximumGzipBytes,
 		}),
-	);
 
-	checks.push(
 		booleanCheck({
 			id: "root-theme-bootstrap",
 			section: "Architecture",

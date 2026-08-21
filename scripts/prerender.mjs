@@ -106,7 +106,7 @@ const renderedPages = await Promise.all(
 		const languageSwitcherLinks = getLanguageSwitcherLinks(route);
 		if (typeof page.appHtml !== "string" || page.appHtml.length === 0) throw new Error(`The ${route.kind} static renderer returned an empty document.`);
 
-		const structuredDataJson = JSON.stringify(page.structuredData).replaceAll("<", "\\u003c");
+		const structuredDataJson = JSON.stringify(page.structuredData).replaceAll("<", String.raw`\u003c`);
 		const routeTemplateHtml = route.kind === "root" ? staticTemplateHtml : localizedTemplateHtml;
 		const html = routeTemplateHtml
 			.replace('<html lang="en">', `<html lang="${page.lang}">`)

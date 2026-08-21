@@ -110,7 +110,6 @@ test("keeps the header details sharp behind the desktop Proof Work popover", asy
 	await page.goto("/en/");
 
 	await page.locator("[data-popover-trigger]").hover();
-	await page.waitForTimeout(750);
 
 	await expect(page.locator("#proof-work")).toBeVisible();
 	await expect(page.locator("[data-header-details-backdrop]")).toBeHidden();
@@ -132,14 +131,12 @@ test("keeps the desktop Proof Work popover hoverable below the sticky header", a
 
 	await trigger.hover();
 	await expect(popover).toBeHidden();
-	await page.waitForTimeout(750);
 	await expect(popover).toBeVisible();
 	await popover.hover();
 	await page.waitForTimeout(200);
 	await expect(popover).toBeVisible();
 
 	await page.mouse.move(0, 0);
-	await page.waitForTimeout(200);
 	await expect(popover).toBeHidden();
 
 	await trigger.evaluate((element) => (element as HTMLButtonElement).focus());

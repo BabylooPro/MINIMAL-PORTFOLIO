@@ -17,7 +17,7 @@ type RootLayoutProps = {
 	usePageHeading?: boolean;
 };
 
-export default function RootLayout({ children, dictionary, locale, page, usePageHeading = page === undefined }: RootLayoutProps) {
+export default function RootLayout({ children, dictionary, locale, page, usePageHeading = page === undefined }: Readonly<RootLayoutProps>) {
 	const { messages, portfolio } = dictionary;
 
 	return (

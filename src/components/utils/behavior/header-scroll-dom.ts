@@ -132,8 +132,8 @@ export function updateDesktopScrollState(progress: number, isAtPageBottom: boole
 	if (header && initialPaddingTop < 0) {
 		const style = getComputedStyle(header);
 
-		initialPaddingBottom = parseFloat(style.paddingBottom) || 0;
-		initialPaddingTop = parseFloat(style.paddingTop) || 0;
+		initialPaddingBottom = Number.parseFloat(style.paddingBottom) || 0;
+		initialPaddingTop = Number.parseFloat(style.paddingTop) || 0;
 	}
 
 	header?.toggleAttribute("data-scrolled", progress > 0);

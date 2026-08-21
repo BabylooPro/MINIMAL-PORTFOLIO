@@ -16,7 +16,7 @@ type PortfolioPageProps = {
 	showSideProjects: boolean;
 };
 
-function PortfolioPage({ locale, dictionary, showSideProjects }: PortfolioPageProps) {
+function PortfolioPage({ locale, dictionary, showSideProjects }: Readonly<PortfolioPageProps>) {
 	const { messages, portfolio } = dictionary;
 
 	return (

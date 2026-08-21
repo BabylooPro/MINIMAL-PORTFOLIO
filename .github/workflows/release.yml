@@ -61,10 +61,10 @@ jobs:
                   cache: pnpm
 
             - name: Install dependencies
-              run: pnpm install --frozen-lockfile
+              run: pnpm install --frozen-lockfile --ignore-scripts
 
             - name: Install browsers for production checks
-              run: pnpm exec playwright install --with-deps chromium webkit
+              run: ./node_modules/.bin/playwright install --with-deps chromium webkit
 
             - name: Validate the static build
               run: pnpm verify:production

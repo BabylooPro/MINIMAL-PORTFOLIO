@@ -75,7 +75,7 @@ for (const assetPath of builtAssetPaths) {
 
 	requireHeader(assetResponse, "cache-control", "immutable");
 }
-const mediaSourceMatch = homepageHtml.match(/<source src="([^"]+)" type="video\/mp4"/u);
+const mediaSourceMatch = /<source src="([^"]+)" type="video\/mp4"/u.exec(homepageHtml);
 if (!mediaSourceMatch?.[1]) throw new Error("The homepage does not contain a Proof Work MP4 source.");
 
 const mediaUrl = new URL(mediaSourceMatch[1], siteUrl);

@@ -7,7 +7,7 @@ type LanguageSwitcherProps = {
 	page?: LegalPageId;
 };
 
-export function LanguageSwitcher({ currentLocale, label, page }: LanguageSwitcherProps) {
+export function LanguageSwitcher({ currentLocale, label, page }: Readonly<LanguageSwitcherProps>) {
 	const choices = locales.map((locale) => {
 		const config = localeConfigs[locale];
 		return {

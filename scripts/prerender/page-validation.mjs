@@ -34,34 +34,37 @@ function parseStructuredData(indexHtml, route) {
 	}
 }
 
-export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pageAlternateLinks, languageSwitcherLinks, siteName, alternateLinksMarker, pageMetadataMarker, structuredDataMarker }) {
+const requiredContentSecurityPolicyDirectives = [
+	"default-src 'self'",
+	"base-uri 'self'",
+	"object-src 'none'",
+	"frame-src 'none'",
+	"img-src 'self'",
+	"media-src 'self'",
+	"font-src 'self'",
+	"style-src 'self'",
+	"connect-src 'self'",
+	"form-action 'self'"
+];
+
+function validatePageShell(indexHtml, route) {
 	if (!indexHtml.includes("Max Remy")) throw new Error(`The ${route.kind} page does not contain "Max Remy".`);
 	if (!/<main\b/i.test(indexHtml)) throw new Error(`The ${route.kind} page does not contain a main element.`);
 	if (/\brel=["']modulepreload["']/i.test(indexHtml)) throw new Error(`A module preload is still present on the ${route.kind} page.`);
 	if (hasAttribute(indexHtml, "data-react-entry")) throw new Error(`The React development entry is still present on the ${route.kind} page.`);
+}
 
+function validateContentSecurityPolicy(indexHtml, route) {
 	const contentSecurityPolicies = getMetaHttpEquivElements(indexHtml, "Content-Security-Policy");
 	if (contentSecurityPolicies.length !== 1) throw new Error(`The ${route.kind} page must contain one Content Security Policy meta tag.`);
 
 	const [contentSecurityPolicy] = contentSecurityPolicies;
 	const contentSecurityPolicyContent = getAttribute(contentSecurityPolicy, "content");
-	const requiredContentSecurityPolicyDirectives = [
-		"default-src 'self'",
-		"base-uri 'self'",
-		"object-src 'none'",
-		"frame-src 'none'",
-		"img-src 'self'",
-		"media-src 'self'",
-		"font-src 'self'",
-		"style-src 'self'",
-		"connect-src 'self'",
-		"form-action 'self'"
-	];
 
 	if (
 		!contentSecurityPolicyContent ||
 		!requiredContentSecurityPolicyDirectives.every((directive) => contentSecurityPolicyContent.includes(directive)) ||
-		!/(?:^|;\s*)script-src 'self'(?: 'sha256-[A-Za-z0-9+/]{43}=')+(?:;|$)/i.test(contentSecurityPolicyContent) ||
+		!/(?:^|;\s*)script-src 'self'(?: 'sha256-[A-Za-z0-9+/]{43}=')+(?:;|$)/.test(contentSecurityPolicyContent) ||
 		/unsafe-(?:inline|eval)/i.test(contentSecurityPolicyContent)
 	) {
 		throw new Error(`The ${route.kind} page has an invalid Content Security Policy.`);
@@ -71,11 +74,27 @@ export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pa
 
 	const firstScriptIndex = indexHtml.search(/<script\b/i);
 	if (firstScriptIndex < 0 || indexHtml.indexOf(contentSecurityPolicy) > firstScriptIndex) throw new Error(`The ${route.kind} Content Security Policy must precede all scripts.`);
+}
 
+function validateLocaleRedirectScripts(localeRedirectScripts, indexHtml, route) {
+	if (route.kind !== "root") {
+		if (localeRedirectScripts.length !== 0 || /\bnavigator\.(?:language|languages)\b/i.test(indexHtml))
+			throw new Error(`The ${route.kind} page must not contain browser language detection.`);
+		return;
+	}
+
+	if (localeRedirectScripts.length !== 1 || localeRedirectScripts.some((scriptElement) => getAttribute(scriptElement, "src"))) 
+		throw new Error("The root page must contain one inline locale redirect script.");
+
+	const [localeRedirectScript] = localeRedirectScripts;
+	if (!/\bnavigator\.(?:language|languages)\b/i.test(localeRedirectScript) || !/\bwindow\.location\.replace\s*\(/i.test(localeRedirectScript))
+		throw new Error("The root locale redirect script is incomplete.");
+}
+
+function validateExecutableScripts(indexHtml, route) {
 	const scriptElements = getScriptElements(indexHtml);
 	const themeBootstrapScripts = scriptElements.filter((scriptElement) => hasAttribute(scriptElement, "data-theme-bootstrap"));
 	const localeRedirectScripts = scriptElements.filter((scriptElement) => hasAttribute(scriptElement, "data-locale-redirect"));
-	const controller = getSiteControllerScript(indexHtml);
 
 	if (
 		scriptElements.some((scriptElement) => !isJsonLdScript(scriptElement) &&
@@ -93,21 +112,10 @@ export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pa
 		throw new Error(`The ${route.kind} page must contain one inline theme bootstrap script.`);
 	}
 
-	if (route.kind === "root") {
-		if (localeRedirectScripts.length !== 1 || localeRedirectScripts.some((scriptElement) => getAttribute(scriptElement, "src"))) {
-			throw new Error("The root page must contain one inline locale redirect script.");
-		}
+	validateLocaleRedirectScripts(localeRedirectScripts, indexHtml, route);
+}
 
-		const [localeRedirectScript] = localeRedirectScripts;
-
-		if (!/\bnavigator\.(?:language|languages)\b/i.test(localeRedirectScript) || !/\bwindow\.location\.replace\s*\(/i.test(localeRedirectScript)) {
-			throw new Error("The root locale redirect script is incomplete.");
-		}
-	} else if (localeRedirectScripts.length !== 0 || /\bnavigator\.(?:language|languages)\b/i.test(indexHtml)) {
-		throw new Error(`The ${route.kind} page must not contain browser language detection.`);
-	}
-
-	if (controller.src !== siteControllerSrc) throw new Error(`The ${route.kind} page has an incorrect site controller source.`);
+function validateDocumentMetadata({ indexHtml, page, route, siteName }) {
 	if (!indexHtml.includes(`<html lang="${page.lang}">`)) throw new Error(`The ${route.kind} page has an incorrect document language.`);
 	if (!indexHtml.includes(`<link rel="canonical" href="${page.canonical}" />`)) throw new Error(`The ${route.kind} page has an incorrect canonical URL.`);
 	if (getLinkElements(indexHtml, "canonical").length !== 1) throw new Error(`The ${route.kind} page must contain exactly one canonical URL.`);
@@ -138,7 +146,9 @@ export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pa
 	for (const [property, content] of expectedOpenGraphMetadata) {
 		assertSingleMetadata(getMetaPropertyElements(indexHtml, property), content, `${property} metadata`);
 	}
+}
 
+function validateSocialImageUrl(page, route) {
 	let socialImageUrl;
 
 	try {
@@ -148,13 +158,17 @@ export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pa
 	}
 
 	if (socialImageUrl.protocol !== "https:") throw new Error(`The ${route.kind} page has a non-HTTPS social image URL.`);
+}
 
+function validateAlternateLinks(indexHtml, route, pageAlternateLinks) {
 	for (const link of pageAlternateLinks) {
 		if (!indexHtml.includes(`hreflang="${link.hreflang}" href="${link.href}"`)) throw new Error(`The ${route.kind} page is missing hreflang="${link.hreflang}".`);
 	}
 
 	if (getLinkElements(indexHtml, "alternate").length !== pageAlternateLinks.length) throw new Error(`The ${route.kind} page has an invalid hreflang cluster.`);
+}
 
+function validateStructuredData(indexHtml, page, route) {
 	const structuredData = parseStructuredData(indexHtml, route);
 	if (structuredData.inLanguage !== page.lang) throw new Error(`The ${route.kind} page has incorrect JSON-LD language data.`);
 
@@ -169,16 +183,18 @@ export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pa
 	) {
 		throw new Error(`The ${route.kind} page has incomplete profile JSON-LD data.`);
 	}
+}
 
-	if (/react-dom|react-jsx-runtime|createRoot|hydrateRoot/i.test(indexHtml)) throw new Error(`The ${route.kind} page still contains React runtime code.`);
-
+function validateThemeMetadata(indexHtml, route, markers) {
 	const themeColorMetaElements = getMetaElements(indexHtml, "theme-color");
 	if (themeColorMetaElements.length !== 1 || !hasAttribute(themeColorMetaElements[0], "data-theme-color")) throw new Error(`The ${route.kind} page must contain one dynamic theme-color meta tag.`);
 
 	const colorSchemeMetaElements = getMetaElements(indexHtml, "color-scheme");
 	if (colorSchemeMetaElements.length !== 1 || getAttribute(colorSchemeMetaElements[0], "content") !== "light dark") throw new Error(`The ${route.kind} page must contain the color-scheme meta tag.`);
-	if (![pageMetadataMarker, alternateLinksMarker, structuredDataMarker, "<!--app-html-->"].every((marker) => !indexHtml.includes(marker))) throw new Error(`The ${route.kind} page contains an unresolved HTML marker.`);
+	if (!markers.every((marker) => !indexHtml.includes(marker))) throw new Error(`The ${route.kind} page contains an unresolved HTML marker.`);
+}
 
+function validateLanguageSwitcher(indexHtml, route, languageSwitcherLinks) {
 	if (
 		!languageSwitcherLinks.every((link) => {
 			const href = new URL(link.href).pathname;
@@ -187,4 +203,24 @@ export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pa
 	) {
 		throw new Error(`The ${route.kind} page does not contain the language selector.`);
 	}
+}
+
+export function validatePageHtml({ page, route, indexHtml, siteControllerSrc, pageAlternateLinks, languageSwitcherLinks, siteName, alternateLinksMarker, pageMetadataMarker, structuredDataMarker }) {
+	validatePageShell(indexHtml, route);
+	validateContentSecurityPolicy(indexHtml, route);
+
+	const controller = getSiteControllerScript(indexHtml);
+	validateExecutableScripts(indexHtml, route);
+
+	if (controller.src !== siteControllerSrc) throw new Error(`The ${route.kind} page has an incorrect site controller source.`);
+
+	validateDocumentMetadata({ indexHtml, page, route, siteName });
+	validateSocialImageUrl(page, route);
+	validateAlternateLinks(indexHtml, route, pageAlternateLinks);
+	validateStructuredData(indexHtml, page, route);
+
+	if (/react-dom|react-jsx-runtime|createRoot|hydrateRoot/i.test(indexHtml)) throw new Error(`The ${route.kind} page still contains React runtime code.`);
+
+	validateThemeMetadata(indexHtml, route, [pageMetadataMarker, alternateLinksMarker, structuredDataMarker, "<!--app-html-->"]);
+	validateLanguageSwitcher(indexHtml, route, languageSwitcherLinks);
 }
