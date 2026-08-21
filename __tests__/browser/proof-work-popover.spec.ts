@@ -14,8 +14,9 @@ test("keeps the mobile Proof Work popover above the sticky header and restores f
 
 	await expect(trigger).toHaveAttribute("aria-expanded", "true");
 	await expect(popover).toBeVisible();
-	await expect(popover).toHaveAttribute("role", "dialog");
-	await expect(popover).toHaveAttribute("aria-label", "About Proof of Work");
+	await expect(popover).not.toHaveAttribute("role", /.+/);
+	await expect(popover).not.toHaveAttribute("aria-label", /.+/);
+	await expect(trigger).toHaveAttribute("aria-label", "About Proof of Work");
 	await expect(popover).toHaveCSS("border-left-width", "1px");
 	await expect(popover).toHaveCSS("border-right-width", "1px");
 	await expect(page.locator("[data-popover-backdrop]")).toBeVisible();
@@ -141,7 +142,7 @@ test("keeps the desktop Proof Work popover hoverable below the sticky header", a
 
 	await trigger.evaluate((element) => (element as HTMLButtonElement).focus());
 	await expect(popover).toBeVisible();
-	await expect(trigger).toHaveAttribute("aria-haspopup", "dialog");
+	await expect(trigger).not.toHaveAttribute("aria-haspopup", /.+/);
 	await expect(trigger).toHaveAttribute("aria-expanded", "true");
 	await expect(popover.getByRole("button", { name: "Close" })).toBeHidden();
 
