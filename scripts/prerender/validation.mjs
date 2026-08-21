@@ -80,12 +80,12 @@ export function readSiteControllerAssets({ manifest, controllerSrc, siteControll
 
 export function removeReactAndUnusedModules(html) {
 	let removedReactEntry = false;
-	const cleanedHtml = html.replace(/\s*<script\b[\s\S]*?<\/script>/gi, (scriptElement) => {
+	const cleanedHtml = html.replace(/(?<!\s)\s*<script\b[\s\S]*?<\/script>/gi, (scriptElement) => {
 		if (!isModuleScript(scriptElement)) return scriptElement;
 		if (hasAttribute(scriptElement, "data-site-controller")) return scriptElement;
 		if (hasAttribute(scriptElement, "data-react-entry")) removedReactEntry = true;
 		return "";
-	}).replace(/\s*<link\b(?=[^>]*\brel=["']modulepreload["'])[^>]*>/gi, "");
+	}).replace(/(?<!\s)\s*<link\b(?=[^>]*\brel=["']modulepreload["'])[^>]*>/gi, "");
 
 	if (!removedReactEntry) throw new Error("The React development entry was not removed from the production HTML.");
 	if (hasAttribute(cleanedHtml, "data-react-entry")) throw new Error("The React development entry is still present after cleanup.");

@@ -96,7 +96,7 @@ export function createGeneratedSideProject(repository, selection) {
 		githubDescription: repository.description,
 		primaryLanguage: repository.language,
 		createdAt: validateCreatedAt(repository.created_at),
-		topics: [...repository.topics].map((topic) => topic.trim()).filter(Boolean).sort().slice(0, 3),
+		topics: [...repository.topics].map((topic) => topic.trim()).filter(Boolean).sort((first, second) => (first < second ? -1 : first > second ? 1 : 0)).slice(0, 3),
 	};
 }
 
@@ -124,7 +124,7 @@ function validateSnapshotProject(value, index) {
 export function validateSnapshot(value) {
 	if (!Array.isArray(value) || value.length === 0 || value.length > MAXIMUM_PROJECTS) throw createPermanentError("Side Projects snapshot is invalid.");
 
-	const projects = value.map(validateSnapshotProject);
+	const projects = value.map((project, index) => validateSnapshotProject(project, index));
 	const slugs = projects.map((project) => project.slug);
 	if (new Set(slugs).size !== slugs.length) throw createPermanentError("Side Projects snapshot contains duplicate slugs.");
 

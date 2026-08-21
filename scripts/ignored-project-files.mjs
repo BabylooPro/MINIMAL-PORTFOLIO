@@ -30,7 +30,7 @@ export function getIgnoredProjectFiles(projectDirectory, filePaths) {
 
 		git.on("error", (error) => reject(new Error(`Unable to evaluate .gitignore rules: ${error.message}`)) );
 		git.on("close", (code) => {
-			if (code === 0) { resolve(output.split("\0").filter(Boolean).sort()); return; }
+			if (code === 0) { resolve(output.split("\0").filter(Boolean).sort((first, second) => (first < second ? -1 : first > second ? 1 : 0))); return; }
 			if (code === 1) { resolve([]); return; }
 			reject(new Error(`Unable to evaluate .gitignore rules: ${errorOutput.trim() || `git exited with ${code}`}`));
 		});

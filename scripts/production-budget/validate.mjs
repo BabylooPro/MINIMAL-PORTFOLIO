@@ -25,7 +25,7 @@ function getOutputIntegrityFailures(measurement, budget) {
 	}
 
 	const actualHtmlPaths = measurement.html.map((page) => page.relativePath).sort();
-	const expectedHtmlPaths = [...budget.html.expectedOutputPaths].sort();
+	const expectedHtmlPaths = [...budget.html.expectedOutputPaths].sort((first, second) => (first < second ? -1 : first > second ? 1 : 0));
 	const missingHtmlPaths = expectedHtmlPaths.filter((filePath) => !actualHtmlPaths.includes(filePath));
 	const unexpectedHtmlPaths = actualHtmlPaths.filter((filePath) => !expectedHtmlPaths.includes(filePath));
 
