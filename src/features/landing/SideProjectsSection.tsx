@@ -14,7 +14,7 @@ const generatedProjects: readonly GeneratedSideProject[] = sideProjects;
 
 type ProjectExternalLinkProps = { href: string; label: string };
 
-function ProjectExternalLink({ href, label }: ProjectExternalLinkProps) {
+function ProjectExternalLink({ href, label }: Readonly<ProjectExternalLinkProps>) {
 	return (
 		<a className="hover:underline focus-visible:underline" href={href} rel="noopener noreferrer" target="_blank">
 			{label} <span aria-hidden="true"> ↗</span>
@@ -22,7 +22,7 @@ function ProjectExternalLink({ href, label }: ProjectExternalLinkProps) {
 	);
 }
 
-export function SideProjectsSection({ content, locale, title }: SideProjectsSectionProps) {
+export function SideProjectsSection({ content, locale, title }: Readonly<SideProjectsSectionProps>) {
 	if (generatedProjects.length === 0) return null;
 
 	return (

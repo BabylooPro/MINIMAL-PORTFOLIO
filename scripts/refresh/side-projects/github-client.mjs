@@ -9,6 +9,15 @@ function isTemporaryStatus(response) {
 	);
 }
 
+function assertUsableResponse(response) {
+	if (isTemporaryStatus(response)) {
+		if (response.status === 429 || response.status === 403) throw createTemporaryError(`GitHub temporarily limited the request (HTTP ${response.status}).`);
+		throw createTemporaryError(`GitHub returned a temporary server error (HTTP ${response.status}).`);
+	}
+
+	if (!response.ok) throw createPermanentError(`GitHub request failed permanently (HTTP ${response.status}).`);
+}
+
 export async function fetchRepositories({ githubUser, cache, fetchImpl, timeoutMs }) {
 	const headers = { Accept: "application/vnd.github+json", "User-Agent": "maxremy-portfolio-build" };
 
@@ -29,12 +38,7 @@ export async function fetchRepositories({ githubUser, cache, fetchImpl, timeoutM
 			return { githubUser, repositories: cache.raw, etag: null, fromCache: true };
 		}
 
-		if (isTemporaryStatus(response)) {
-			if (response.status === 429 || response.status === 403) throw createTemporaryError(`GitHub temporarily limited the request (HTTP ${response.status}).`);
-			throw createTemporaryError(`GitHub returned a temporary server error (HTTP ${response.status}).`);
-		}
-
-		if (!response.ok) throw createPermanentError(`GitHub request failed permanently (HTTP ${response.status}).`);
+		assertUsableResponse(response);
 
 		let repositories;
 		try {

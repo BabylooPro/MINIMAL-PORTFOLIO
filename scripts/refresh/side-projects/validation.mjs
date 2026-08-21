@@ -96,7 +96,7 @@ export function createGeneratedSideProject(repository, selection) {
 		githubDescription: repository.description,
 		primaryLanguage: repository.language,
 		createdAt: validateCreatedAt(repository.created_at),
-		topics: [...repository.topics].map((topic) => topic.trim()).filter(Boolean).sort((first, second) => (first < second ? -1 : first > second ? 1 : 0)).slice(0, 3),
+		topics: [...repository.topics].map((topic) => topic.trim()).filter(Boolean).sort((first, second) => Number(first > second) - Number(first < second)).slice(0, 3),
 	};
 }
 

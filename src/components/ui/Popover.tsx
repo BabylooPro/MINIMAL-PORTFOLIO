@@ -11,7 +11,7 @@ type PopoverProps = {
 	trigger: ReactNode;
 };
 
-export function Popover({ children, id, label, locale, trigger }: PopoverProps) {
+export function Popover({ children, id, label, locale, trigger }: Readonly<PopoverProps>) {
 	return (
 		<div data-popover className="relative flex [@media(min-width:40rem)_and_(hover:hover)_and_(pointer:fine)]:static">
 			<button

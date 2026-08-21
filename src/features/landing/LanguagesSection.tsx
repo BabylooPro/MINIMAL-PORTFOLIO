@@ -12,7 +12,7 @@ type LanguagesSectionProps = {
 	languages: readonly Language[];
 };
 
-export function LanguagesSection({ languages, moreInformationLabel, title }: LanguagesSectionProps) {
+export function LanguagesSection({ languages, moreInformationLabel, title }: Readonly<LanguagesSectionProps>) {
 	if (languages.length === 0) return null;
 
 	return (

@@ -6,7 +6,7 @@ type SkillsSectionProps = {
 	skillGroups: readonly SkillGroup[];
 };
 
-export function SkillsSection({ skillGroups, title }: SkillsSectionProps) {
+export function SkillsSection({ skillGroups, title }: Readonly<SkillsSectionProps>) {
 	if (skillGroups.length === 0) return null;
 
 	return (

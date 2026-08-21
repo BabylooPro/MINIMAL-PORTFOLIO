@@ -18,7 +18,10 @@ export async function listFiles(directory) {
 export async function validatePublicAssets({ projectDirectory, publicDirectory }) {
 	const publicFiles = await listFiles(publicDirectory);
 	const ignoredFiles = await getIgnoredProjectFiles(projectDirectory, publicFiles);
-	if (ignoredFiles.length > 0) throw new Error(`Public assets must not match .gitignore rules:\n${ignoredFiles.map((file) => `- ${file}`).join("\n")}`);
+	if (ignoredFiles.length === 0) return;
+
+	const ignoredList = ignoredFiles.map((file) => `- ${file}`).join("\n");
+	throw new Error(`Public assets must not match .gitignore rules:\n${ignoredList}`);
 }
 
 function normalizePublicAssetPath(assetPath) {
@@ -106,38 +109,31 @@ export async function removeUnusedJavaScriptFiles({ distDirectory, allowedFiles 
 	}));
 }
 
-export async function validateStaticOutput({ renderedPages, files, sitemap, allowedJavaScriptFiles, paths, markers, siteName }) {
-	const { assetsDirectory, cloudflareHeadersPath, indexPath, sitemapPath, socialImagePath } = paths;
-
+function validateGeneratedFiles(files, { cloudflareHeadersPath, indexPath, sitemapPath }) {
 	if (!files.includes(indexPath)) throw new Error("The production index file was not generated.");
 	if (!files.includes(sitemapPath)) throw new Error("The production sitemap file was not generated.");
 	if (!files.includes(cloudflareHeadersPath)) throw new Error("The Cloudflare Pages _headers configuration was not generated.");
 	if (files.some((filePath) => filePath.endsWith(".mp4"))) throw new Error("Cloudflare Pages output must not contain MP4 files.");
+}
 
+async function validateCloudflareHeaders(cloudflareHeadersPath) {
 	const cloudflareHeaders = await readFile(cloudflareHeadersPath, "utf8");
 	for (const directive of ["default-src 'self'", "script-src 'self'", "frame-ancestors 'none'"]) {
 		if (!cloudflareHeaders.includes(directive)) throw new Error(`The Cloudflare Pages _headers file must serve the full Content-Security-Policy, missing: ${directive}.`);
 	}
+}
 
-	for (const { page, route, outputPath, html, siteControllerSrc, alternateLinks: pageAlternateLinks, languageSwitcherLinks } of renderedPages) {
-		if (!files.includes(outputPath)) throw new Error(`The ${route.kind} output file was not generated.`);
-		validatePageHtml({ page, route, indexHtml: html, siteControllerSrc, pageAlternateLinks, languageSwitcherLinks, siteName, ...markers });
-	}
-
+async function validateSocialImage(socialImagePath, files, expectedImage) {
 	if (!files.includes(socialImagePath)) throw new Error("The social image was not generated.");
 	if ((await stat(socialImagePath)).size > 250_000) throw new Error("The social image exceeds the 250 kB budget.");
 
-	const [{ page: firstPage }] = renderedPages;
-	const socialImageDimensions = getJpegDimensions(await readFile(socialImagePath));
-
-	if (socialImageDimensions.width !== firstPage.socialImage.width || socialImageDimensions.height !== firstPage.socialImage.height) {
-		throw new Error(`The social image must be ${firstPage.socialImage.width} × ${firstPage.socialImage.height}, received ${socialImageDimensions.width} × ${socialImageDimensions.height}.`);
+	const dimensions = getJpegDimensions(await readFile(socialImagePath));
+	if (dimensions.width !== expectedImage.width || dimensions.height !== expectedImage.height) {
+		throw new Error(`The social image must be ${expectedImage.width} × ${expectedImage.height}, received ${dimensions.width} × ${dimensions.height}.`);
 	}
+}
 
-	if (!files.some((filePath) => filePath.startsWith(`${assetsDirectory}${path.sep}`) && filePath.endsWith(".css"))) {
-		throw new Error("The generated CSS file was not found.");
-	}
-
+async function validateJavaScriptOutput(files, allowedJavaScriptFiles) {
 	const javascriptFiles = files.filter((filePath) => filePath.endsWith(".js"));
 	if (javascriptFiles.length !== allowedJavaScriptFiles.size || javascriptFiles.some((filePath) => !allowedJavaScriptFiles.has(filePath))) {
 		throw new Error("The production build contains unexpected JavaScript assets.");
@@ -147,10 +143,34 @@ export async function validateStaticOutput({ renderedPages, files, sitemap, allo
 		const source = await readFile(filePath, "utf8");
 		if (/react-dom|react-jsx-runtime|createRoot|hydrateRoot/i.test(source)) throw new Error(`The React runtime is still shipped in ${path.basename(filePath)}.`);
 	}
+}
 
+function validateSitemapUrls(renderedPages, sitemap) {
 	const indexablePages = renderedPages.filter(({ page }) => page.indexable);
 	const nonIndexablePages = renderedPages.filter(({ page }) => !page.indexable);
 
 	if (!indexablePages.every(({ page }) => sitemap.includes(`<loc>${page.canonical}</loc>`))) throw new Error("The generated sitemap does not contain every indexable URL.");
 	if (nonIndexablePages.some(({ page }) => sitemap.includes(`<loc>${page.canonical}</loc>`))) throw new Error("The generated sitemap contains a non-indexable URL.");
+}
+
+export async function validateStaticOutput({ renderedPages, files, sitemap, allowedJavaScriptFiles, paths, markers, siteName }) {
+	const { assetsDirectory, cloudflareHeadersPath, socialImagePath } = paths;
+
+	validateGeneratedFiles(files, paths);
+	await validateCloudflareHeaders(cloudflareHeadersPath);
+
+	for (const { page, route, outputPath, html, siteControllerSrc, alternateLinks: pageAlternateLinks, languageSwitcherLinks } of renderedPages) {
+		if (!files.includes(outputPath)) throw new Error(`The ${route.kind} output file was not generated.`);
+		validatePageHtml({ page, route, indexHtml: html, siteControllerSrc, pageAlternateLinks, languageSwitcherLinks, siteName, ...markers });
+	}
+
+	const [{ page: firstPage }] = renderedPages;
+	await validateSocialImage(socialImagePath, files, firstPage.socialImage);
+
+	if (!files.some((filePath) => filePath.startsWith(`${assetsDirectory}${path.sep}`) && filePath.endsWith(".css"))) {
+		throw new Error("The generated CSS file was not found.");
+	}
+
+	await validateJavaScriptOutput(files, allowedJavaScriptFiles);
+	validateSitemapUrls(renderedPages, sitemap);
 }

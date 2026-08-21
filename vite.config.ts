@@ -28,7 +28,7 @@ const siteControllerScriptPattern = /<script\b(?=[^>]*\bdata-site-controller\b)[
 const contentSecurityPolicyMarker = "<!--content-security-policy-->";
 
 function escapeRegularExpression(value: string): string {
-	return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	return value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
 type InlineScriptDefinition = {
@@ -164,7 +164,7 @@ function injectSiteController(): Plugin {
 				if (reactEntry?.type !== "chunk") throw new Error("The React development entry was not generated.");
 				if (!html.includes(siteControllerMarker)) throw new Error("The site controller HTML marker was not found.");
 
-				const reactEntryScriptPattern = new RegExp(`<script\\b(?=[^>]*\\bsrc=["']/${escapeRegularExpression(reactEntry.fileName)}["'])[^>]*><\\/script>`, "gi");
+				const reactEntryScriptPattern = new RegExp(String.raw`<script\b(?=[^>]*\bsrc=["']/${escapeRegularExpression(reactEntry.fileName)}["'])[^>]*><\/script>`, "gi");
 				const reactEntryScripts = html.match(reactEntryScriptPattern) ?? [];
 				if (reactEntryScripts.length !== 1) throw new Error("The React development entry script was not found.");
 

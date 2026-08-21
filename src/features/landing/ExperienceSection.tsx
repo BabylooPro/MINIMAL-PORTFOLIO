@@ -14,7 +14,7 @@ function formatWorkContext(experience: Experience) {
 	return [experience.employmentType, experience.location].filter(Boolean).join(" - ");
 }
 
-export function ExperienceSection({ experiences, locale, presentLabel, title }: ExperienceSectionProps) {
+export function ExperienceSection({ experiences, locale, presentLabel, title }: Readonly<ExperienceSectionProps>) {
 	if (experiences.length === 0) return null;
 
 	return (

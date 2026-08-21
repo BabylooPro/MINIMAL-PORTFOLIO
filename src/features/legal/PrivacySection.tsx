@@ -11,7 +11,7 @@ type PrivacySectionProps = {
 	email: string | null;
 };
 
-export function PrivacySection({ content, email }: PrivacySectionProps) {
+export function PrivacySection({ content, email }: Readonly<PrivacySectionProps>) {
 	return (
 		<>
 			<p className="leading-6">{content.intro}</p>

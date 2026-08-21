@@ -54,7 +54,7 @@ type VideoPreviewButtonProps = {
 	video: Video;
 };
 
-function VideoPreviewButton({ direction, label, positionClassName, video }: VideoPreviewButtonProps) {
+function VideoPreviewButton({ direction, label, positionClassName, video }: Readonly<VideoPreviewButtonProps>) {
 	return (
 		<button
 			aria-label={label}
@@ -99,9 +99,9 @@ function formatVideoCounter(template: string, current: number, total: number): s
 	return template.replace("{current}", String(current)).replace("{total}", String(total));
 }
 
-export function ProofWorkSection({ content, links, locale, title }: ProofWorkSectionProps) {
+export function ProofWorkSection({ content, links, locale, title }: Readonly<ProofWorkSectionProps>) {
 	const activeVideo = videos[0];
-	const previousVideo = videos[videos.length - 1];
+	const previousVideo = videos.at(-1);
 	const nextVideo = videos[1];
 
 	if (!activeVideo || !previousVideo || !nextVideo) return null;

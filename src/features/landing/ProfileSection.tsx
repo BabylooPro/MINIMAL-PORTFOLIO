@@ -5,7 +5,7 @@ type ProfileSectionProps = {
 	summary: string;
 };
 
-export function ProfileSection({ summary, title }: ProfileSectionProps) {
+export function ProfileSection({ summary, title }: Readonly<ProfileSectionProps>) {
 	const paragraphOccurrences = new Map<string, number>();
 
 	const paragraphs = summary.split("\n").map((content) => {

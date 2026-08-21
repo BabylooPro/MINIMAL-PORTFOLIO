@@ -18,7 +18,7 @@ type SectionHeadingProps = {
 	bordered?: boolean
 };
 
-export function SectionHeading({ id, children, bordered = true }: SectionHeadingProps) {
+export function SectionHeading({ id, children, bordered = true }: Readonly<SectionHeadingProps>) {
 	return (
 		<h2 id={id} className={`text-sm font-medium uppercase tracking-wider text-(--muted-color) ${bordered ? "border-b" : ""}`} >
 			{children}

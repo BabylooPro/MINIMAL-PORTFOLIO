@@ -55,7 +55,7 @@ export function isLocale(value: string): value is Locale {
 }
 
 export function getLocaleFromPathname(pathname: string): Locale | null {
-	const firstSegment = pathname.split("/").filter(Boolean).at(0);
+	const firstSegment = pathname.split("/").find(Boolean);
 	if (!firstSegment || !isLocale(firstSegment)) return null;
 	return firstSegment;
 }

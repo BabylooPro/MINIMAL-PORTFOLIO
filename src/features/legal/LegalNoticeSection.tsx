@@ -8,7 +8,7 @@ const legalNoticeUrls = {
 
 type LegalNoticeSectionProps = { content: Messages["legalPages"]["legal"]; email: string | null };
 
-export function LegalNoticeSection({ content, email }: LegalNoticeSectionProps) {
+export function LegalNoticeSection({ content, email }: Readonly<LegalNoticeSectionProps>) {
 	return (
 		<>
 			<Section labelledBy="legal-publisher-title">
@@ -83,7 +83,7 @@ export function LegalNoticeSection({ content, email }: LegalNoticeSectionProps) 
 	);
 }
 
-function LegalInformationItem({ href, label, value }: { href?: string; label: string; value: string }) {
+function LegalInformationItem({ href, label, value }: Readonly<{ href?: string; label: string; value: string }>) {
 	return (
 		<div>
 			<dt className="font-medium text-(--foreground-color)">

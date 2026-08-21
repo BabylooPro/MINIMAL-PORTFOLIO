@@ -191,11 +191,13 @@ function markdownStatus(status) {
 	return status === "PASS" ? "✅ PASS" : "❌ FAIL";
 }
 
+const escapedTableSeparator = String.raw`\|`;
+
 function renderMarkdownTable(headers, rows) {
 	return [
 		`| ${headers.join(" | ")} |`,
 		`|${headers.map(() => "---").join("|")}|`,
-		...rows.map((row) => `| ${row.map((cell) => cell.replaceAll("|", "\\|")).join(" | ")} |`),
+		...rows.map((row) => `| ${row.map((cell) => cell.replaceAll("|", escapedTableSeparator)).join(" | ")} |`),
 	].join("\n");
 }
 

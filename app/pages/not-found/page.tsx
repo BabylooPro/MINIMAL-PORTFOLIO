@@ -5,7 +5,7 @@ import type { Dictionary } from "@/src/lib/i18n/dictionaries";
 
 type NotFoundPageProps = { dictionary: Dictionary; locale: Locale };
 
-export function NotFoundPage({ dictionary, locale }: NotFoundPageProps) {
+export function NotFoundPage({ dictionary, locale }: Readonly<NotFoundPageProps>) {
 	const { messages } = dictionary;
 
 	return (

@@ -29,7 +29,7 @@ type ButtonChoiceSwitcherProps = {
 
 type ChoiceSwitcherProps = LinkChoiceSwitcherProps | ButtonChoiceSwitcherProps;
 
-function ChoiceList<T extends Choice>({ choices, renderChoice }: { choices: readonly T[]; renderChoice: (choice: T) => ReactNode }) {
+function ChoiceList<T extends Choice>({ choices, renderChoice }: Readonly<{ choices: readonly T[]; renderChoice: (choice: T) => ReactNode }>) {
 	return (
 		<ul className="flex items-center text-xs">
 			{choices.map((choice, index) => (

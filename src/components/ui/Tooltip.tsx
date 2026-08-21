@@ -7,7 +7,7 @@ type TooltipProps = {
 	triggerLabel: string;
 };
 
-export function Tooltip({ children, id, trigger, triggerLabel }: TooltipProps) {
+export function Tooltip({ children, id, trigger, triggerLabel }: Readonly<TooltipProps>) {
 	return (
 		<div className="inline-flex" data-tooltip>
 			<button

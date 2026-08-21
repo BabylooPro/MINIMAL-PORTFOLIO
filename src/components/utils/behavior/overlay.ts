@@ -27,11 +27,11 @@ export function isOverlayEngaged({ panel, root, trigger }: Overlay): boolean {
 	return trigger.matches(":hover") || panel.matches(":hover") || root.contains(document.activeElement);
 }
 
-export function bindOverlayHover(overlay: Overlay, open: () => void, close: () => void): void {
-	function onDesktop(action: () => void): () => void {
-		return () => { if (isDesktopGesture()) action() };
-	}
+function onDesktop(action: () => void): () => void {
+	return () => { if (isDesktopGesture()) action() };
+}
 
+export function bindOverlayHover(overlay: Overlay, open: () => void, close: () => void): void {
 	function schedule(action: () => void, delay: number): void {
 		clearOverlayTimer(overlay);
 		overlay.timer = setTimeout(action, delay);

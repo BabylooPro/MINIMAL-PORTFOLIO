@@ -11,7 +11,7 @@
 	}
 
 	if (preference === "system") {
-		root.removeAttribute("data-theme");
+		delete root.dataset.theme;
 	} else {
 		root.dataset.theme = preference;
 	}

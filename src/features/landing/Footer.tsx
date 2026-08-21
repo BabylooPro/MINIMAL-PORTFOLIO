@@ -13,7 +13,7 @@ type FooterProps = {
 	theme: Messages["theme"];
 };
 
-export function Footer({ company, currentLocale, currentPage, footer, theme }: FooterProps) {
+export function Footer({ company, currentLocale, currentPage, footer, theme }: Readonly<FooterProps>) {
 	const year = new Date().getFullYear();
 
 	return (
