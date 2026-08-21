@@ -17,7 +17,6 @@ export function Popover({ children, id, label, locale, trigger }: Readonly<Popov
 			<button
 				aria-controls={id}
 				aria-expanded="false"
-				aria-haspopup="dialog"
 				aria-label={label}
 				className={[
 					"flex size-6 items-center justify-center rounded-full text-(--muted-color) hover:text-(--foreground-color)",
@@ -36,7 +35,6 @@ export function Popover({ children, id, label, locale, trigger }: Readonly<Popov
 			/>
 
 			<div
-				aria-label={label}
 				className={[
 					// BASE STYLING
 					"fixed left-1/2 top-1/2 z-50 max-h-[calc(100dvh-2rem)] w-max max-w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 -translate-y-1/2 overflow-y-auto",
@@ -53,7 +51,6 @@ export function Popover({ children, id, label, locale, trigger }: Readonly<Popov
 				data-popover-panel
 				hidden
 				id={id}
-				role="dialog"
 			>
 				<button
 					aria-label={getDictionary(locale).messages.labels.close}
