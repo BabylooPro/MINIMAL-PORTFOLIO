@@ -4,15 +4,31 @@
 		margin: 14mm 16mm;
 	}
 
+	html:root, html:root:not([data-theme]), html:root[data-theme="dark"], html:root[data-theme="light"] {
+		--background-color: #ffffff;
+		--active-hover-color: #262626;
+		--border-color: #a3a3a3;
+		--body-color: #000000;
+		--foreground-color: #000000;
+		--inactive-hover-color: #e6e6e6;
+		--muted-color: #737373;
+
+		color-scheme: light;
+	}
+
+	*, *::before, *::after {
+		/* biome-ignore lint/complexity/noImportantStyles: Print must not capture a mid-transition colour. */
+		transition: none !important;
+		/* biome-ignore lint/complexity/noImportantStyles: Print must not capture a mid-animation frame. */
+		animation: none !important;
+	}
+
 	html {
-		background: #ffffff;
 		font-size: 10pt;
 	}
 
 	body {
 		min-width: 0;
-		background: #ffffff;
-		color: #000000;
 	}
 
 	a {
