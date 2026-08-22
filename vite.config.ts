@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -20,6 +21,16 @@ const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-r
 const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 
 const packageVersion: string = JSON.parse(readFileSync(fileURLToPath(new URL("./package.json", import.meta.url)), "utf8")).version;
+
+function readBuildNumber(): string {
+	try {
+		return execFileSync("git", ["rev-list", "--count", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim() || "0";
+	} catch {
+		return "0";
+	}
+}
+
+const buildNumber = readBuildNumber();
 
 const indexHtmlPath = fileURLToPath(new URL("./index.html", import.meta.url));
 
@@ -194,6 +205,7 @@ const inlineScriptsPlugin = inlineHeadScripts([
 export default defineConfig({
 	define: {
 		"import.meta.env.VITE_APP_VERSION": JSON.stringify(packageVersion),
+		"import.meta.env.VITE_APP_BUILD": JSON.stringify(buildNumber),
 	},
 	resolve: {
 		alias: aliases,

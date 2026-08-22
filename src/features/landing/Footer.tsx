@@ -17,6 +17,7 @@ type FooterProps = {
 export function Footer({ company, currentLocale, currentPage, footer, theme }: Readonly<FooterProps>) {
 	const year = new Date().getFullYear();
 	const version: string = import.meta.env.VITE_APP_VERSION;
+	const build: string = import.meta.env.VITE_APP_BUILD;
 
 	return (
 		<footer className="group/footer fixed inset-x-0 bottom-0 z-40 bg-(--background-color) pb-[env(safe-area-inset-bottom)] text-sm text-(--muted-color)" data-page-footer>
@@ -39,7 +40,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: R
 							triggerClassName="text-xs sm:transition-[font-size] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:text-sm"
 							triggerLabel={footer.version}
 						>
-							<p>v{version}</p>
+							<p>v{version} ({build})</p>
 						</Tooltip>
 
 						<nav aria-label={footer.navigationLabel}>
