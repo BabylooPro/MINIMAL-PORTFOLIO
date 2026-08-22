@@ -1,5 +1,6 @@
 import { ArrowUpIcon } from "@/src/components/icons/ArrowUpIcon";
 import { Container } from "@/src/components/ui/Container";
+import { Tooltip } from "@/src/components/ui/Tooltip";
 import { ThemeSwitcher } from "@/src/features/themes/ThemeSwitcher";
 import { getLegalPagePath, type LegalPageId, type Locale } from "@/src/lib/i18n/config";
 
@@ -15,6 +16,7 @@ type FooterProps = {
 
 export function Footer({ company, currentLocale, currentPage, footer, theme }: Readonly<FooterProps>) {
 	const year = new Date().getFullYear();
+	const version: string = import.meta.env.VITE_APP_VERSION;
 
 	return (
 		<footer className="group/footer fixed inset-x-0 bottom-0 z-40 bg-(--background-color) pb-[env(safe-area-inset-bottom)] text-sm text-(--muted-color)" data-page-footer>
@@ -31,9 +33,14 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: R
 			<Container>
 				<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 border-t border-(--border-color) py-3 sm:py-3 sm:transition-[padding] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:py-6">
 					<div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-						<p className="text-xs sm:transition-[font-size] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:text-sm">
-							© {year} {company}
-						</p>
+						<Tooltip
+							id="footer-version"
+							trigger={<>© {year} {company}</>}
+							triggerClassName="text-xs sm:transition-[font-size] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:text-sm"
+							triggerLabel={footer.version}
+						>
+							<p>v{version}</p>
+						</Tooltip>
 
 						<nav aria-label={footer.navigationLabel}>
 							<ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">

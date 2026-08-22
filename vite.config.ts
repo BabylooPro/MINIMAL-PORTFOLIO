@@ -19,6 +19,8 @@ const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-r
 
 const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 
+const packageVersion: string = JSON.parse(readFileSync(fileURLToPath(new URL("./package.json", import.meta.url)), "utf8")).version;
+
 const indexHtmlPath = fileURLToPath(new URL("./index.html", import.meta.url));
 
 const siteControllerPath = fileURLToPath(new URL("./app/client/site-controller.ts", import.meta.url));
@@ -190,6 +192,9 @@ const inlineScriptsPlugin = inlineHeadScripts([
 ], mediaOrigin);
 
 export default defineConfig({
+	define: {
+		"import.meta.env.VITE_APP_VERSION": JSON.stringify(packageVersion),
+	},
 	resolve: {
 		alias: aliases,
 	},

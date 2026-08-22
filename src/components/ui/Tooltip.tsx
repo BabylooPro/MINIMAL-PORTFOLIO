@@ -4,17 +4,18 @@ type TooltipProps = {
 	children: ReactNode;
 	id: string;
 	trigger: ReactNode;
+	triggerClassName?: string;
 	triggerLabel: string;
 };
 
-export function Tooltip({ children, id, trigger, triggerLabel }: Readonly<TooltipProps>) {
+export function Tooltip({ children, id, trigger, triggerClassName, triggerLabel }: Readonly<TooltipProps>) {
 	return (
 		<div className="inline-flex" data-tooltip>
 			<button
 				aria-describedby={id}
 				aria-label={triggerLabel}
 				className={[
-					"flex size-6 items-center justify-center rounded-full text-(--muted-color) hover:text-(--foreground-color)",
+					triggerClassName ?? "flex size-6 items-center justify-center rounded-full text-(--muted-color) hover:text-(--foreground-color)",
 					"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
 				].join(" ")}
 				data-tooltip-trigger

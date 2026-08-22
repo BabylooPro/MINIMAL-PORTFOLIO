@@ -34,6 +34,7 @@ export const frMessages = {
 		privacy: "Confidentialité",
 		legal: "Mentions légales",
 		backToTop: "Retour en haut",
+		version: "Version du projet",
 	},
 	legalPages: {
 		lastUpdated: "Dernière mise à jour : 30 juillet 2026",

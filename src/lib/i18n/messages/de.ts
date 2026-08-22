@@ -34,6 +34,7 @@ export const deMessages = {
 		privacy: "Datenschutz",
 		legal: "Impressum",
 		backToTop: "Nach oben",
+		version: "Projektversion",
 	},
 	legalPages: {
 		lastUpdated: "Letzte Aktualisierung: 30. Juli 2026",
