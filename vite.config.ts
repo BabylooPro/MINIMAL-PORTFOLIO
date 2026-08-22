@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -19,12 +19,16 @@ const themeBootstrapPath = fileURLToPath(new URL("./src/features/themes/theme-bo
 const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-redirect.js", import.meta.url));
 
 const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
+const gitExecutablePaths = ["/usr/bin/git", "/usr/local/bin/git", "/opt/homebrew/bin/git"];
 
 const packageVersion: string = JSON.parse(readFileSync(fileURLToPath(new URL("./package.json", import.meta.url)), "utf8")).version;
 
 function readBuildNumber(): string {
+	const gitExecutablePath = gitExecutablePaths.find((candidate) => existsSync(candidate));
+	if (!gitExecutablePath) return "0";
+
 	try {
-		return execFileSync("git", ["rev-list", "--count", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim() || "0";
+		return execFileSync(gitExecutablePath, ["rev-list", "--count", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim() || "0";
 	} catch {
 		return "0";
 	}
