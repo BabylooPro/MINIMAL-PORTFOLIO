@@ -206,9 +206,14 @@ test("forbids raising any budget value above the committed baseline", async (t) 
 });
 
 test("keeps origin/main in the baseline set when a base revision is provided", (t) => {
+	const originalBaseRef = process.env.PERFORMANCE_BUDGET_BASE_REF;
+
 	t.after(() => {
-		process.env.PERFORMANCE_BUDGET_BASE_REF = "";
+		if (originalBaseRef === undefined) delete process.env.PERFORMANCE_BUDGET_BASE_REF;
+		else process.env.PERFORMANCE_BUDGET_BASE_REF = originalBaseRef;
 	});
+
+	process.env.PERFORMANCE_BUDGET_BASE_REF = "";
 
 	assert.deepEqual(resolveBaselineRevisions(), ["origin/main"]);
 
