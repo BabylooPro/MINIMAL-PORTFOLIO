@@ -6,7 +6,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { performanceBudget } from "@/config/performance-budget.mjs";
-import { getBudgetIncreases, readBudgetAtRevision, resolveBaselineRevision } from "@/scripts/production-budget/baseline.mjs";
+import { getBudgetIncreases, getCommittedBudgetIncreases, resolveBaselineRevisions } from "@/scripts/production-budget/baseline.mjs";
 import { extractInlineScript, gzipBytes, measureProductionOutput } from "@/scripts/production-budget/measure.mjs";
 import { renderMarkdownReport, writeMarkdownReport } from "@/scripts/production-budget/report.mjs";
 import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mjs";
@@ -197,11 +197,22 @@ test("reports every relaxed budget value and ignores tightened ones", () => {
 test("forbids raising any budget value above the committed baseline", async (t) => {
 	if (process.env.PERFORMANCE_BUDGET_ALLOW_INCREASE === "1") return t.skip("PERFORMANCE_BUDGET_ALLOW_INCREASE is set.");
 
-	const baselineBudget = await readBudgetAtRevision(resolveBaselineRevision());
-	if (!baselineBudget) return t.skip("The performance budget is not committed yet.");
+	const increases = await getCommittedBudgetIncreases(performanceBudget);
+	if (!increases) return t.skip("The performance budget is not committed on any baseline revision.");
 
-	const increases = getBudgetIncreases(baselineBudget, performanceBudget);
 	const raised = increases.map((increase) => (increase.baseline === null ? `${increase.path} + ${increase.current}` : `${increase.path} ${increase.baseline} -> ${increase.current}`)).join(", ");
 
 	assert.deepEqual(increases, [], `The performance budget may only be lowered. Raised: ${raised}. Set PERFORMANCE_BUDGET_ALLOW_INCREASE=1 to record a deliberate increase.`);
+});
+
+test("keeps origin/main in the baseline set when a base revision is provided", (t) => {
+	t.after(() => {
+		process.env.PERFORMANCE_BUDGET_BASE_REF = "";
+	});
+
+	assert.deepEqual(resolveBaselineRevisions(), ["origin/main"]);
+
+	process.env.PERFORMANCE_BUDGET_BASE_REF = "HEAD~1";
+
+	assert.deepEqual(resolveBaselineRevisions(), ["HEAD~1", "origin/main"]);
 });

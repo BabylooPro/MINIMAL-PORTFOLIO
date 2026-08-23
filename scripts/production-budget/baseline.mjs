@@ -14,15 +14,19 @@ function runGit(gitArguments) {
 	return execFileSync(gitExecutablePath, gitArguments, { cwd: projectDirectory, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
 }
 
-export function resolveBaselineRevision() {
-	if (process.env.PERFORMANCE_BUDGET_BASE_REF) return process.env.PERFORMANCE_BUDGET_BASE_REF;
+export function resolveBaselineRevisions() {
+	const revisions = [];
+
+	if (process.env.PERFORMANCE_BUDGET_BASE_REF) revisions.push(process.env.PERFORMANCE_BUDGET_BASE_REF);
 
 	try {
 		runGit(["rev-parse", "--verify", "--quiet", "origin/main"]);
-		return "origin/main";
+		revisions.push("origin/main");
 	} catch {
-		return "HEAD";
+		if (revisions.length === 0) revisions.push("HEAD");
 	}
+
+	return [...new Set(revisions)];
 }
 
 export async function readBudgetAtRevision(revision) {
@@ -70,6 +74,21 @@ export function getBudgetIncreases(baselineBudget, currentBudget) {
 	}
 
 	compare(baselineBudget, currentBudget, "");
+
+	return increases;
+}
+
+export async function getCommittedBudgetIncreases(currentBudget) {
+	const baselineBudgets = (await Promise.all(resolveBaselineRevisions().map(readBudgetAtRevision))).filter(Boolean);
+	if (baselineBudgets.length === 0) return null;
+
+	const increases = [];
+
+	for (const baselineBudget of baselineBudgets) {
+		for (const increase of getBudgetIncreases(baselineBudget, currentBudget)) {
+			if (!increases.some((existing) => existing.path === increase.path && existing.current === increase.current)) increases.push(increase);
+		}
+	}
 
 	return increases;
 }
