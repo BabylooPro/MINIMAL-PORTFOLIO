@@ -6,6 +6,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { performanceBudget } from "@/config/performance-budget.mjs";
+import { getBudgetIncreases, readBudgetAtRevision, resolveBaselineRevision } from "@/scripts/production-budget/baseline.mjs";
 import { extractInlineScript, gzipBytes, measureProductionOutput } from "@/scripts/production-budget/measure.mjs";
 import { renderMarkdownReport, writeMarkdownReport } from "@/scripts/production-budget/report.mjs";
 import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mjs";
@@ -174,4 +175,33 @@ test("renders deterministic Markdown and writes it atomically", async (t) => {
 	assert.equal(await readFile(reportPath, "utf8"), failingReport);
 
 	await assert.rejects(stat(`${reportPath}.tmp`));
+});
+
+test("reports every relaxed budget value and ignores tightened ones", () => {
+	const changedBudget = {
+		...performanceBudget,
+		javascript: { ...performanceBudget.javascript, maximumControllerGzipBytes: performanceBudget.javascript.maximumControllerGzipBytes - 1 },
+		css: { ...performanceBudget.css, maximumGzipBytes: performanceBudget.css.maximumGzipBytes + 1 },
+		html: { ...performanceBudget.html, expectedOutputPaths: [...performanceBudget.html.expectedOutputPaths.slice(1), "es/index.html"] },
+		architecture: { ...performanceBudget.architecture, expectedClientHydration: true, allowedRuntimeOrigins: ["https://cdn.example.test"] },
+	};
+
+	assert.deepEqual(getBudgetIncreases(performanceBudget, performanceBudget), []);
+	assert.deepEqual(getBudgetIncreases(performanceBudget, changedBudget), [
+		{ path: "css.maximumGzipBytes", baseline: performanceBudget.css.maximumGzipBytes, current: performanceBudget.css.maximumGzipBytes + 1 },
+		{ path: "architecture.expectedClientHydration", baseline: false, current: true },
+		{ path: "architecture.allowedRuntimeOrigins", baseline: null, current: "https://cdn.example.test" },
+	]);
+});
+
+test("forbids raising any budget value above the committed baseline", async (t) => {
+	if (process.env.PERFORMANCE_BUDGET_ALLOW_INCREASE === "1") return t.skip("PERFORMANCE_BUDGET_ALLOW_INCREASE is set.");
+
+	const baselineBudget = await readBudgetAtRevision(resolveBaselineRevision());
+	if (!baselineBudget) return t.skip("The performance budget is not committed yet.");
+
+	const increases = getBudgetIncreases(baselineBudget, performanceBudget);
+	const raised = increases.map((increase) => (increase.baseline === null ? `${increase.path} + ${increase.current}` : `${increase.path} ${increase.baseline} -> ${increase.current}`)).join(", ");
+
+	assert.deepEqual(increases, [], `The performance budget may only be lowered. Raised: ${raised}. Set PERFORMANCE_BUDGET_ALLOW_INCREASE=1 to record a deliberate increase.`);
 });
