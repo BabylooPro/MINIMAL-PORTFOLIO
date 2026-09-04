@@ -1,9 +1,9 @@
 import { readdir, readFile, stat, unlink } from "node:fs/promises";
 import path from "node:path";
 
-import { getIgnoredProjectFiles } from "@/scripts/ignored-project-files.mjs";
-import { getAttribute, getJpegDimensions, getScriptElements, hasAttribute, isModuleScript } from "@/scripts/prerender/html.mjs";
-import { validatePageHtml } from "@/scripts/prerender/page-validation.mjs";
+import { getIgnoredProjectFiles } from "@/scripts/ignored-project-files.mts";
+import { getAttribute, getJpegDimensions, getScriptElements, hasAttribute, isModuleScript } from "@/scripts/prerender/html.mts";
+import { validatePageHtml } from "@/scripts/prerender/page-validation.mts";
 
 export async function listFiles(directory) {
 	const entries = await readdir(directory, { withFileTypes: true });

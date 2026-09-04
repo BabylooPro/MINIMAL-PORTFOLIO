@@ -3,7 +3,7 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { getIgnoredProjectFiles } from "@/scripts/ignored-project-files.mjs";
+import { getIgnoredProjectFiles } from "@/scripts/ignored-project-files.mts";
 
 const projectDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 

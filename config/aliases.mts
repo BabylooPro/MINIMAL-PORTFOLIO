@@ -3,7 +3,12 @@ import { readFileSync } from "node:fs";
 const projectDirectoryUrl = new URL("..", import.meta.url);
 const aliasConfigUrl = new URL("tsconfig.base.json", projectDirectoryUrl);
 
-function readAliasDefinitions() {
+export type AliasDefinition = {
+	prefix: string;
+	target: string;
+};
+
+function readAliasDefinitions(): AliasDefinition[] {
 	const configuration = JSON.parse(readFileSync(aliasConfigUrl, "utf8"));
 	const paths = configuration.compilerOptions?.paths;
 

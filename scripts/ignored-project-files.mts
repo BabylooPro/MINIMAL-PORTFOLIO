@@ -1,17 +1,17 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
 
-const gitExecutablePath = process.env.GIT_EXECUTABLE_PATH ?? "/usr/bin/git";
+const gitExecutablePath = process.env.GIT_EXECUTABLE_PATH ?? "git";
 
-function toProjectRelativePath(projectDirectory, filePath) {
+function toProjectRelativePath(projectDirectory: string, filePath: string): string {
 	const relativePath = path.relative(projectDirectory, filePath);
 	if (!relativePath || relativePath.startsWith(`..${path.sep}`) || path.isAbsolute(relativePath))
 		throw new Error(`Path is outside the project directory: ${filePath}`);
 
-	return relativePath;
+	return relativePath.replaceAll(path.sep, "/");
 }
 
-export function getIgnoredProjectFiles(projectDirectory, filePaths) {
+export function getIgnoredProjectFiles(projectDirectory: string, filePaths: readonly string[]): Promise<string[]> {
 	if (filePaths.length === 0) return Promise.resolve([]);
 
 	const relativePaths = filePaths.map((filePath) => toProjectRelativePath(projectDirectory, filePath));

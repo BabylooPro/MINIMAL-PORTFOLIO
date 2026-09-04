@@ -5,11 +5,11 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { performanceBudget } from "@/config/performance-budget.mjs";
-import { getBudgetIncreases, getCommittedBudgetIncreases, resolveBaselineRevisions } from "@/scripts/production-budget/baseline.mjs";
-import { extractInlineScript, gzipBytes, measureProductionOutput } from "@/scripts/production-budget/measure.mjs";
-import { renderMarkdownReport, writeMarkdownReport } from "@/scripts/production-budget/report.mjs";
-import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mjs";
+import { performanceBudget } from "@/config/performance-budget.mts";
+import { getBudgetIncreases, getCommittedBudgetIncreases, resolveBaselineRevisions } from "@/scripts/production-budget/baseline.mts";
+import { extractInlineScript, gzipBytes, measureProductionOutput } from "@/scripts/production-budget/measure.mts";
+import { renderMarkdownReport, writeMarkdownReport } from "@/scripts/production-budget/report.mts";
+import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mts";
 
 const testDirectory = path.dirname(fileURLToPath(import.meta.url));
 

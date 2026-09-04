@@ -1,9 +1,9 @@
 import path from "node:path";
 
-import { performanceBudget } from "@/config/performance-budget.mjs";
-import { defaultOutputDirectory, measureProductionOutput, projectDirectory } from "@/scripts/production-budget/measure.mjs";
-import { renderMarkdownReport, renderTerminalReport, writeMarkdownReport } from "@/scripts/production-budget/report.mjs";
-import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mjs";
+import { performanceBudget } from "@/config/performance-budget.mts";
+import { defaultOutputDirectory, measureProductionOutput, projectDirectory } from "@/scripts/production-budget/measure.mts";
+import { renderMarkdownReport, renderTerminalReport, writeMarkdownReport } from "@/scripts/production-budget/report.mts";
+import { validatePerformanceBudget } from "@/scripts/production-budget/validate.mts";
 
 const arguments_ = process.argv.slice(2);
 const writeReport = arguments_.includes("--write-report");

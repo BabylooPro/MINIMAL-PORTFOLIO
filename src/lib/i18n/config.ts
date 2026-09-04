@@ -1,4 +1,4 @@
-import { rootUrl } from "@/config/site.mjs";
+import { rootUrl } from "@/config/site.mts";
 
 export { rootUrl };
 
