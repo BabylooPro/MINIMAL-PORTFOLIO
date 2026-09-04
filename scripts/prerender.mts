@@ -127,7 +127,7 @@ const renderedPages = await Promise.all(
 const sitemap = renderSitemap(renderedPages);
 await writeFile(sitemapPath, sitemap, "utf8");
 
-const contentSecurityPolicy = templateHtml.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/u)?.[1];
+const contentSecurityPolicy = /<meta http-equiv="Content-Security-Policy" content="([^"]+)"/u.exec(templateHtml)?.[1];
 if (!contentSecurityPolicy) throw new Error("The built template does not declare a Content-Security-Policy meta tag.");
 
 const cloudflareHeaders = (await readFile(cloudflareHeadersPath, "utf8")).replaceAll("\r\n", "\n");
