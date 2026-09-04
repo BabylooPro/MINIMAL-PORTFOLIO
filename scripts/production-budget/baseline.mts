@@ -15,7 +15,7 @@ function runGit(gitArguments) {
 }
 
 export function resolveBaselineRevisions() {
-	const revisions = [];
+	const revisions: string[] = [];
 
 	if (process.env.PERFORMANCE_BUDGET_BASE_REF) revisions.push(process.env.PERFORMANCE_BUDGET_BASE_REF);
 
@@ -35,7 +35,7 @@ export async function readBudgetAtRevision(revision) {
 			const source = runGit(["show", `${revision}:${budgetFilePath}`]);
 			const { performanceBudget } = await import(`data:text/javascript;base64,${Buffer.from(source, "utf8").toString("base64")}`);
 			return performanceBudget ?? null;
-		} catch {}
+		} catch { }
 	}
 
 	return null;
@@ -58,7 +58,7 @@ function compareArray(baselineValue, currentValue, keyPath, increases) {
 }
 
 export function getBudgetIncreases(baselineBudget, currentBudget) {
-	const increases = [];
+	const increases: Array<{ path: string; baseline: unknown; current: unknown }> = [];
 
 	function compare(baselineValue, currentValue, keyPath) {
 		if (exemptKeyPaths.has(keyPath)) return;
@@ -92,7 +92,7 @@ export async function getCommittedBudgetIncreases(currentBudget) {
 	const baselineBudgets = (await Promise.all(resolveBaselineRevisions().map(readBudgetAtRevision))).filter(Boolean);
 	if (baselineBudgets.length === 0) return null;
 
-	const increases = [];
+	const increases: Array<{ path: string; baseline: unknown; current: unknown }> = [];
 
 	for (const baselineBudget of baselineBudgets) {
 		for (const increase of getBudgetIncreases(baselineBudget, currentBudget)) {

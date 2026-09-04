@@ -13,7 +13,7 @@ export { buildSnapshot } from "@/scripts/refresh/side-projects/snapshot.mts";
 export { createGeneratedSideProject, isGitHubRepository } from "@/scripts/refresh/side-projects/validation.mts";
 
 function githubUsersFor(configuration) {
-	return [...new Map(configuration.repositories.map((repository) => [repository.githubUser.toLowerCase(), repository.githubUser])).values()];
+	return [...new Map<string, string>(configuration.repositories.map((repository) => [repository.githubUser.toLowerCase(), repository.githubUser] as [string, string])).values()];
 }
 
 export async function refreshSideProjects({ projectDirectory, fetchImpl = fetch, logger = console, timeoutMs = REQUEST_TIMEOUT_MS }) {
@@ -25,7 +25,7 @@ export async function refreshSideProjects({ projectDirectory, fetchImpl = fetch,
 	const canUseExistingSnapshot = snapshotMatchesConfiguration(existingSnapshot, configuration);
 	const githubUsers = githubUsersFor(configuration);
 
-	const caches = new Map(await Promise.all(githubUsers.map(async (githubUser) => [
+	const caches = new Map<string, unknown>(await Promise.all(githubUsers.map(async (githubUser): Promise<[string, unknown]> => [
 		githubUser.toLowerCase(),
 		await readCache(
 			cacheDirectory,

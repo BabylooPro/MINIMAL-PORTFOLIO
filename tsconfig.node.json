@@ -6,7 +6,9 @@
 		"types": ["node"],
 
 		"module": "nodenext",
-		"moduleResolution": "nodenext"
+		"moduleResolution": "nodenext",
+		"noImplicitAny": false,
+		"useUnknownInCatchVariables": false
 	},
-	"include": ["vite.config.ts"]
+	"include": ["config/**/*.mts", "scripts/**/*.mts", "vite.config.ts"]
 }

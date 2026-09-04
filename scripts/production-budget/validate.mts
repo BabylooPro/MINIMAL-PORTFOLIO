@@ -17,7 +17,7 @@ function booleanCheck({ id, section, label, current, expected, detail = null }) 
 }
 
 function getOutputIntegrityFailures(measurement, budget) {
-	const failures = [];
+	const failures: string[] = [];
 
 	if (!measurement.outputExists) {
 		failures.push("dist/ does not exist. Run a production build first.");
@@ -46,7 +46,7 @@ function getOutputIntegrityFailures(measurement, budget) {
 }
 
 export function validatePerformanceBudget(measurement, budget = performanceBudget) {
-	const checks = [];
+	const checks: Array<{ status: string }> = [];
 	const integrityFailures = getOutputIntegrityFailures(measurement, budget);
 	const rootPage = measurement.html.find((page) => page.relativePath === "index.html");
 	const nonRootPages = measurement.html.filter((page) => page.relativePath !== "index.html");

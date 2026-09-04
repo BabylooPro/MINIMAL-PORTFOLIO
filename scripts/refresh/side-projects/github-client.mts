@@ -19,7 +19,7 @@ function assertUsableResponse(response) {
 }
 
 export async function fetchRepositories({ githubUser, cache, fetchImpl, timeoutMs }) {
-	const headers = { Accept: "application/vnd.github+json", "User-Agent": "maxremy-portfolio-build" };
+	const headers: Record<string, string> = { Accept: "application/vnd.github+json", "User-Agent": "maxremy-portfolio-build" };
 
 	if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
 	if (cache) headers["If-None-Match"] = cache.etag;

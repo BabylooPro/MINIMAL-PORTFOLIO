@@ -31,9 +31,9 @@ export async function readSnapshot(filePath) {
 }
 
 export function buildSnapshot(repositoriesByGitHubUser, configuration) {
-	const repositoriesByUser = new Map(
+	const repositoriesByUser = new Map<string, Map<string, unknown>>(
 		repositoriesByGitHubUser.map(({ githubUser, repositories }) => {
-			const repositoryByName = new Map();
+			const repositoryByName = new Map<string, unknown>();
 
 			for (const repository of repositories) {
 				if (!isGitHubRepository(repository)) throw createPermanentError("GitHub returned an incompatible Side Projects response.");
@@ -41,7 +41,7 @@ export function buildSnapshot(repositoriesByGitHubUser, configuration) {
 				repositoryByName.set(repository.name, repository);
 			}
 
-			return [githubUser.toLowerCase(), repositoryByName];
+			return [githubUser.toLowerCase(), repositoryByName] as [string, Map<string, unknown>];
 		}),
 	);
 

@@ -106,7 +106,7 @@ function getHtmlLinkReferences(html) {
 
 function getHtmlMediaReferences(html) {
 	return ["img", "video", "source"].flatMap((tagName) => getElements(html, tagName).flatMap((element) => {
-		const references = [];
+		const references: Array<{ kind: string; url: string; isFont: boolean }> = [];
 		const src = getAttribute(element, "src");
 		if (src) references.push({ kind: tagName, url: src, isFont: false });
 
@@ -122,7 +122,7 @@ function getHtmlResourceReferences(html) {
 }
 
 export function getCssResourceReferences(source) {
-	const references = [];
+	const references: Array<{ kind: string; url: string; isFont: boolean }> = [];
 	const pattern = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^\s)]+))\s*\)/gi;
 
 	for (const match of source.matchAll(pattern)) {
@@ -134,7 +134,7 @@ export function getCssResourceReferences(source) {
 }
 
 export function getJavaScriptResourceReferences(source) {
-	const references = [];
+	const references: Array<{ kind: string; url: string; isFont: boolean }> = [];
 	const patterns = [
 		/\b(?:fetch|importScripts|Worker|EventSource|WebSocket)\s*\(\s*(['"])([^'"]+)\1/gi,
 		/\b(?:src|href)\s*=\s*(['"])([^'"]+)\1/gi,
@@ -149,7 +149,7 @@ export function getJavaScriptResourceReferences(source) {
 	return references;
 }
 
-export function classifyResourceReference(reference, siteOrigin, allowedOrigins = []) {
+export function classifyResourceReference(reference, siteOrigin, allowedOrigins: string[] = []) {
 	const { url } = reference;
 
 	if (url.startsWith("data:")) return { ...reference, scope: "data", isThirdParty: false };
