@@ -41,6 +41,22 @@ export async function readBudgetAtRevision(revision) {
 	return null;
 }
 
+function compareNumber(baselineValue, currentValue, keyPath, increases) {
+	if (typeof currentValue === "number" && currentValue > baselineValue) increases.push({ path: keyPath, baseline: baselineValue, current: currentValue });
+}
+
+function compareBoolean(baselineValue, currentValue, keyPath, increases) {
+	if (baselineValue === false && currentValue === true) increases.push({ path: keyPath, baseline: baselineValue, current: currentValue });
+}
+
+function compareArray(baselineValue, currentValue, keyPath, increases) {
+	if (!Array.isArray(currentValue)) return;
+
+	for (const entry of currentValue) {
+		if (!baselineValue.includes(entry)) increases.push({ path: keyPath, baseline: null, current: entry });
+	}
+}
+
 export function getBudgetIncreases(baselineBudget, currentBudget) {
 	const increases = [];
 
@@ -48,22 +64,17 @@ export function getBudgetIncreases(baselineBudget, currentBudget) {
 		if (exemptKeyPaths.has(keyPath)) return;
 
 		if (typeof baselineValue === "number") {
-			if (typeof currentValue === "number" && currentValue > baselineValue) increases.push({ path: keyPath, baseline: baselineValue, current: currentValue });
+			compareNumber(baselineValue, currentValue, keyPath, increases);
 			return;
 		}
 
 		if (typeof baselineValue === "boolean") {
-			if (baselineValue === false && currentValue === true) increases.push({ path: keyPath, baseline: baselineValue, current: currentValue });
+			compareBoolean(baselineValue, currentValue, keyPath, increases);
 			return;
 		}
 
 		if (Array.isArray(baselineValue)) {
-			if (!Array.isArray(currentValue)) return;
-
-			for (const entry of currentValue) {
-				if (!baselineValue.includes(entry)) increases.push({ path: keyPath, baseline: null, current: entry });
-			}
-
+			compareArray(baselineValue, currentValue, keyPath, increases);
 			return;
 		}
 
