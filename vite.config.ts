@@ -6,25 +6,25 @@ import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { type Alias, defineConfig, type Plugin } from "vite";
-import { aliasDefinitions } from "#config/aliases.mjs";
-import { mediaOrigin } from "#src/lib/media-origin.js";
-import { getIgnoredProjectFiles } from "./scripts/ignored-project-files.mjs";
+import { aliasDefinitions } from "#config/aliases.mts";
+import { mediaOrigin } from "#src/lib/media-origin.ts";
+import { getIgnoredProjectFiles } from "./scripts/ignored-project-files.mts";
 
 const aliases: Alias[] = aliasDefinitions.map(({ prefix, target }) => ({
 	find: prefix.slice(0, -1),
 	replacement: fileURLToPath(new URL(target, import.meta.url)),
 }));
 
-const themeBootstrapPath = fileURLToPath(new URL("./src/features/themes/theme-bootstrap.js", import.meta.url));
-const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-redirect.js", import.meta.url));
+const themeBootstrapPath = fileURLToPath(new URL("./src/features/themes/theme-bootstrap.ts", import.meta.url));
+const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-redirect.ts", import.meta.url));
 
 const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
 const gitExecutablePaths = ["/usr/bin/git", "/usr/local/bin/git", "/opt/homebrew/bin/git"];
+const gitExecutablePath = process.env.GIT_EXECUTABLE_PATH ?? (process.platform === "win32" ? "git" : gitExecutablePaths.find((candidate) => existsSync(candidate)));
 
 const packageVersion: string = JSON.parse(readFileSync(fileURLToPath(new URL("./package.json", import.meta.url)), "utf8")).version;
 
 function readBuildNumber(): string {
-	const gitExecutablePath = gitExecutablePaths.find((candidate) => existsSync(candidate));
 	if (!gitExecutablePath) return "0";
 
 	try {
@@ -46,6 +46,10 @@ const contentSecurityPolicyMarker = "<!--content-security-policy-->";
 
 function escapeRegularExpression(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
+function normalizeFilePath(filePath: string): string {
+	return filePath.replaceAll("\\", "/");
 }
 
 type InlineScriptDefinition = {
@@ -174,8 +178,8 @@ function injectSiteController(): Plugin {
 			handler(html, context) {
 				if (!isClientProductionBuild) return html;
 
-				const controller = Object.values(context.bundle ?? {}).find((output) => output.type === "chunk" && output.facadeModuleId === siteControllerPath);
-				const reactEntry = Object.values(context.bundle ?? {}).find((output) => output.type === "chunk" && output.facadeModuleId === indexHtmlPath);
+				const controller = Object.values(context.bundle ?? {}).find((output) => output.type === "chunk" && output.facadeModuleId && normalizeFilePath(output.facadeModuleId) === normalizeFilePath(siteControllerPath));
+				const reactEntry = Object.values(context.bundle ?? {}).find((output) => output.type === "chunk" && output.facadeModuleId && normalizeFilePath(output.facadeModuleId) === normalizeFilePath(indexHtmlPath));
 
 				if (controller?.type !== "chunk") throw new Error("The site controller entry was not generated.");
 				if (reactEntry?.type !== "chunk") throw new Error("The React development entry was not generated.");

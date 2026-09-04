@@ -1,8 +1,8 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
-import { readJsonFile } from "@/scripts/refresh/side-projects/snapshot.mjs";
-import { createGeneratedSideProject, isGitHubRepository } from "@/scripts/refresh/side-projects/validation.mjs";
+import { readJsonFile } from "@/scripts/refresh/side-projects/snapshot.mts";
+import { createGeneratedSideProject, isGitHubRepository } from "@/scripts/refresh/side-projects/validation.mts";
 
 async function readOptionalText(filePath) {
 	try {

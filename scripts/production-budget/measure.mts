@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 
-import { performanceBudget } from "@/config/performance-budget.mjs";
+import { performanceBudget } from "@/config/performance-budget.mts";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 
@@ -196,11 +196,11 @@ export async function measureProductionOutput({
 	const resolvedOutputDirectory = path.resolve(outputDirectory);
 	const outputExists = await pathExists(resolvedOutputDirectory);
 	const files = await listFiles(resolvedOutputDirectory);
-	const relativeFiles = files.map((filePath) => path.relative(resolvedOutputDirectory, filePath));
+	const relativeFiles = files.map((filePath) => path.relative(resolvedOutputDirectory, filePath).replaceAll(path.sep, "/"));
 	const javascriptFiles = files.filter((filePath) => filePath.endsWith(".js"));
 	const cssFiles = files.filter((filePath) => filePath.endsWith(".css"));
 	const htmlPaths = files.filter((filePath) => filePath.endsWith(".html")).sort();
-	const previewPaths = files.filter((filePath) => /\/videos\/timelapse\/previews\/[^/]+\.avif$/u.test(filePath)).sort();
+	const previewPaths = files.filter((filePath) => path.relative(resolvedOutputDirectory, filePath).replaceAll("\\", "/").startsWith("videos/timelapse/previews/") && filePath.endsWith(".avif")).sort();
 	const socialImagePath = path.join(resolvedOutputDirectory, "og-image.jpg");
 
 	const [javascript, css, previews, html] = await Promise.all([
@@ -209,7 +209,7 @@ export async function measureProductionOutput({
 		Promise.all(previewPaths.map(measureFile)),
 		Promise.all(htmlPaths.map(async (filePath) => {
 			const source = await readFile(filePath, "utf8");
-			const relativePath = path.relative(resolvedOutputDirectory, filePath);
+			const relativePath = path.relative(resolvedOutputDirectory, filePath).replaceAll(path.sep, "/");
 			const themeBootstrap = extractInlineScript(source, "data-theme-bootstrap");
 			const localeRedirect = extractInlineScript(source, "data-locale-redirect");
 

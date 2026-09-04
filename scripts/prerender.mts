@@ -2,17 +2,17 @@ import { mkdir, readFile, rm, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { rootUrl } from "@/config/site.mjs";
+import { rootUrl } from "@/config/site.mts";
 
-import { escapeHtml } from "@/scripts/prerender/html.mjs";
-import { getSiteControllerScript } from "@/scripts/prerender/page-validation.mjs";
+import { escapeHtml } from "@/scripts/prerender/html.mts";
+import { getSiteControllerScript } from "@/scripts/prerender/page-validation.mts";
 import { getAlternateLinks, getLanguageSwitcherLinks, renderAlternateLinks,
 	renderMetadata, renderSitemap, routeOutputPath
-} from "@/scripts/prerender/seo.mjs";
+} from "@/scripts/prerender/seo.mts";
 import { getLocaleRedirectScript, getReactEntryScript, listFiles, readSiteControllerAssets,
 	removeLocaleRedirect, removeReactAndUnusedModules, removeUnusedJavaScriptFiles,
 	validatePublicAssets, validateStaticOutput
-} from "@/scripts/prerender/validation.mjs";
+} from "@/scripts/prerender/validation.mts";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectDirectory = path.resolve(scriptDirectory, "..");
@@ -70,7 +70,7 @@ const serverModuleUrl = pathToFileURL(serverEntryPath);
 const { renderPage } = await import(serverModuleUrl.href);
 if (typeof renderPage !== "function") throw new TypeError('The static entry must export a "renderPage" function.');
 
-let templateHtml;
+let templateHtml: string;
 try {
 	templateHtml = await readFile(indexPath, "utf8");
 } catch {
@@ -88,7 +88,7 @@ getLocaleRedirectScript(templateHtml);
 
 await validatePublicAssets({ projectDirectory, publicDirectory });
 
-let manifest;
+let manifest: Record<string, unknown>;
 try {
 	manifest = JSON.parse(await readFile(manifestPath, "utf8"));
 } catch {
@@ -130,7 +130,7 @@ await writeFile(sitemapPath, sitemap, "utf8");
 const contentSecurityPolicy = templateHtml.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/u)?.[1];
 if (!contentSecurityPolicy) throw new Error("The built template does not declare a Content-Security-Policy meta tag.");
 
-const cloudflareHeaders = await readFile(cloudflareHeadersPath, "utf8");
+const cloudflareHeaders = (await readFile(cloudflareHeadersPath, "utf8")).replaceAll("\r\n", "\n");
 const frameAncestorsDirective = "  Content-Security-Policy: frame-ancestors 'none'\n";
 if (!cloudflareHeaders.includes(frameAncestorsDirective)) throw new Error("The Cloudflare Pages _headers file no longer declares the frame-ancestors policy to extend.");
 

@@ -1,11 +1,11 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
-import { createPermanentError } from "@/scripts/refresh/side-projects/errors.mjs";
-import { createGeneratedSideProject, isGitHubRepository, validateConfiguration, validateSnapshot } from "@/scripts/refresh/side-projects/validation.mjs";
+import { createPermanentError } from "@/scripts/refresh/side-projects/errors.mts";
+import { createGeneratedSideProject, isGitHubRepository, validateConfiguration, validateSnapshot } from "@/scripts/refresh/side-projects/validation.mts";
 
 export async function readJsonFile(filePath, label, required) {
-	let serialized;
+	let serialized: string;
 
 	try {
 		serialized = await fs.readFile(filePath, "utf8");
@@ -68,4 +68,4 @@ export async function writeSnapshot(outputPath, snapshot) {
 	await fs.rename(temporaryPath, outputPath);
 }
 
-export { slugForSelection } from "@/scripts/refresh/side-projects/validation.mjs";
+export { slugForSelection } from "@/scripts/refresh/side-projects/validation.mts";

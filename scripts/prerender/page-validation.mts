@@ -1,8 +1,8 @@
-import { rootUrl } from "@/config/site.mjs";
+import { rootUrl } from "@/config/site.mts";
 import { escapeHtml, getAnchorElements, getAttribute, getLinkElements,
 	getMetaElements, getMetaHttpEquivElements, getMetaPropertyElements,
 	getScriptElements, hasAttribute, isJsonLdScript, isModuleScript
-} from "@/scripts/prerender/html.mjs";
+} from "@/scripts/prerender/html.mts";
 
 export function getSiteControllerScript(html) {
 	const controllerScripts = getScriptElements(html).filter((scriptElement) => hasAttribute(scriptElement, "data-site-controller"));
@@ -149,7 +149,7 @@ function validateDocumentMetadata({ indexHtml, page, route, siteName }) {
 }
 
 function validateSocialImageUrl(page, route) {
-	let socialImageUrl;
+	let socialImageUrl: URL;
 
 	try {
 		socialImageUrl = new URL(page.socialImage.url);

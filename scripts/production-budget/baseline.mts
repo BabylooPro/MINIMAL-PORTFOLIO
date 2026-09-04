@@ -1,14 +1,14 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
 
-import { projectDirectory } from "@/scripts/production-budget/measure.mjs";
+import { projectDirectory } from "@/scripts/production-budget/measure.mts";
 
 const gitExecutablePaths = ["/usr/bin/git", "/usr/local/bin/git", "/opt/homebrew/bin/git"];
-const budgetFilePath = "config/performance-budget.mjs";
+const gitExecutablePath = process.env.GIT_EXECUTABLE_PATH ?? (process.platform === "win32" ? "git" : gitExecutablePaths.find((candidate) => existsSync(candidate)));
+const budgetFilePaths = ["config/performance-budget.mts", "config/performance-budget.mjs"];
 const exemptKeyPaths = new Set(["html.expectedOutputPaths"]);
 
 function runGit(gitArguments) {
-	const gitExecutablePath = gitExecutablePaths.find((candidate) => existsSync(candidate));
 	if (!gitExecutablePath) throw new Error("Unable to locate git to read the committed performance budget.");
 
 	return execFileSync(gitExecutablePath, gitArguments, { cwd: projectDirectory, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] });
@@ -30,16 +30,15 @@ export function resolveBaselineRevisions() {
 }
 
 export async function readBudgetAtRevision(revision) {
-	let source;
-
-	try {
-		source = runGit(["show", `${revision}:${budgetFilePath}`]);
-	} catch {
-		return null;
+	for (const budgetFilePath of budgetFilePaths) {
+		try {
+			const source = runGit(["show", `${revision}:${budgetFilePath}`]);
+			const { performanceBudget } = await import(`data:text/javascript;base64,${Buffer.from(source, "utf8").toString("base64")}`);
+			return performanceBudget ?? null;
+		} catch {}
 	}
 
-	const { performanceBudget } = await import(`data:text/javascript;base64,${Buffer.from(source, "utf8").toString("base64")}`);
-	return performanceBudget ?? null;
+	return null;
 }
 
 export function getBudgetIncreases(baselineBudget, currentBudget) {

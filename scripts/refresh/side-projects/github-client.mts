@@ -1,4 +1,4 @@
-import { createPermanentError, createTemporaryError, SideProjectsError } from "@/scripts/refresh/side-projects/errors.mjs";
+import { createPermanentError, createTemporaryError, SideProjectsError } from "@/scripts/refresh/side-projects/errors.mts";
 
 function isTemporaryStatus(response) {
 	return (
@@ -40,7 +40,7 @@ export async function fetchRepositories({ githubUser, cache, fetchImpl, timeoutM
 
 		assertUsableResponse(response);
 
-		let repositories;
+		let repositories: unknown;
 		try {
 			repositories = await response.json();
 		} catch (error) {

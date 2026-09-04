@@ -9,7 +9,7 @@
 	},
 	"packageManager": "pnpm@11.13.1",
 	"scripts": {
-		"dev": "node scripts/dev.mjs",
+		"dev": "node --experimental-strip-types scripts/dev.mts",
 		"dev:vite": "vite",
 		"typecheck:watch": "tsc -b --pretty false --watch --preserveWatchOutput",
 		"preview": "vite preview",
@@ -17,20 +17,20 @@
 		"build:static": "tsc -b && pnpm build:client && pnpm build:server && pnpm prerender",
 		"build:client": "vite build",
 		"build:server": "vite build --ssr app/server/entry.tsx --outDir dist/server",
-		"prerender": "node --import ./scripts/register-aliases.mjs scripts/prerender.mjs",
-		"refresh": "node --import ./scripts/register-aliases.mjs scripts/refresh.mjs",
-		"test": "node --import ./scripts/register-aliases.mjs --experimental-strip-types --test",
+		"prerender": "node --experimental-strip-types --import ./scripts/register-aliases.mts scripts/prerender.mts",
+		"refresh": "node --experimental-strip-types --import ./scripts/register-aliases.mts scripts/refresh.mts",
+		"test": "node --import ./scripts/register-aliases.mts --experimental-strip-types --test",
 		"test:browser": "playwright test",
 		"check": "biome check .",
 		"check:write": "biome check --write .",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"typecheck": "tsc -b --pretty false",
-		"check:production-budget": "node --import ./scripts/register-aliases.mjs scripts/production-budget.mjs",
-		"report:production-budget": "pnpm build && node --import ./scripts/register-aliases.mjs scripts/production-budget.mjs --write-report",
+		"check:production-budget": "node --experimental-strip-types --import ./scripts/register-aliases.mts scripts/production-budget.mts",
+		"report:production-budget": "pnpm build && node --experimental-strip-types --import ./scripts/register-aliases.mts scripts/production-budget.mts --write-report",
 		"validate": "pnpm typecheck && pnpm check && pnpm test && pnpm build",
 		"verify:production": "pnpm validate && pnpm test:browser && pnpm check:production-budget",
-		"verify:cloudflare": "node --import ./scripts/register-aliases.mjs scripts/verify-cloudflare-deployment.mjs"
+		"verify:cloudflare": "node --experimental-strip-types --import ./scripts/register-aliases.mts scripts/verify-cloudflare-deployment.mts"
 	},
 	"dependencies": {
 		"react": "^19.2.7",
@@ -45,7 +45,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^6.0.3",
 		"tailwindcss": "^4.3.3",
-		"typescript": "~6.0.2",
+		"typescript": "~7.0.2",
 		"vite": "^8.1.1"
 	}
 }

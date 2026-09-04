@@ -1,9 +1,9 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { performanceBudget } from "@/config/performance-budget.mjs";
-import { rootUrl } from "@/config/site.mjs";
-import { defaultOutputDirectory } from "@/scripts/production-budget/measure.mjs";
+import { performanceBudget } from "@/config/performance-budget.mts";
+import { rootUrl } from "@/config/site.mts";
+import { defaultOutputDirectory } from "@/scripts/production-budget/measure.mts";
 
 const [siteArgument, ...extraArguments] = process.argv.slice(2);
 if (!siteArgument || extraArguments.length > 0) throw new Error(`Usage: pnpm verify:cloudflare <${rootUrl}>`);

@@ -8,7 +8,7 @@ const refreshDirectory = path.join(path.dirname(scriptPath), "refresh");
 
 try {
 	const taskPaths = (await readdir(refreshDirectory, { withFileTypes: true }))
-		.filter((entry) => entry.isFile() && entry.name.endsWith(".mjs"))
+		.filter((entry) => entry.isFile() && entry.name.endsWith(".mts"))
 		.map((entry) => path.join(refreshDirectory, entry.name))
 		.sort();
 
