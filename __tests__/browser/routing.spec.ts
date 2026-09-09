@@ -134,7 +134,7 @@ test("keeps localized legal links and language switching on every locale", async
 
 		await expect(page.locator("html")).toHaveAttribute("lang", localeConfigs[locale].htmlLang);
 		await expect(page.locator(`[data-page-footer] a[href="${getLegalPagePath(locale, "legal")}"]`)).toBeVisible();
-		await expect(page.locator('a[href^="mailto:"]')).toBeVisible();
+		await expect(page.locator('main a[href^="mailto:"]')).toBeVisible();
 
 		for (const targetLocale of locales) {
 			await expect(page.locator(`a[hreflang="${localeConfigs[targetLocale].htmlLang}"]`)).toHaveAttribute("href", getLegalPagePath(targetLocale, "privacy"));
@@ -148,6 +148,6 @@ test("keeps localized legal links and language switching on every locale", async
 
 		await page.goto(getLegalPagePath(locale, "legal"));
 		await expect(page.locator(`[data-page-footer] a[href="${getLegalPagePath(locale, "privacy")}"]`)).toBeVisible();
-		await expect(page.locator('a[href^="mailto:"]')).toBeVisible();
+		await expect(page.locator('main a[href^="mailto:"]')).toBeVisible();
 	}
 });

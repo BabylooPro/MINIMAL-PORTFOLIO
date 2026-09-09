@@ -12,7 +12,7 @@ import { getAlternateLinks, getLanguageSwitcherLinks, renderAlternateLinks,
 	renderMetadata, renderSitemap
 } from "@/scripts/prerender/seo.mts";
 import { getLocaleRedirectScript, getReactEntryScript, readSiteControllerAssets,
-	removeLocaleRedirect, removeReactAndUnusedModules, removeUnusedJavaScriptFiles,
+	removeFinderMetadata, removeLocaleRedirect, removeReactAndUnusedModules, removeUnusedJavaScriptFiles,
 	validatePublicAssets, validateStaticOutput
 } from "@/scripts/prerender/validation.mts";
 import { localeConfigs } from "@/src/lib/i18n/config.ts";
@@ -123,6 +123,7 @@ await writeFile(
 await rm(serverDirectory, { recursive: true, force: true });
 await rm(manifestDirectory, { recursive: true, force: true });
 await removeUnusedJavaScriptFiles({ distDirectory, allowedFiles: siteControllerAssets });
+await removeFinderMetadata(distDirectory);
 
 const externalVideoFiles = (await listFiles(path.join(distDirectory, "videos", "timelapse"))).filter((filePath) => filePath.endsWith(".mp4"));
 await Promise.all(externalVideoFiles.map((filePath) => unlink(filePath)));

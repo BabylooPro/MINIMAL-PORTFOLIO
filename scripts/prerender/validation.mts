@@ -6,7 +6,13 @@ import { getIgnoredProjectFiles } from "@/scripts/ignored-project-files.mts";
 import { getAttribute, getJpegDimensions, getScriptElements, hasAttribute, isModuleScript } from "@/scripts/prerender/html.mts";
 import { validatePageHtml } from "@/scripts/prerender/page-validation.mts";
 
+export async function removeFinderMetadata(directory: string): Promise<void> {
+	const files = await listFiles(directory);
+	await Promise.all(files.filter((filePath) => path.basename(filePath) === ".DS_Store").map((filePath) => unlink(filePath)));
+}
+
 export async function validatePublicAssets({ projectDirectory, publicDirectory }) {
+	await removeFinderMetadata(publicDirectory);
 	const publicFiles = await listFiles(publicDirectory);
 	const ignoredFiles = await getIgnoredProjectFiles(projectDirectory, publicFiles);
 	if (ignoredFiles.length === 0) return;
