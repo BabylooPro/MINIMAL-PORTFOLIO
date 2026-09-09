@@ -1,4 +1,5 @@
-import { ContactEmail, LegalExternalLink, LegalSection } from "@/src/features/legal/LegalContent";
+import { ExternalLink } from "@/src/components/ui/ExternalLink";
+import { ContactEmail, LegalSection } from "@/src/features/legal/LegalContent";
 import type { Messages } from "@/src/lib/i18n/messages/types";
 
 const privacyPolicyUrls = {
@@ -21,9 +22,9 @@ export function PrivacySection({ content, email }: Readonly<PrivacySectionProps>
 			<LegalSection description={content.cvDownloadDescription} id="privacy-cv-download-title" title={content.cvDownloadTitle} />
 
 			<LegalSection description={content.hostingDescription} id="privacy-hosting-title" title={content.hostingTitle}>
-				<LegalExternalLink className="mt-1 inline-flex underline underline-offset-2" href={privacyPolicyUrls.cloudflare}>
+				<ExternalLink className="mt-1 inline-flex underline underline-offset-2" href={privacyPolicyUrls.cloudflare}>
 					{content.hostingPrivacyPolicyLabel}
-				</LegalExternalLink>
+				</ExternalLink>
 			</LegalSection>
 
 			<LegalSection description={content.externalLinksDescription} id="privacy-external-links-title" title={content.externalLinksTitle} />
@@ -31,9 +32,9 @@ export function PrivacySection({ content, email }: Readonly<PrivacySectionProps>
 			<LegalSection description={content.contactDescription} id="privacy-contact-title" title={content.contactTitle}>
 				<ContactEmail email={email} />
 
-				<LegalExternalLink className="mt-1 block w-fit underline underline-offset-2" href={privacyPolicyUrls.google}>
+				<ExternalLink className="mt-1 block w-fit underline underline-offset-2" href={privacyPolicyUrls.google}>
 					{content.emailProviderPrivacyPolicyLabel}
-				</LegalExternalLink>
+				</ExternalLink>
 			</LegalSection>
 
 			<LegalSection description={content.rightsDescription} id="privacy-rights-title" title={content.rightsTitle} />

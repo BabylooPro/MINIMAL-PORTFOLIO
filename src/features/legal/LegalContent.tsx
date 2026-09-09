@@ -30,17 +30,3 @@ export function ContactEmail({ email }: Readonly<{ email: string | null }>) {
 		</a>
 	) : null;
 }
-
-type LegalExternalLinkProps = {
-	children: ReactNode;
-	className: string;
-	href: string;
-};
-
-export function LegalExternalLink({ children, className, href }: Readonly<LegalExternalLinkProps>) {
-	return (
-		<a className={className} href={href} rel="noopener noreferrer" target="_blank">
-			{children} <span aria-hidden="true">&nbsp;↗</span>
-		</a>
-	);
-}

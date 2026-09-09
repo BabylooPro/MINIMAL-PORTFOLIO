@@ -1,4 +1,5 @@
-import { ContactEmail, LegalExternalLink, LegalSection } from "@/src/features/legal/LegalContent";
+import { ExternalLink } from "@/src/components/ui/ExternalLink";
+import { ContactEmail, LegalSection } from "@/src/features/legal/LegalContent";
 import type { Messages } from "@/src/lib/i18n/messages/types";
 
 const legalNoticeUrls = {
@@ -46,9 +47,9 @@ export function LegalNoticeSection({ content, email }: Readonly<LegalNoticeSecti
 			<LegalSection description={content.responsibilityDescription} id="legal-responsibility-title" title={content.responsibilityTitle} />
 
 			<LegalSection description={content.intellectualPropertyDescription} id="legal-intellectual-property-title" title={content.intellectualPropertyTitle}>
-				<LegalExternalLink className="mt-1 inline-flex underline underline-offset-2" href={legalNoticeUrls.sourceRepositoryLicense}>
+				<ExternalLink className="mt-1 inline-flex underline underline-offset-2" href={legalNoticeUrls.sourceRepositoryLicense}>
 					{content.sourceCodeLicenseLabel}
-				</LegalExternalLink>
+				</ExternalLink>
 			</LegalSection>
 
 			<LegalSection description={content.externalLinksDescription} id="legal-external-links-title" title={content.externalLinksTitle} />
@@ -65,7 +66,7 @@ function LegalInformationItem({ href, label, value }: Readonly<{ href?: string; 
 
 			<dd>
 				{href ? (
-					<LegalExternalLink className="underline underline-offset-2" href={href}>{value} </LegalExternalLink>
+					<ExternalLink className="underline underline-offset-2" href={href}>{value}</ExternalLink>
 				) : (
 					value
 				)}

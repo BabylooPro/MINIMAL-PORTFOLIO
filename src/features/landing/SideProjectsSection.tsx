@@ -1,3 +1,4 @@
+import { ExternalLink } from "@/src/components/ui/ExternalLink";
 import { Section, SectionHeading } from "@/src/components/ui/Section";
 import sideProjects from "@/src/features/landing/generated/side-projects.json";
 
@@ -11,16 +12,6 @@ import type { GeneratedSideProject } from "@/src/types/side-projects";
 type SideProjectsSectionProps = { locale: Locale; content: Messages["sideProjects"]; title: Messages["sections"]["sideProjects"] };
 
 const generatedProjects: readonly GeneratedSideProject[] = sideProjects;
-
-type ProjectExternalLinkProps = { href: string; label: string };
-
-function ProjectExternalLink({ href, label }: Readonly<ProjectExternalLinkProps>) {
-	return (
-		<a className="hover:underline focus-visible:underline" href={href} rel="noopener noreferrer" target="_blank">
-			{label} <span aria-hidden="true"> ↗</span>
-		</a>
-	);
-}
 
 export function SideProjectsSection({ content, locale, title }: Readonly<SideProjectsSectionProps>) {
 	if (generatedProjects.length === 0) return null;
@@ -73,14 +64,18 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 								</p>
 
 								<p className="mt-3 pb-5 text-sm font-medium text-(--foreground-color)">
-									<ProjectExternalLink href={project.repositoryUrl} label={content.repositoryLabel} />
+									<ExternalLink className="hover:underline focus-visible:underline" href={project.repositoryUrl}>
+										{content.repositoryLabel}
+									</ExternalLink>
 
 									{project.homepageUrl ? (<>
 										<span aria-hidden="true" className="text-(--muted-color)">
 											{" • "}
 										</span>
 
-										<ProjectExternalLink href={project.homepageUrl} label={content.liveDemoLabel} />
+										<ExternalLink className="hover:underline focus-visible:underline" href={project.homepageUrl}>
+											{content.liveDemoLabel}
+										</ExternalLink>
 									</>) : null}
 								</p>
 							</article>
