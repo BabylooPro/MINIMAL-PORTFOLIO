@@ -4,6 +4,13 @@ import path from "node:path";
 import { performanceBudget } from "@/config/performance-budget.mts";
 import { rootUrl } from "@/config/site.mts";
 import { defaultOutputDirectory } from "@/scripts/production-budget/measure.mts";
+import { defaultLocale, locales } from "@/src/lib/i18n/config.ts";
+
+type DictionaryProvider = {
+	getDictionary: (locale: (typeof locales)[number]) => { messages: { notFound: { title: string } } };
+};
+
+const { getDictionary } = await import(new URL("../src/lib/i18n/dictionaries.ts", import.meta.url).href) as DictionaryProvider;
 
 const [siteArgument, ...extraArguments] = process.argv.slice(2);
 if (!siteArgument || extraArguments.length > 0) throw new Error(`Usage: pnpm verify:cloudflare <${rootUrl}>`);
@@ -84,7 +91,13 @@ if (mediaUrl.protocol !== "https:" || mediaUrl.origin === siteUrl.origin) throw 
 const mediaResponse = await fetch(mediaUrl, { headers: { Range: "bytes=0-1" }, redirect: "manual" });
 if (mediaResponse.status !== 206 || !mediaResponse.headers.get("content-range")) throw new Error(`Expected a byte-range response from ${mediaUrl}. Received: ${mediaResponse.status}.`);
 
-await requireLocalizedNotFound("/missing-cloudflare-check", "Page not found");
-await requireLocalizedNotFound("/fr/missing-cloudflare-check", "Page introuvable");
+const localizedNotFoundChecks = [
+	{ locale: defaultLocale, pathname: "/missing-cloudflare-check" },
+	...locales.map((locale) => ({ locale, pathname: `/${locale}/missing-cloudflare-check` })),
+];
+
+for (const { locale, pathname } of localizedNotFoundChecks) {
+	await requireLocalizedNotFound(pathname, getDictionary(locale).messages.notFound.title);
+}
 
 console.log(`Cloudflare deployment verified: ${siteUrl.origin}`);

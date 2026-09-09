@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { revealBelowStickyHeader } from "./helpers";
+import { expectOverlayStack, revealBelowStickyHeader } from "./helpers";
 
 test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
 	await page.setViewportSize({ width: 390, height: 350 });
@@ -146,15 +146,7 @@ test("keeps the desktop Proof Work popover hoverable below the sticky header", a
 	await expect(trigger).toHaveAttribute("aria-expanded", "true");
 	await expect(popover.getByRole("button", { name: "Close" })).toBeHidden();
 
-	expect(
-		await page.evaluate(() => {
-			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
-			const panel = document.querySelector<HTMLElement>("#proof-work");
-			if (!header || !panel) throw new Error("The header and Proof Work popover must be rendered.");
-
-			return { header: getComputedStyle(header).zIndex, panel: getComputedStyle(panel).zIndex };
-		}),
-	).toEqual({ header: "40", panel: "30" });
+	await expectOverlayStack(page, "#proof-work");
 });
 
 test("keeps the touch Proof Work popover inside the content column", async ({ browser }) => {

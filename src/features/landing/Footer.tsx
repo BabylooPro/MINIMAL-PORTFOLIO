@@ -2,7 +2,7 @@ import { ArrowUpIcon } from "@/src/components/icons/ArrowUpIcon";
 import { Container } from "@/src/components/ui/Container";
 import { Tooltip } from "@/src/components/ui/Tooltip";
 import { ThemeSwitcher } from "@/src/features/themes/ThemeSwitcher";
-import { getLegalPagePath, type LegalPageId, type Locale } from "@/src/lib/i18n/config";
+import { getLegalPagePath, type LegalPageId, type Locale, legalPageIds } from "@/src/lib/i18n/config";
 
 import type { Messages } from "@/src/lib/i18n/messages/types";
 
@@ -16,8 +16,11 @@ type FooterProps = {
 
 export function Footer({ company, currentLocale, currentPage, footer, theme }: Readonly<FooterProps>) {
 	const year = new Date().getFullYear();
+
 	const version: string = import.meta.env.VITE_APP_VERSION;
 	const build: string = import.meta.env.VITE_APP_BUILD;
+
+	const legalLinks = legalPageIds.map((page) => ({ page, label: footer[page] }));
 
 	return (
 		<footer className="group/footer fixed inset-x-0 bottom-0 z-40 bg-(--background-color) pb-[env(safe-area-inset-bottom)] text-sm text-(--muted-color)" data-page-footer>
@@ -45,25 +48,17 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: R
 
 						<nav aria-label={footer.navigationLabel}>
 							<ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-								<li>
-									<a
-										aria-current={currentPage === "privacy" ? "page" : undefined}
-										className="not-aria-[current=page]:hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)"
-										href={getLegalPagePath(currentLocale, "privacy")}
-									>
-										{footer.privacy}
-									</a>
-								</li>
-
-								<li>
-									<a
-										aria-current={currentPage === "legal" ? "page" : undefined}
-										className="not-aria-[current=page]:hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)"
-										href={getLegalPagePath(currentLocale, "legal")}
-									>
-										{footer.legal}
-									</a>
-								</li>
+								{legalLinks.map(({ label, page }) => (
+									<li key={page}>
+										<a
+											aria-current={currentPage === page ? "page" : undefined}
+											className="not-aria-[current=page]:hover:text-(--foreground-color) aria-[current=page]:text-(--body-color)"
+											href={getLegalPagePath(currentLocale, page)}
+										>
+											{label}
+										</a>
+									</li>
+								))}
 							</ul>
 						</nav>
 					</div>

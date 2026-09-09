@@ -1,4 +1,4 @@
-import { Section, SectionHeading } from "@/src/components/ui/Section";
+import { ContactEmail, LegalExternalLink, LegalSection } from "@/src/features/legal/LegalContent";
 import type { Messages } from "@/src/lib/i18n/messages/types";
 
 const privacyPolicyUrls = {
@@ -16,76 +16,29 @@ export function PrivacySection({ content, email }: Readonly<PrivacySectionProps>
 		<>
 			<p className="leading-6">{content.intro}</p>
 
-			<Section labelledBy="privacy-theme-title">
-				<SectionHeading id="privacy-theme-title">{content.themeTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.themeDescription}</p>
-			</Section>
+			<LegalSection description={content.themeDescription} id="privacy-theme-title" title={content.themeTitle} />
+			<LegalSection description={content.languageDescription} id="privacy-language-title" title={content.languageTitle} />
+			<LegalSection description={content.cvDownloadDescription} id="privacy-cv-download-title" title={content.cvDownloadTitle} />
 
-			<Section labelledBy="privacy-language-title">
-				<SectionHeading id="privacy-language-title">{content.languageTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.languageDescription}</p>
-			</Section>
-
-			<Section labelledBy="privacy-cv-download-title">
-				<SectionHeading id="privacy-cv-download-title">{content.cvDownloadTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.cvDownloadDescription}</p>
-			</Section>
-
-			<Section labelledBy="privacy-hosting-title">
-				<SectionHeading id="privacy-hosting-title">{content.hostingTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.hostingDescription}</p>
-
-				<a
-					className="mt-1 inline-flex underline underline-offset-2"
-					href={privacyPolicyUrls.cloudflare}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
+			<LegalSection description={content.hostingDescription} id="privacy-hosting-title" title={content.hostingTitle}>
+				<LegalExternalLink className="mt-1 inline-flex underline underline-offset-2" href={privacyPolicyUrls.cloudflare}>
 					{content.hostingPrivacyPolicyLabel}
-					<span aria-hidden="true">&nbsp;↗</span>
-				</a>
-			</Section>
+				</LegalExternalLink>
+			</LegalSection>
 
-			<Section labelledBy="privacy-external-links-title">
-				<SectionHeading id="privacy-external-links-title">{content.externalLinksTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.externalLinksDescription}</p>
-			</Section>
+			<LegalSection description={content.externalLinksDescription} id="privacy-external-links-title" title={content.externalLinksTitle} />
 
-			<Section labelledBy="privacy-contact-title">
-				<SectionHeading id="privacy-contact-title">{content.contactTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.contactDescription}</p>
+			<LegalSection description={content.contactDescription} id="privacy-contact-title" title={content.contactTitle}>
+				<ContactEmail email={email} />
 
-				{email ? (
-					<a className="mt-1 inline-flex underline underline-offset-2" href={`mailto:${email}`}>
-						{email}
-					</a>
-				) : null}
-
-				<a
-					className="mt-1 block w-fit underline underline-offset-2"
-					href={privacyPolicyUrls.google}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
+				<LegalExternalLink className="mt-1 block w-fit underline underline-offset-2" href={privacyPolicyUrls.google}>
 					{content.emailProviderPrivacyPolicyLabel}
-					<span aria-hidden="true">&nbsp;↗</span>
-				</a>
-			</Section>
+				</LegalExternalLink>
+			</LegalSection>
 
-			<Section labelledBy="privacy-rights-title">
-				<SectionHeading id="privacy-rights-title">{content.rightsTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.rightsDescription}</p>
-			</Section>
-
-			<Section labelledBy="privacy-retention-title">
-				<SectionHeading id="privacy-retention-title">{content.retentionTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.retentionDescription}</p>
-			</Section>
-
-			<Section labelledBy="privacy-updates-title">
-				<SectionHeading id="privacy-updates-title">{content.updatesTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.updatesDescription}</p>
-			</Section>
+			<LegalSection description={content.rightsDescription} id="privacy-rights-title" title={content.rightsTitle} />
+			<LegalSection description={content.retentionDescription} id="privacy-retention-title" title={content.retentionTitle} />
+			<LegalSection description={content.updatesDescription} id="privacy-updates-title" title={content.updatesTitle} />
 		</>
 	);
 }

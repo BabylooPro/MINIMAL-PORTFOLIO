@@ -28,6 +28,18 @@ export async function revealBelowStickyHeader(target: Locator): Promise<void> {
 		.toBe(true);
 }
 
+export async function expectOverlayStack(page: Page, panelSelector: string): Promise<void> {
+	expect(
+		await page.evaluate((selector) => {
+			const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
+			const panel = document.querySelector<HTMLElement>(selector);
+			if (!header || !panel) throw new Error("The header and overlay panel must be rendered.");
+
+			return { header: getComputedStyle(header).zIndex, panel: getComputedStyle(panel).zIndex };
+		}, panelSelector),
+	).toEqual({ header: "40", panel: "30" });
+}
+
 export async function scrollProofWorkPlayerOutOfView(page: Page): Promise<void> {
 	await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
 	await page.waitForTimeout(600);

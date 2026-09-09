@@ -1,19 +1,10 @@
-import { readdir, readFile, stat, unlink } from "node:fs/promises";
+import { readFile, stat, unlink } from "node:fs/promises";
 import path from "node:path";
 
+import { listFiles } from "@/scripts/files.mts";
 import { getIgnoredProjectFiles } from "@/scripts/ignored-project-files.mts";
 import { getAttribute, getJpegDimensions, getScriptElements, hasAttribute, isModuleScript } from "@/scripts/prerender/html.mts";
 import { validatePageHtml } from "@/scripts/prerender/page-validation.mts";
-
-export async function listFiles(directory) {
-	const entries = await readdir(directory, { withFileTypes: true });
-	const files = await Promise.all(entries.map(async (entry) => {
-		const entryPath = path.join(directory, entry.name);
-		if (entry.isDirectory()) return listFiles(entryPath);
-		return [entryPath];
-	}));
-	return files.flat();
-}
 
 export async function validatePublicAssets({ projectDirectory, publicDirectory }) {
 	const publicFiles = await listFiles(publicDirectory);

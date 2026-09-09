@@ -57,6 +57,10 @@ export function hasAttribute(element, attribute) {
 	return new RegExp(String.raw`\b${escapeRegularExpression(attribute)}\b`, "i").test(element);
 }
 
+export function getElements(html, tagName) {
+	return html.match(new RegExp(String.raw`<${tagName}\b[^>]*>`, "gi")) ?? [];
+}
+
 export function getScriptElements(html) {
 	return html.match(/<script\b[\s\S]*?<\/script>/gi) ?? [];
 }

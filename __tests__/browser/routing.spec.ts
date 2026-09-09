@@ -1,37 +1,33 @@
 import { expect, test } from "@playwright/test";
-import { localeConfigs } from "@/src/lib/i18n/config";
+import { defaultLocale, getLegalPagePath, getLocalePath, localeConfigs, locales } from "@/src/lib/i18n/config";
+import { getDictionary } from "@/src/lib/i18n/dictionaries";
 import { mediaOrigin, revealBelowStickyHeader } from "./helpers";
 
-const locales = ["en", "fr", "de"] as const;
+const localizedNotFoundPages = locales.map((locale) => ({
+	locale,
+	title: getDictionary(locale).messages.notFound.title,
+	backToPortfolio: getDictionary(locale).messages.labels.backToPortfolio,
+}));
 
-const localizedNotFoundPages = [
-	{ locale: "en", title: "Page not found", backToPortfolio: "Back to portfolio" },
-	{ locale: "fr", title: "Page introuvable", backToPortfolio: "Retour au portfolio" },
-	{ locale: "de", title: "Seite nicht gefunden", backToPortfolio: "Zurück zum Portfolio" },
-] as const;
+test("keeps the default locale at the root and redirects every other supported browser locale", async ({ browser }) => {
+	const siteOrigin = "http://127.0.0.1:4174";
 
-test("keeps English at the root and redirects French browser language", async ({ browser }) => {
-	const englishContext = await browser.newContext({ locale: "en-CH" });
-	const englishPage = await englishContext.newPage();
+	for (const locale of locales) {
+		const context = await browser.newContext({ locale: localeConfigs[locale].intlLocale });
+		const page = await context.newPage();
 
-	await englishPage.goto("http://127.0.0.1:4174/");
-	await expect(englishPage).toHaveURL("http://127.0.0.1:4174/");
-	await expect(englishPage.locator("main")).toContainText("Profile");
-	await englishContext.close();
+		await page.goto(`${siteOrigin}/`);
+		await expect(page).toHaveURL(`${siteOrigin}${locale === defaultLocale ? "/" : getLocalePath(locale)}`);
+		await context.close();
+	}
 
-	const italianContext = await browser.newContext({ locale: "it-CH" });
-	const italianPage = await italianContext.newPage();
+	const unsupportedContext = await browser.newContext({ locale: "it-CH" });
+	const unsupportedPage = await unsupportedContext.newPage();
 
-	await italianPage.goto("http://127.0.0.1:4174/");
-	await expect(italianPage).toHaveURL("http://127.0.0.1:4174/");
-	await italianContext.close();
-
-	const frenchContext = await browser.newContext({ locale: "fr-CH" });
-	const frenchPage = await frenchContext.newPage();
-
-	await frenchPage.goto("http://127.0.0.1:4174/");
-	await expect(frenchPage).toHaveURL("http://127.0.0.1:4174/fr/");
-	await frenchContext.close();
+	await unsupportedPage.goto(`${siteOrigin}/`);
+	await expect(unsupportedPage).toHaveURL(`${siteOrigin}/`);
+	await expect(unsupportedPage.locator("main")).toContainText(getDictionary(defaultLocale).messages.sections.profile);
+	await unsupportedContext.close();
 });
 
 test("keeps the back-to-top link usable without JavaScript", async ({ browser }) => {
@@ -51,7 +47,7 @@ test("keeps runtime resources on first-party origins", async ({ browser }) => {
 
 	page.on("request", (request) => requestedUrls.add(request.url()));
 
-	for (const route of ["/", "/en/", "/fr/", "/de/"]) {
+	for (const route of ["/", ...locales.map(getLocalePath)]) {
 		await page.goto(`${siteOrigin}${route}`, { waitUntil: "domcontentloaded" });
 		await expect(page.locator("main")).toBeVisible();
 	}
@@ -134,25 +130,24 @@ test("renders a localized static not-found page for every locale", async ({ page
 
 test("keeps localized legal links and language switching on every locale", async ({ page }) => {
 	for (const locale of locales) {
-		await page.goto(`/${locale}/privacy/`);
+		await page.goto(getLegalPagePath(locale, "privacy"));
 
 		await expect(page.locator("html")).toHaveAttribute("lang", localeConfigs[locale].htmlLang);
-		await expect(page.locator(`[data-page-footer] a[href="/${locale}/legal/"]`)).toBeVisible();
+		await expect(page.locator(`[data-page-footer] a[href="${getLegalPagePath(locale, "legal")}"]`)).toBeVisible();
+		await expect(page.locator('a[href^="mailto:"]')).toBeVisible();
 
 		for (const targetLocale of locales) {
-			await expect(page.locator(`a[hreflang="${localeConfigs[targetLocale].htmlLang}"]`)).toHaveAttribute("href", `/${targetLocale}/privacy/`);
+			await expect(page.locator(`a[hreflang="${localeConfigs[targetLocale].htmlLang}"]`)).toHaveAttribute("href", getLegalPagePath(targetLocale, "privacy"));
 		}
 
 		const alternateLocale = locales.find((targetLocale) => targetLocale !== locale);
-
-		if (!alternateLocale) {
-			throw new Error("Each localized page needs an alternate language.");
-		}
+		if (!alternateLocale) throw new Error("Each localized page needs an alternate language.");
 
 		await page.locator(`a[hreflang="${localeConfigs[alternateLocale].htmlLang}"]`).click();
-		await expect(page).toHaveURL(`/${alternateLocale}/privacy/`);
+		await expect(page).toHaveURL(getLegalPagePath(alternateLocale, "privacy"));
 
-		await page.goto(`/${locale}/legal/`);
-		await expect(page.locator(`[data-page-footer] a[href="/${locale}/privacy/"]`)).toBeVisible();
+		await page.goto(getLegalPagePath(locale, "legal"));
+		await expect(page.locator(`[data-page-footer] a[href="${getLegalPagePath(locale, "privacy")}"]`)).toBeVisible();
+		await expect(page.locator('a[href^="mailto:"]')).toBeVisible();
 	}
 });

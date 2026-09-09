@@ -2,9 +2,12 @@ import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 import { PageRenderer } from "@/app/routing/page-renderer";
-import { type AppRoute, getRouteTitle } from "@/app/routing/routes";
+import { type AppRoute, getRouteLocale, getRouteTitle } from "@/app/routing/routes";
 
 import { defaultLocale, getLegalPageAbsoluteUrl, localeConfigs, rootUrl } from "@/src/lib/i18n/config";
+
+import type { Dictionary } from "@/src/lib/i18n/dictionaries";
+
 import { getDictionary } from "@/src/lib/i18n/dictionaries";
 import { validateDictionaries } from "@/src/lib/i18n/validate";
 import { socialImage } from "@/src/lib/seo/social-image";
@@ -29,6 +32,8 @@ export type RenderedPage = {
 
 let dictionariesAreValidated = false;
 
+type PageMetadata = Omit<RenderedPage, "appHtml" | "lang" | "ogLocale" | "socialImage">;
+
 function renderPageHtml(content: ReactNode): string {
 	return renderToStaticMarkup(content);
 }
@@ -40,50 +45,53 @@ function validateBeforeRendering(): void {
 	}
 }
 
+function createRenderedPage(route: AppRoute, dictionary: Dictionary, metadata: PageMetadata): RenderedPage {
+	const locale = getRouteLocale(route);
+
+	return {
+		...metadata,
+		appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
+		lang: localeConfigs[locale].htmlLang,
+		ogLocale: localeConfigs[locale].ogLocale,
+		socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
+	};
+}
+
 export function renderPage(route: AppRoute): RenderedPage {
 	validateBeforeRendering();
 
 	if (route.kind === "root") {
 		const dictionary = getDictionary(defaultLocale);
 
-		return {
-			appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
-			lang: localeConfigs[defaultLocale].htmlLang,
+		return createRenderedPage(route, dictionary, {
 			indexable: false,
 			pathname: "/",
 			title: getRouteTitle(route, dictionary),
 			description: dictionary.messages.meta.description,
 			ogDescription: dictionary.messages.meta.ogDescription,
 			canonical: rootUrl,
-			ogLocale: "en_CH",
 			ogType: "website",
-			socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
 			structuredData: createStructuredData(defaultLocale, dictionary, rootUrl),
-		};
+		});
 	}
 
 	const dictionary = getDictionary(route.locale);
-	const localeConfig = localeConfigs[route.locale];
 
 	if (route.kind === "not-found") {
 		const canonical = new URL("404.html", rootUrl).href;
 		const title = getRouteTitle(route, dictionary);
 		const description = dictionary.messages.notFound.description;
 
-		return {
-			appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
-			lang: localeConfig.htmlLang,
+		return createRenderedPage(route, dictionary, {
 			indexable: false,
 			pathname: "/404.html",
 			title,
 			description,
 			ogDescription: description,
 			canonical,
-			ogLocale: localeConfig.ogLocale,
 			ogType: "website",
-			socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
 			structuredData: createWebPageStructuredData(route.locale, canonical, title, description),
-		};
+		});
 	}
 
 	if (route.kind === "legal") {
@@ -91,34 +99,26 @@ export function renderPage(route: AppRoute): RenderedPage {
 		const canonical = getLegalPageAbsoluteUrl(route.locale, route.page);
 		const title = getRouteTitle(route, dictionary);
 
-		return {
-			appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
-			lang: localeConfig.htmlLang,
+		return createRenderedPage(route, dictionary, {
 			indexable: false,
 			pathname: canonical,
 			title,
 			description: content.description,
 			ogDescription: content.description,
 			canonical,
-			ogLocale: localeConfig.ogLocale,
 			ogType: "website",
-			socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
 			structuredData: createWebPageStructuredData(route.locale, canonical, title, content.description),
-		};
+		});
 	}
 
-	return {
-		appHtml: renderPageHtml(<PageRenderer dictionary={dictionary} route={route} />),
-		lang: localeConfig.htmlLang,
+	return createRenderedPage(route, dictionary, {
 		indexable: true,
-		pathname: localeConfig.pathname,
+		pathname: localeConfigs[route.locale].pathname,
 		title: getRouteTitle(route, dictionary),
 		description: dictionary.messages.meta.description,
 		ogDescription: dictionary.messages.meta.ogDescription,
-		canonical: localeConfig.absoluteUrl,
-		ogLocale: localeConfig.ogLocale,
+		canonical: localeConfigs[route.locale].absoluteUrl,
 		ogType: "profile",
-		socialImage: { ...socialImage, alt: dictionary.messages.meta.socialImageAlt },
 		structuredData: createStructuredData(route.locale, dictionary),
-	};
+	});
 }

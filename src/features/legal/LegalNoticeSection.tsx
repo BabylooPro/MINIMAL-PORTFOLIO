@@ -1,4 +1,4 @@
-import { Section, SectionHeading } from "@/src/components/ui/Section";
+import { ContactEmail, LegalExternalLink, LegalSection } from "@/src/features/legal/LegalContent";
 import type { Messages } from "@/src/lib/i18n/messages/types";
 
 const legalNoticeUrls = {
@@ -11,14 +11,9 @@ type LegalNoticeSectionProps = { content: Messages["legalPages"]["legal"]; email
 export function LegalNoticeSection({ content, email }: Readonly<LegalNoticeSectionProps>) {
 	return (
 		<>
-			<Section labelledBy="legal-publisher-title">
-				<SectionHeading id="legal-publisher-title">{content.publisherTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.publisherDescription}</p>
-			</Section>
+			<LegalSection description={content.publisherDescription} id="legal-publisher-title" title={content.publisherTitle} />
 
-			<Section labelledBy="legal-business-information-title">
-				<SectionHeading id="legal-business-information-title">{content.businessInformation.title}</SectionHeading>
-
+			<LegalSection id="legal-business-information-title" title={content.businessInformation.title}>
 				<dl className="mt-1 space-y-2 leading-6">
 					<LegalInformationItem
 						label={content.businessInformation.legalFormLabel}
@@ -42,43 +37,21 @@ export function LegalNoticeSection({ content, email }: Readonly<LegalNoticeSecti
 						value={content.businessInformation.commercialRegisterValue}
 					/>
 				</dl>
-			</Section>
+			</LegalSection>
 
-			<Section labelledBy="legal-contact-title">
-				<SectionHeading id="legal-contact-title">{content.contactTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.contactDescription}</p>
+			<LegalSection description={content.contactDescription} id="legal-contact-title" title={content.contactTitle}>
+				<ContactEmail email={email} />
+			</LegalSection>
 
-				{email ? (
-					<a className="mt-1 inline-flex underline underline-offset-2" href={`mailto:${email}`}>
-						{email}
-					</a>
-				) : null}
-			</Section>
+			<LegalSection description={content.responsibilityDescription} id="legal-responsibility-title" title={content.responsibilityTitle} />
 
-			<Section labelledBy="legal-responsibility-title">
-				<SectionHeading id="legal-responsibility-title">{content.responsibilityTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.responsibilityDescription}</p>
-			</Section>
-
-			<Section labelledBy="legal-intellectual-property-title">
-				<SectionHeading id="legal-intellectual-property-title">{content.intellectualPropertyTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.intellectualPropertyDescription}</p>
-
-				<a
-					className="mt-1 inline-flex underline underline-offset-2"
-					href={legalNoticeUrls.sourceRepositoryLicense}
-					rel="noopener noreferrer"
-					target="_blank"
-				>
+			<LegalSection description={content.intellectualPropertyDescription} id="legal-intellectual-property-title" title={content.intellectualPropertyTitle}>
+				<LegalExternalLink className="mt-1 inline-flex underline underline-offset-2" href={legalNoticeUrls.sourceRepositoryLicense}>
 					{content.sourceCodeLicenseLabel}
-					<span aria-hidden="true">&nbsp;↗</span>
-				</a>
-			</Section>
+				</LegalExternalLink>
+			</LegalSection>
 
-			<Section labelledBy="legal-external-links-title">
-				<SectionHeading id="legal-external-links-title">{content.externalLinksTitle}</SectionHeading>
-				<p className="mt-1 leading-6">{content.externalLinksDescription}</p>
-			</Section>
+			<LegalSection description={content.externalLinksDescription} id="legal-external-links-title" title={content.externalLinksTitle} />
 		</>
 	);
 }
@@ -92,9 +65,7 @@ function LegalInformationItem({ href, label, value }: Readonly<{ href?: string; 
 
 			<dd>
 				{href ? (
-					<a className="underline underline-offset-2" href={href} rel="noopener noreferrer" target="_blank">
-						{value} <span aria-hidden="true">&nbsp;↗</span>
-					</a>
+					<LegalExternalLink className="underline underline-offset-2" href={href}>{value} </LegalExternalLink>
 				) : (
 					value
 				)}

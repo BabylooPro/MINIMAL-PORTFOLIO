@@ -1,6 +1,8 @@
 import { mkdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
+import { primaryRoutePaths } from "@/scripts/prerender/routes.mts";
+
 export function formatBytes(bytes) {
 	if (bytes < 1_000) return `${bytes.toLocaleString("en-US")} B`;
 	if (bytes < 1_000_000) return `${(bytes / 1_000).toFixed(1)} kB`;
@@ -51,6 +53,7 @@ function getInitialRows(validation) {
 		const check = getCheck(validation, id);
 		return [check.label, formatValue(check.current, { asBytes: true }), formatMaximum(check.maximum, { asBytes: true }), check.status];
 	});
+
 	const react = getCheck(validation, "react-runtime");
 	const hydration = getCheck(validation, "client-side-hydration");
 
@@ -72,13 +75,11 @@ function getInitialRows(validation) {
 }
 
 function getHtmlRows(validation, section) {
-	const primaryRouteOrder = ["/", "/en/", "/fr/", "/de/"];
-
 	return validation.checks
 		.filter((check) => check.section === section)
 		.sort((first, second) => {
 			if (section !== "HTML") return first.label.localeCompare(second.label);
-			return primaryRouteOrder.indexOf(first.label) - primaryRouteOrder.indexOf(second.label);
+			return primaryRoutePaths.indexOf(first.label) - primaryRoutePaths.indexOf(second.label);
 		})
 		.map((check) => [check.label, formatValue(check.current, { asBytes: true }), formatMaximum(check.maximum, { asBytes: true }), check.status]);
 }
@@ -149,6 +150,7 @@ export function renderTerminalReport(measurement, validation) {
 	const architectureRows = getArchitectureRows(validation);
 	const mediaRows = getMediaRows(measurement, validation);
 	const previewRows = getFileRows(validation, "Preview files");
+
 	const lines = [
 		"Performance budget",
 		"─".repeat(72),
@@ -212,6 +214,7 @@ export function renderMarkdownReport(measurement, validation) {
 	const architectureRows = toMarkdownRows(getArchitectureRows(validation));
 	const mediaRows = toMarkdownRows(getMediaRows(measurement, validation));
 	const previewRows = toMarkdownRows(getFileRows(validation, "Preview files"));
+
 	const sections = [
 		"# Performance budget",
 		"",

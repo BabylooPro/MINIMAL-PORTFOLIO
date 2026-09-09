@@ -4,15 +4,18 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { rootUrl } from "@/config/site.mts";
 
+import { listFiles } from "@/scripts/files.mts";
 import { escapeHtml } from "@/scripts/prerender/html.mts";
 import { getSiteControllerScript } from "@/scripts/prerender/page-validation.mts";
+import { getStaticOutputPath, staticRoutes } from "@/scripts/prerender/routes.mts";
 import { getAlternateLinks, getLanguageSwitcherLinks, renderAlternateLinks,
-	renderMetadata, renderSitemap, routeOutputPath
+	renderMetadata, renderSitemap
 } from "@/scripts/prerender/seo.mts";
-import { getLocaleRedirectScript, getReactEntryScript, listFiles, readSiteControllerAssets,
+import { getLocaleRedirectScript, getReactEntryScript, readSiteControllerAssets,
 	removeLocaleRedirect, removeReactAndUnusedModules, removeUnusedJavaScriptFiles,
 	validatePublicAssets, validateStaticOutput
 } from "@/scripts/prerender/validation.mts";
+import { localeConfigs } from "@/src/lib/i18n/config.ts";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectDirectory = path.resolve(scriptDirectory, "..");
@@ -38,31 +41,8 @@ const pageTitlePattern = /<title data-page-title>.*?<\/title>/;
 
 const siteName = "Max Remy";
 
-const routes = [
-	{ kind: "root" },
-
-	{ kind: "not-found", locale: "en", rootFallback: true },
-	{ kind: "not-found", locale: "en" },
-	{ kind: "not-found", locale: "fr" },
-	{ kind: "not-found", locale: "de" },
-
-	{ kind: "locale", locale: "en" },
-	{ kind: "locale", locale: "fr" },
-	{ kind: "locale", locale: "de" },
-
-	{ kind: "legal", locale: "en", page: "privacy" },
-	{ kind: "legal", locale: "fr", page: "privacy" },
-	{ kind: "legal", locale: "de", page: "privacy" },
-
-	{ kind: "legal", locale: "en", page: "legal" },
-	{ kind: "legal", locale: "fr", page: "legal" },
-	{ kind: "legal", locale: "de", page: "legal" },
-];
-
 const localizedAlternateLinks = [
-	{ hreflang: "en-CH", href: new URL("/en/", rootUrl).href },
-	{ hreflang: "fr-CH", href: new URL("/fr/", rootUrl).href },
-	{ hreflang: "de-CH", href: new URL("/de/", rootUrl).href },
+	...Object.values(localeConfigs).map(({ absoluteUrl, intlLocale }) => ({ hreflang: intlLocale, href: absoluteUrl })),
 	{ hreflang: "x-default", href: rootUrl },
 ];
 
@@ -100,7 +80,7 @@ const staticTemplateHtml = removeReactAndUnusedModules(templateHtml);
 const localizedTemplateHtml = removeLocaleRedirect(staticTemplateHtml);
 
 const renderedPages = await Promise.all(
-	routes.map(async (route) => {
+	staticRoutes.map(async (route) => {
 		const page = renderPage(route);
 		const pageAlternateLinks = getAlternateLinks(route, localizedAlternateLinks);
 		const languageSwitcherLinks = getLanguageSwitcherLinks(route);
@@ -116,7 +96,7 @@ const renderedPages = await Promise.all(
 			.replace(alternateLinksMarker, renderAlternateLinks(pageAlternateLinks))
 			.replace(structuredDataMarker, `<script type="application/ld+json">${structuredDataJson}</script>`);
 
-		const outputPath = routeOutputPath(route, { distDirectory, indexPath });
+		const outputPath = path.join(distDirectory, getStaticOutputPath(route));
 		await mkdir(path.dirname(outputPath), { recursive: true });
 		await writeFile(outputPath, html, "utf8");
 

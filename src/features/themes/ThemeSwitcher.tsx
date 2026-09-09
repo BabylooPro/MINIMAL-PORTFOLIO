@@ -3,9 +3,8 @@ import { SunIcon } from "@/src/components/icons/SunIcon";
 import { SystemIcon } from "@/src/components/icons/SystemIcon";
 import { ChoiceSwitcher } from "@/src/components/ui/ChoiceSwitcher";
 
+import type { ThemePreference } from "@/src/features/themes/theme-controller";
 import type { Messages } from "@/src/lib/i18n/messages/types";
-
-type ThemePreference = "light" | "dark" | "system";
 
 type ThemeSwitcherProps = {
 	theme: Messages["theme"];

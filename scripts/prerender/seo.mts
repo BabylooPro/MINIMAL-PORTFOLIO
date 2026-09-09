@@ -1,7 +1,5 @@
-import path from "node:path";
-
-import { rootUrl } from "@/config/site.mts";
 import { escapeHtml } from "@/scripts/prerender/html.mts";
+import { getLegalPageAbsoluteUrl, localeConfigs, locales } from "@/src/lib/i18n/config.ts";
 
 export function renderMetadata(page, siteName) {
 	const escapedTitle = escapeHtml(page.title);
@@ -41,19 +39,10 @@ export function getAlternateLinks(route, localizedAlternateLinks) {
 }
 
 export function getLanguageSwitcherLinks(route) {
-	if (route.kind !== "legal") {
-		return [
-			{ hreflang: "en", href: new URL("/en/", rootUrl).href },
-			{ hreflang: "fr", href: new URL("/fr/", rootUrl).href },
-			{ hreflang: "de", href: new URL("/de/", rootUrl).href },
-		];
-	}
-
-	return [
-		{ hreflang: "en", href: new URL(`/en/${route.page}/`, rootUrl).href },
-		{ hreflang: "fr", href: new URL(`/fr/${route.page}/`, rootUrl).href },
-		{ hreflang: "de", href: new URL(`/de/${route.page}/`, rootUrl).href },
-	];
+	return locales.map((locale) => ({
+		hreflang: locale,
+		href: route.kind === "legal" ? getLegalPageAbsoluteUrl(locale, route.page) : localeConfigs[locale].absoluteUrl,
+	}));
 }
 
 export function renderAlternateLinks(links) {
@@ -62,13 +51,10 @@ export function renderAlternateLinks(links) {
 
 export function renderSitemap(renderedPages) {
 	const indexablePages = renderedPages.filter(({ page }) => page.indexable);
-	const entries = indexablePages
-		.map(({ page, alternateLinks }) => {
-			const alternates = alternateLinks.map((link) => `\t\t<xhtml:link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`).join("\n");
-
-			return ["\t<url>", `\t\t<loc>${page.canonical}</loc>`, alternates, "\t</url>"].join("\n");
-		})
-		.join("\n");
+	const entries = indexablePages.map(({ page, alternateLinks }) => {
+		const alternates = alternateLinks.map((link) => `\t\t<xhtml:link rel="alternate" hreflang="${link.hreflang}" href="${link.href}" />`).join("\n");
+		return ["\t<url>", `\t\t<loc>${page.canonical}</loc>`, alternates, "\t</url>"].join("\n");
+	}).join("\n");
 
 	return [
 		'<?xml version="1.0" encoding="UTF-8"?>',
@@ -77,10 +63,4 @@ export function renderSitemap(renderedPages) {
 		"</urlset>",
 		"",
 	].join("\n");
-}
-
-export function routeOutputPath(route, { distDirectory, indexPath }) {
-	if (route.kind === "root") return indexPath;
-	if (route.kind === "not-found") return route.rootFallback ? path.join(distDirectory, "404.html") : path.join(distDirectory, route.locale, "404.html");
-	return route.kind === "legal" ? path.join(distDirectory, route.locale, route.page, "index.html") : path.join(distDirectory, route.locale, "index.html");
 }

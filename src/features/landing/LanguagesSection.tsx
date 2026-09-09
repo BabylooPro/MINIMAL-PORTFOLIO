@@ -1,3 +1,5 @@
+import type { ComponentType } from "react";
+
 import { EarIcon } from "@/src/components/icons/EarIcon";
 import { MessageIcon } from "@/src/components/icons/MessageIcon";
 import { PersonVoiceIcon } from "@/src/components/icons/PersonVoiceIcon";
@@ -12,14 +14,20 @@ type LanguagesSectionProps = {
 	languages: readonly Language[];
 };
 
+type LanguageCapability = keyof Language["capabilities"];
+
+const capabilityDefinitions = [
+	{ id: "listening", Icon: EarIcon },
+	{ id: "speaking", Icon: PersonVoiceIcon },
+	{ id: "writing", Icon: MessageIcon },
+] as const satisfies readonly { id: LanguageCapability; Icon: ComponentType }[];
+
 export function LanguagesSection({ languages, moreInformationLabel, title }: Readonly<LanguagesSectionProps>) {
 	if (languages.length === 0) return null;
 
 	return (
 		<Section labelledBy="languages-title">
-			<SectionHeading id="languages-title">
-				{title}
-			</SectionHeading>
+			<SectionHeading id="languages-title">{title}</SectionHeading>
 
 			<ul className="mt-2 list-disc space-y-0.5 pl-5">
 				{languages.map((language, languageIndex) => (
@@ -27,45 +35,24 @@ export function LanguagesSection({ languages, moreInformationLabel, title }: Rea
 						{language.label}
 
 						<div className="relative top-px ml-1 inline-flex items-center gap-1">
-							<span aria-hidden="true">
-								-
-							</span>
+							<span aria-hidden="true">-</span>
 
-							{language.capabilities.listening ? (
-								<div className="relative inline-flex">
-									<Tooltip
-										id={`language-${languageIndex}-listening`}
-										trigger={<EarIcon />}
-										triggerLabel={moreInformationLabel}
-									>
-										<p>{language.capabilities.listening}</p>
-									</Tooltip>
-								</div>
-							) : null}
+							{capabilityDefinitions.map(({ Icon, id }) => {
+								const capability = language.capabilities[id];
+								if (!capability) return null;
 
-							{language.capabilities.speaking ? (
-								<div className="relative inline-flex">
-									<Tooltip
-										id={`language-${languageIndex}-speaking`}
-										trigger={<PersonVoiceIcon />}
-										triggerLabel={moreInformationLabel}
-									>
-										<p>{language.capabilities.speaking}</p>
-									</Tooltip>
-								</div>
-							) : null}
-
-							{language.capabilities.writing ? (
-								<div className="relative inline-flex">
-									<Tooltip
-										id={`language-${languageIndex}-writing`}
-										trigger={<MessageIcon />}
-										triggerLabel={moreInformationLabel}
-									>
-										<p>{language.capabilities.writing}</p>
-									</Tooltip>
-								</div>
-							) : null}
+								return (
+									<div className="relative inline-flex" key={id}>
+										<Tooltip
+											id={`language-${languageIndex}-${id}`}
+											trigger={<Icon />}
+											triggerLabel={moreInformationLabel}
+										>
+											<p>{capability}</p>
+										</Tooltip>
+									</div>
+								);
+							})}
 						</div>
 					</li>
 				))}

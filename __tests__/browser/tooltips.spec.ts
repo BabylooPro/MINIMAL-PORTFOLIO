@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { revealBelowStickyHeader } from "./helpers";
+import { expectOverlayStack, revealBelowStickyHeader } from "./helpers";
 
 test("uses a single standard desktop trigger for language tooltips", async ({ page }) => {
 	await page.setViewportSize({ width: 1_280, height: 800 });
@@ -75,15 +75,7 @@ test("keeps language tooltips inside every touch viewport", async ({ browser }) 
 		await expect(trigger).toHaveAttribute("aria-expanded", "true");
 		await expect(tooltip).toHaveCSS("opacity", "1");
 
-		expect(
-			await page.evaluate(() => {
-				const header = document.querySelector<HTMLElement>("[data-page-header-shell]");
-				const panel = document.querySelector<HTMLElement>("#language-0-writing");
-				if (!header || !panel) throw new Error("The header and language tooltip must be rendered.");
-
-				return { header: getComputedStyle(header).zIndex, panel: getComputedStyle(panel).zIndex };
-			}),
-		).toEqual({ header: "40", panel: "30" });
+		await expectOverlayStack(page, "#language-0-writing");
 
 		const bounds = await tooltip.evaluate((element) => {
 			const { left, right } = element.getBoundingClientRect();

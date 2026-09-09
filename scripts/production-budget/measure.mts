@@ -1,9 +1,12 @@
-import { readdir, readFile, stat } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { gzipSync } from "node:zlib";
 
 import { performanceBudget } from "@/config/performance-budget.mts";
+import { listFiles } from "@/scripts/files.mts";
+import { getAttribute, getElements, getScriptElements, hasAttribute } from "@/scripts/prerender/html.mts";
+import { primaryRoutePaths } from "@/scripts/prerender/routes.mts";
 
 const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 
@@ -23,18 +26,6 @@ async function pathExists(filePath) {
 	}
 }
 
-export async function listFiles(directory) {
-	if (!(await pathExists(directory))) return [];
-
-	const entries = await readdir(directory, { withFileTypes: true });
-	const files = await Promise.all(entries.map(async (entry) => {
-		const entryPath = path.join(directory, entry.name);
-		return entry.isDirectory() ? listFiles(entryPath) : [entryPath];
-	}));
-
-	return files.flat();
-}
-
 export function gzipBytes(source) {
 	return gzipSync(source, { level: 9 }).byteLength;
 }
@@ -42,25 +33,6 @@ export function gzipBytes(source) {
 async function measureFile(filePath) {
 	const source = await readFile(filePath);
 	return { filePath, name: path.basename(filePath), rawBytes: source.byteLength, gzipBytes: gzipBytes(source), source };
-}
-
-function getAttribute(element, attribute) {
-	const escapedAttribute = attribute.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-	const match = element.match(new RegExp(String.raw`\b${escapedAttribute}=(['"])([\s\S]*?)\1`, "i"));
-	return match?.[2] ?? null;
-}
-
-function hasAttribute(element, attribute) {
-	const escapedAttribute = attribute.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-	return new RegExp(String.raw`\b${escapedAttribute}\b`, "i").test(element);
-}
-
-function getElements(html, tagName) {
-	return html.match(new RegExp(String.raw`<${tagName}\b[^>]*>`, "gi")) ?? [];
-}
-
-function getScriptElements(html) {
-	return html.match(/<script\b[^>]*>[\s\S]*?<\/script>/gi) ?? [];
 }
 
 export function extractInlineScript(html, attribute) {
@@ -172,7 +144,7 @@ function routeFromOutputPath(relativePath) {
 }
 
 function isPrimaryRoute(route) {
-	return ["/", "/en/", "/fr/", "/de/"].includes(route);
+	return primaryRoutePaths.includes(route);
 }
 
 function getLargestFile(files) {
@@ -194,13 +166,16 @@ export async function measureProductionOutput({
 	allowedRuntimeOrigins = performanceBudget.architecture.allowedRuntimeOrigins,
 } = {}) {
 	const resolvedOutputDirectory = path.resolve(outputDirectory);
+
 	const outputExists = await pathExists(resolvedOutputDirectory);
-	const files = await listFiles(resolvedOutputDirectory);
+	const files = outputExists ? await listFiles(resolvedOutputDirectory) : [];
+
 	const relativeFiles = files.map((filePath) => path.relative(resolvedOutputDirectory, filePath).replaceAll(path.sep, "/"));
 	const javascriptFiles = files.filter((filePath) => filePath.endsWith(".js"));
 	const cssFiles = files.filter((filePath) => filePath.endsWith(".css"));
 	const htmlPaths = files.filter((filePath) => filePath.endsWith(".html")).sort();
 	const previewPaths = files.filter((filePath) => path.relative(resolvedOutputDirectory, filePath).replaceAll("\\", "/").startsWith("videos/timelapse/previews/") && filePath.endsWith(".avif")).sort();
+
 	const socialImagePath = path.join(resolvedOutputDirectory, "og-image.jpg");
 
 	const [javascript, css, previews, html] = await Promise.all([
@@ -240,9 +215,9 @@ export async function measureProductionOutput({
 		...javascript.flatMap((file) => getJavaScriptResourceReferences(file.source.toString("utf8"))),
 	].map((reference) => classifyResourceReference(reference, siteOrigin, allowedRuntimeOrigins));
 
-	const reactRuntimeFiles = javascript.filter((file) => reactRuntimePattern.test(file.source));
-	const hydrationFiles = javascript.filter((file) => hydrationPattern.test(file.source));
-	const clientI18nFiles = javascript.filter((file) => clientI18nPattern.test(file.source));
+	const reactRuntimeFiles = javascript.filter((file) => reactRuntimePattern.test(file.source.toString("utf8")));
+	const hydrationFiles = javascript.filter((file) => hydrationPattern.test(file.source.toString("utf8")));
+	const clientI18nFiles = javascript.filter((file) => clientI18nPattern.test(file.source.toString("utf8")));
 
 	return {
 		outputDirectory: resolvedOutputDirectory,

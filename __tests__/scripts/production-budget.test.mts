@@ -6,6 +6,7 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { performanceBudget } from "@/config/performance-budget.mts";
+import { getStaticOutputPath, staticRoutes } from "@/scripts/prerender/routes.mts";
 import { getBudgetIncreases, getCommittedBudgetIncreases, resolveBaselineRevisions } from "@/scripts/production-budget/baseline.mts";
 import { extractInlineScript, gzipBytes, measureProductionOutput } from "@/scripts/production-budget/measure.mts";
 import { renderMarkdownReport, writeMarkdownReport } from "@/scripts/production-budget/report.mts";
@@ -67,6 +68,13 @@ async function createCompleteOutput(t, options = {}) {
 
 	return { outputDirectory };
 }
+
+test("keeps the generated route contract aligned with the standalone performance budget", () => {
+	assert.deepEqual(
+		staticRoutes.map(getStaticOutputPath).sort(),
+		[...performanceBudget.html.expectedOutputPaths].sort(),
+	);
+});
 
 test("measures gzip data and extracts exact inline scripts", async (t) => {
 	const source = "(() => { document.documentElement.dataset.theme = 'dark'; })();";

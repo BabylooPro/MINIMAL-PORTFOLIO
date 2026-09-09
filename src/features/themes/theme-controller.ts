@@ -1,4 +1,4 @@
-type ThemePreference = "light" | "dark" | "system";
+export type ThemePreference = "light" | "dark" | "system";
 
 export function initializeThemeController(): void {
 	const systemTheme = matchMedia("(prefers-color-scheme: dark)");
