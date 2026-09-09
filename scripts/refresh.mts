@@ -10,7 +10,7 @@ try {
 	const taskPaths = (await readdir(refreshDirectory, { withFileTypes: true }))
 		.filter((entry) => entry.isFile() && entry.name.endsWith(".mts"))
 		.map((entry) => path.join(refreshDirectory, entry.name))
-		.sort();
+		.sort((first, second) => first.localeCompare(second));
 
 	if (taskPaths.length === 0) throw new Error("No refresh tasks were found.");
 

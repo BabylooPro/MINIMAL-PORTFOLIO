@@ -2,7 +2,9 @@
 	"extends": "./tsconfig.app.json",
 	"compilerOptions": {
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tests.tsbuildinfo",
-		"types": ["node", "vite/client"]
+		"types": ["node", "vite/client"],
+		"noImplicitAny": false,
+		"useUnknownInCatchVariables": false
 	},
-	"include": ["__tests__/**/*.ts"]
+	"include": ["__tests__/**/*.ts", "__tests__/**/*.mts"]
 }

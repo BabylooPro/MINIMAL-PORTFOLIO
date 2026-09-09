@@ -186,8 +186,11 @@ function injectSiteController(): Plugin {
 				if (!html.includes(siteControllerMarker)) throw new Error("The site controller HTML marker was not found.");
 
 				const reactEntryScriptPattern = new RegExp(String.raw`<script\b(?=[^>]*\bsrc=["']/${escapeRegularExpression(reactEntry.fileName)}["'])[^>]*><\/script>`, "gi");
-				const reactEntryScripts = html.match(reactEntryScriptPattern) ?? [];
-				if (reactEntryScripts.length !== 1) throw new Error("The React development entry script was not found.");
+				const reactEntryScript = reactEntryScriptPattern.exec(html);
+				const duplicateReactEntryScript = reactEntryScriptPattern.exec(html);
+
+				reactEntryScriptPattern.lastIndex = 0;
+				if (!reactEntryScript || duplicateReactEntryScript) throw new Error("The React development entry script was not found.");
 
 				return html
 					.replace(reactEntryScriptPattern, (scriptTag) => scriptTag.replace(">", " data-react-entry>"))

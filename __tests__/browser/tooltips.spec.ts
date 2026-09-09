@@ -15,11 +15,13 @@ test("uses a single standard desktop trigger for language tooltips", async ({ pa
 	await expect(page.locator("[data-tooltip] summary")).toHaveCount(0);
 
 	await revealBelowStickyHeader(trigger);
+	await page.clock.install();
 	await trigger.hover();
 	await expect(tooltip).toHaveCSS("opacity", "0");
+	await page.clock.fastForward(300);
 	await expect(tooltip).toHaveCSS("opacity", "1");
 	await tooltip.hover();
-	await page.waitForTimeout(200);
+	await page.clock.fastForward(200);
 	await expect(tooltip).toHaveCSS("opacity", "1");
 
 	await page.keyboard.press("Escape");

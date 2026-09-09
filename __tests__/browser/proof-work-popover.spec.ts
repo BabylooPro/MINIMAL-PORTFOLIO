@@ -130,14 +130,17 @@ test("keeps the desktop Proof Work popover hoverable below the sticky header", a
 	const trigger = page.locator("[data-popover-trigger]");
 	const popover = page.locator("#proof-work");
 
+	await page.clock.install();
 	await trigger.hover();
 	await expect(popover).toBeHidden();
+	await page.clock.fastForward(300);
 	await expect(popover).toBeVisible();
 	await popover.hover();
-	await page.waitForTimeout(200);
+	await page.clock.fastForward(200);
 	await expect(popover).toBeVisible();
 
 	await page.mouse.move(0, 0);
+	await page.clock.fastForward(150);
 	await expect(popover).toBeHidden();
 
 	await trigger.evaluate((element) => (element as HTMLButtonElement).focus());

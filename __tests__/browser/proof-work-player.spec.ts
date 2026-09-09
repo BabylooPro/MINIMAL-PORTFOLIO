@@ -170,6 +170,7 @@ test("keeps a Proof Work clip paused when the visitor uses the native pause cont
 
 	await player.evaluate((element) => element.scrollIntoView({ block: "center" }));
 	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+	await page.clock.install();
 
 	await player.tap();
 	await expect(player).toHaveJSProperty("controls", true);
@@ -180,8 +181,8 @@ test("keeps a Proof Work clip paused when the visitor uses the native pause cont
 		video.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, pointerType: "touch", pointerId: 1 }));
 	});
 
-	await page.waitForTimeout(900);
-	expect(await isPaused()).toBe(true);
+	await page.clock.fastForward(900);
+	await expect.poll(isPaused).toBe(true);
 
 	await context.close();
 });
@@ -191,7 +192,7 @@ test("keeps the Proof Work card within the header and footer band on a landscape
 	await page.goto("/en/");
 
 	await page.evaluate(() => scrollTo(0, 2_000));
-	await page.waitForTimeout(700);
+	await expect(page.locator("[data-page-header]")).toHaveAttribute("data-fully-compact", "");
 
 	const { card, band } = await page.evaluate(() => {
 		const header = document.querySelector("[data-page-header-shell]")?.getBoundingClientRect();
@@ -215,12 +216,12 @@ test("does not resume a Proof Work clip the visitor paused", async ({ page }) =>
 	await expect
 		.poll(async () => player.evaluate((element) => (element as HTMLVideoElement).paused), { timeout: 20_000 })
 		.toBe(false);
+	await page.clock.install();
 
 	await player.evaluate((element) => (element as HTMLVideoElement).pause());
 	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
-	await page.waitForTimeout(600);
-
-	expect(await player.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
+	await page.clock.fastForward(600);
+	await expect.poll(() => player.evaluate((element) => (element as HTMLVideoElement).paused)).toBe(true);
 });
 
 test("advances the Proof Work carousel when a clip ends", async ({ page }) => {
@@ -258,12 +259,12 @@ test("keeps the Proof Work clip playing after the visitor presses the native pla
 
 	await player.evaluate(async (element) => { await (element as HTMLVideoElement).play() });
 	await expect.poll(isPaused).toBe(false);
+	await page.clock.install();
 
 	await player.dispatchEvent("pointerenter");
 	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
-	await page.waitForTimeout(600);
-
-	expect(await isPaused()).toBe(false);
+	await page.clock.fastForward(600);
+	await expect.poll(isPaused).toBe(false);
 });
 
 test("honours a Proof Work pause taken in the same tick as a visibility change", async ({ page }) => {
@@ -295,13 +296,13 @@ test("honours a Proof Work pause taken after switching clips", async ({ page }) 
 	await page.locator('[data-proof-work-direction="next"]').click();
 	await expect.poll(currentSource).toContain("/videos/timelapse/2.mp4");
 	await expect.poll(isPaused, { timeout: 20_000 }).toBe(false);
+	await page.clock.install();
 
 	await player.evaluate((element) => (element as HTMLVideoElement).pause());
 	await player.dispatchEvent("pointerenter");
 	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
-	await page.waitForTimeout(600);
-
-	expect(await isPaused()).toBe(true);
+	await page.clock.fastForward(600);
+	await expect.poll(isPaused).toBe(true);
 });
 
 test("restores a visible Proof Work player when a clip fails to load", async ({ page }) => {
@@ -375,8 +376,7 @@ test("keeps the Proof Work clip playing while it reports as the picture-in-pictu
 
 	await scrollProofWorkPlayerOutOfView(page);
 	await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
-	await page.waitForTimeout(800);
+	await expect.poll(isPaused).toBe(false);
 
 	expect(await player.evaluate((element) => element.getBoundingClientRect().bottom < 0)).toBe(true);
-	expect(await isPaused()).toBe(false);
 });

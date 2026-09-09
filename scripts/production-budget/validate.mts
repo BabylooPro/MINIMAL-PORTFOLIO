@@ -46,7 +46,7 @@ function getOutputIntegrityFailures(measurement, budget) {
 }
 
 export function validatePerformanceBudget(measurement, budget = performanceBudget) {
-	const checks: Array<{ status: string }> = [];
+	const checks: Array<ReturnType<typeof createCheck>> = [];
 	const integrityFailures = getOutputIntegrityFailures(measurement, budget);
 	const rootPage = measurement.html.find((page) => page.relativePath === "index.html");
 	const nonRootPages = measurement.html.filter((page) => page.relativePath !== "index.html");

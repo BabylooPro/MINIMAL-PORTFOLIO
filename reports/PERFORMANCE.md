@@ -31,11 +31,11 @@ This portfolio is statically pre-rendered. React is used during the build only a
 | /404.html    | 4,336 B | ≤ 10,000 B | ✅ PASS |
 | /de/404.html | 4,377 B | ≤ 10,000 B | ✅ PASS |
 | /de/legal/   | 5,207 B | ≤ 10,000 B | ✅ PASS |
-| /de/privacy/ | 5,999 B | ≤ 10,000 B | ✅ PASS |
+| /de/privacy/ | 6,000 B | ≤ 10,000 B | ✅ PASS |
 | /en/404.html | 4,336 B | ≤ 10,000 B | ✅ PASS |
 | /en/legal/   | 5,082 B | ≤ 10,000 B | ✅ PASS |
-| /en/privacy/ | 5,679 B | ≤ 10,000 B | ✅ PASS |
-| /fr/404.html | 4,420 B | ≤ 10,000 B | ✅ PASS |
+| /en/privacy/ | 5,680 B | ≤ 10,000 B | ✅ PASS |
+| /fr/404.html | 4,421 B | ≤ 10,000 B | ✅ PASS |
 | /fr/legal/   | 5,237 B | ≤ 10,000 B | ✅ PASS |
 | /fr/privacy/ | 6,068 B | ≤ 10,000 B | ✅ PASS |
 

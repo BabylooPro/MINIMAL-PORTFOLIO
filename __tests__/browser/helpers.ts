@@ -41,8 +41,19 @@ export async function expectOverlayStack(page: Page, panelSelector: string): Pro
 }
 
 export async function scrollProofWorkPlayerOutOfView(page: Page): Promise<void> {
-	await page.evaluate(() => scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }));
-	await page.waitForTimeout(600);
+	await page.evaluate(() => new Promise<void>((resolve) => {
+		const player = document.querySelector("[data-proof-work-player]");
+		if (!player) throw new Error("The Proof Work player must be rendered.");
+
+		const observer = new IntersectionObserver(([entry]) => {
+			if ((entry?.intersectionRatio ?? 0) >= 0.25) return;
+			observer.disconnect();
+			requestAnimationFrame(() => resolve());
+		}, { threshold: 0.25 });
+
+		observer.observe(player);
+		scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" });
+	}));
 }
 
 export function proofWorkPlayer(page: Page) {

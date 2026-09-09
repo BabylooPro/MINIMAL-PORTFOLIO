@@ -32,8 +32,8 @@ async function requireLocalizedNotFound(pathname, expectedText) {
 
 const builtHomepage = await readFile(path.join(defaultOutputDirectory, "index.html"), "utf8");
 const builtAssetPaths = [
-	builtHomepage.match(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/u)?.[1],
-	builtHomepage.match(/<script\b[^>]*\bsrc="([^"]+)"[^>]*\bdata-site-controller/u)?.[1],
+	/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/u.exec(builtHomepage)?.[1],
+	/<script\b[^>]*\bsrc="([^"]+)"[^>]*\bdata-site-controller/u.exec(builtHomepage)?.[1],
 ].filter((assetPath) => assetPath !== undefined);
 if (builtAssetPaths.length !== 2) throw new Error("The built homepage must reference a hashed stylesheet and a hashed site controller.");
 

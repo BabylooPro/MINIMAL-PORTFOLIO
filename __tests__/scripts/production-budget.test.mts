@@ -37,7 +37,15 @@ async function writeFixtureFile(outputDirectory, relativePath, source) {
 	await writeFile(filePath, source);
 }
 
-async function createCompleteOutput(t, options = {}) {
+type ProductionOutputOptions = {
+	thirdPartyImage?: boolean;
+	controllerSource?: string;
+	cssSource?: string;
+	previewBytes?: number;
+	extraJavaScript?: boolean;
+};
+
+async function createCompleteOutput(t, options: ProductionOutputOptions = {}) {
 	const outputDirectory = await mkdtemp(path.join(tmpdir(), "test-production-budget-"));
 
 	t.after(async () => {
@@ -80,24 +88,34 @@ test("measures gzip data and extracts exact inline scripts", async (t) => {
 	const source = "(() => { document.documentElement.dataset.theme = 'dark'; })();";
 	const output = await createCompleteOutput(t);
 	const measurement = await measureProductionOutput(output);
+	const { themeBootstrap, localeRedirect } = measurement.inlineScripts;
+
+	assert.ok(themeBootstrap);
+	assert.ok(localeRedirect);
 
 	assert.ok(gzipBytes(Buffer.from(source, "utf8")) > 0);
 	assert.equal(extractInlineScript(`<script data-theme-bootstrap>${source}</script>`, "data-theme-bootstrap"), source);
-	assert.equal(measurement.inlineScripts.themeBootstrap.rawBytes, Buffer.byteLength("(() => {})()"));
-	assert.equal(measurement.inlineScripts.localeRedirect.gzipBytes, gzipBytes(Buffer.from("(() => {})()")));
+	assert.equal(themeBootstrap.rawBytes, Buffer.byteLength("(() => {})()"));
+	assert.equal(localeRedirect.gzipBytes, gzipBytes(Buffer.from("(() => {})()")));
 });
 
 test("calculates root and localized executable JavaScript separately", async (t) => {
 	const output = await createCompleteOutput(t);
 	const measurement = await measureProductionOutput(output);
+	const { themeBootstrap, localeRedirect } = measurement.inlineScripts;
+	const { controller } = measurement.javascript;
+
+	assert.ok(themeBootstrap);
+	assert.ok(localeRedirect);
+	assert.ok(controller);
 
 	assert.equal(
 		measurement.executableJavascript.rootGzipBytes,
-		measurement.inlineScripts.themeBootstrap.gzipBytes + measurement.inlineScripts.localeRedirect.gzipBytes + measurement.javascript.controller.gzipBytes,
+		themeBootstrap.gzipBytes + localeRedirect.gzipBytes + controller.gzipBytes,
 	);
 	assert.equal(
 		measurement.executableJavascript.localizedGzipBytes,
-		measurement.inlineScripts.themeBootstrap.gzipBytes + measurement.javascript.controller.gzipBytes,
+		themeBootstrap.gzipBytes + controller.gzipBytes,
 	);
 	assert.ok(measurement.executableJavascript.rootGzipBytes > measurement.executableJavascript.localizedGzipBytes);
 });

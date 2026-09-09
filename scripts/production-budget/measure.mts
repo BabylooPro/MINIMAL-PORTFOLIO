@@ -173,8 +173,8 @@ export async function measureProductionOutput({
 	const relativeFiles = files.map((filePath) => path.relative(resolvedOutputDirectory, filePath).replaceAll(path.sep, "/"));
 	const javascriptFiles = files.filter((filePath) => filePath.endsWith(".js"));
 	const cssFiles = files.filter((filePath) => filePath.endsWith(".css"));
-	const htmlPaths = files.filter((filePath) => filePath.endsWith(".html")).sort();
-	const previewPaths = files.filter((filePath) => path.relative(resolvedOutputDirectory, filePath).replaceAll("\\", "/").startsWith("videos/timelapse/previews/") && filePath.endsWith(".avif")).sort();
+	const htmlPaths = files.filter((filePath) => filePath.endsWith(".html")).sort((first, second) => first.localeCompare(second));
+	const previewPaths = files.filter((filePath) => path.relative(resolvedOutputDirectory, filePath).replaceAll("\\", "/").startsWith("videos/timelapse/previews/") && filePath.endsWith(".avif")).sort((first, second) => first.localeCompare(second));
 
 	const socialImagePath = path.join(resolvedOutputDirectory, "og-image.jpg");
 

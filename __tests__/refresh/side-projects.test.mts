@@ -13,7 +13,36 @@ const configuration = {
 	],
 };
 
-function repository(name, { githubUser = "example-user", ...overrides } = {}) {
+type GeneratedSideProject = {
+	slug: string;
+	name: string;
+	repositoryUrl: string;
+	homepageUrl: string | null;
+	githubDescription: string;
+	primaryLanguage: string;
+	createdAt: string;
+	topics: string[];
+};
+
+type Repository = {
+	name: string;
+	html_url: string;
+	homepage: string | null;
+	description: string;
+	language: string;
+	created_at: string;
+	topics: string[];
+	fork: boolean;
+	archived: boolean;
+	disabled: boolean;
+};
+
+type FixtureOptions = {
+	config?: typeof configuration;
+	existingSnapshot?: GeneratedSideProject[];
+};
+
+function repository(name: string, { githubUser = "example-user", ...overrides }: Partial<Repository> & { githubUser?: string } = {}): Repository {
 	return {
 		name,
 		html_url: `https://github.com/${githubUser}/${name}`,
@@ -42,7 +71,7 @@ function snapshot() {
 	}));
 }
 
-async function fixture({ config = configuration, existingSnapshot } = {}) {
+async function fixture({ config = configuration, existingSnapshot }: FixtureOptions = {}) {
 	const projectDirectory = await mkdtemp(path.join(tmpdir(), "side-projects-"));
 
 	await mkdir(path.join(projectDirectory, "config"), { recursive: true });
@@ -70,8 +99,8 @@ async function withFixture(options, callback) {
 	}
 }
 
-function refresh(projectDirectory, fetchImpl, warnings = []) {
-	return refreshSideProjects({ projectDirectory, fetchImpl, logger: { warn: (message) => warnings.push(message) }, timeoutMs: 5 });
+function refresh(projectDirectory: string, fetchImpl, warnings: string[] = []) {
+	return refreshSideProjects({ projectDirectory, fetchImpl, logger: { ...console, warn: (message: string) => warnings.push(message) }, timeoutMs: 5 });
 }
 
 test("writes a valid response in the configuration order", async () => {
@@ -123,9 +152,10 @@ test("refreshes every configured GitHub owner once", async () => {
 	};
 
 	await withFixture({ config: multiOwnerConfiguration }, async (projectDirectory) => {
-		const requestedUsers = [];
+		const requestedUsers: string[] = [];
 		const result = await refresh(projectDirectory, async (url) => {
 			const githubUser = new URL(url).pathname.split("/")[2];
+			if (!githubUser) throw new Error("The GitHub request must include a user name.");
 			requestedUsers.push(githubUser);
 
 			return response(githubUser === "other-owner" ? [repository("project-two", { githubUser })] : [repository("project-one", { githubUser })]);
