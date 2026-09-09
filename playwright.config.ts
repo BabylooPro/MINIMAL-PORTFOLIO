@@ -10,7 +10,7 @@ export default defineConfig({
 	projects: [
 		{
 			name: "chromium",
-			use: { browserName: "chromium", channel: "chromium" },
+			use: { browserName: "chromium" },
 		},
 		{
 			name: "webkit-proof-work",
