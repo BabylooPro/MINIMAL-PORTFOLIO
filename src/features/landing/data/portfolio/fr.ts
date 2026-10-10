@@ -30,10 +30,10 @@ const experienceContent = {
 		description: "Gestion d’une entreprise individuelle proposant des services freelance en informatique.",
 	},
 	"various-clients-freelance-developer": {
-		company: "Divers clients via une agence",
-		role: "Développeur freelance",
+		company: "Clients directs et missions d’agence",
+		role: "Développeur indépendant, portage salarial",
 		location: "Suisse - À distance, sur site",
-		description: "Réalisation de solutions backend, d’automatisation, web, mobiles et de jeux pour différents clients.",
+		description: "Prestations backend, automatisation, web, mobiles et jeux, pour des clients locaux et des missions confiées par une agence.",
 	},
 	"self-taught-junior-developer": {
 		company: "Projets personnels",

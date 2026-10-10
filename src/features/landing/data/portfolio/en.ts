@@ -30,10 +30,10 @@ const experienceContent = {
 		description: "Operate an individual company offering freelance services in IT.",
 	},
 	"various-clients-freelance-developer": {
-		company: "Various Clients via Agency",
-		role: "Freelance Developer",
+		company: "Direct Clients and Agency Assignments",
+		role: "Independent Developer, Umbrella Company",
 		location: "Switzerland - Remote, On-site",
-		description: "Delivered backend, automation, web, mobile, and game development solutions for various clients.",
+		description: "Backend, automation, web, mobile, and game jobs for local clients and assignments passed on by an agency.",
 	},
 	"self-taught-junior-developer": {
 		company: "Personal Projects",

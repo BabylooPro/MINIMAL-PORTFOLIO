@@ -30,10 +30,10 @@ const experienceContent = {
 		description: "Führung eines Einzelunternehmens für freiberufliche IT-Dienstleistungen.",
 	},
 	"various-clients-freelance-developer": {
-		company: "Verschiedene Kunden über eine Agentur",
-		role: "Freiberuflicher Entwickler",
+		company: "Direktkunden und Agenturmandate",
+		role: "Selbstständiger Entwickler, Payrolling",
 		location: "Schweiz - Remote, vor Ort",
-		description: "Bereitstellung von Lösungen für Backend, Automatisierung, Web, Mobile und Spieleentwicklung für verschiedene Kunden.",
+		description: "Aufträge in Backend, Automatisierung, Web, Mobile und Spieleentwicklung für lokale Kunden und über eine Agentur vermittelte Mandate.",
 	},
 	"self-taught-junior-developer": {
 		company: "Eigene Projekte",
