@@ -33,7 +33,7 @@ const experienceContent = {
 		company: "Direct Clients and Agency Assignments",
 		role: "Independent Developer, Umbrella Company",
 		location: "Switzerland - Remote, On-site",
-		description: "Backend, automation, web, mobile, and game jobs for local clients and assignments passed on by an agency.",
+		description: "Delivered backend, automation, web, mobile, and game jobs for local clients and assignments passed on by an agency.",
 	},
 	"self-taught-junior-developer": {
 		company: "Personal Projects",
