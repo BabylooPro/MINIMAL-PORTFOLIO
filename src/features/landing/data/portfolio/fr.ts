@@ -35,6 +35,18 @@ const experienceContent = {
 		location: "Suisse - À distance, sur site",
 		description: "Réalisation de solutions backend, d’automatisation, web, mobiles et de jeux pour différents clients.",
 	},
+	"self-taught-junior-developer": {
+		company: "Projets personnels",
+		role: "Développeur junior",
+		location: "Suisse",
+		description: "Apprentissage autodidacte de l’informatique : modding de jeux existants et création de jeux, compréhension du fonctionnement des PC et des logiciels, développement de logiciels et contributions à des projets.",
+	},
+	"self-taught-computing-beginnings": {
+		company: "Apprentissage personnel",
+		role: "Débuts en informatique",
+		location: "Suisse",
+		description: "Découverte de l’informatique dès l’âge de 8 ans : exploration de Windows, du matériel, des logiciels et des jeux, premières manipulations techniques avant d’apprendre à coder.",
+	},
 } satisfies LocalizedExperienceContent;
 
 const skillGroupLabels = {

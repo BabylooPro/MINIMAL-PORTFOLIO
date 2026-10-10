@@ -1,4 +1,5 @@
 import { Section, SectionHeading } from "@/src/components/ui/Section";
+import { firstPersonalExperienceId } from "@/src/features/landing/data/portfolio/shared/experiences";
 import type { Locale } from "@/src/lib/i18n/config";
 import { formatPortfolioDate } from "@/src/lib/i18n/format";
 import type { Experience } from "@/src/types/portfolio";
@@ -28,7 +29,7 @@ export function ExperienceSection({ experiences, locale, presentLabel, title }: 
 					const endDate = experience.endDate ? formatPortfolioDate(locale, experience.endDate, experience.datePrecision) : presentLabel;
 
 					return (
-						<li key={experience.id}>
+						<li key={experience.id} className={experience.id === firstPersonalExperienceId ? "border-t border-dashed border-(--border-color) pt-6" : undefined}>
 							<article>
 								<header className="grid gap-x-6 gap-y-1 pt-2 sm:grid-cols-[minmax(0,1fr)_auto]">
 									<div>

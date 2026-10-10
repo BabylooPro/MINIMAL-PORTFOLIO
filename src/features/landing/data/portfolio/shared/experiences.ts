@@ -43,10 +43,24 @@ const sharedExperiences = [
 		endDate: "2023",
 		datePrecision: "year",
 	},
+	{
+		id: "self-taught-junior-developer",
+		startDate: "2014",
+		endDate: "2017",
+		datePrecision: "year",
+	},
+	{
+		id: "self-taught-computing-beginnings",
+		startDate: "2010",
+		endDate: "2014",
+		datePrecision: "year",
+	},
 ] as const satisfies readonly ExperienceMetadata[];
 
+export const firstPersonalExperienceId = "self-taught-junior-developer";
+
 type ExperienceId = (typeof sharedExperiences)[number]["id"];
-type LocalizedCompanyExperienceId = "confidential-client-software-engineer" | "various-clients-freelance-developer";
+type LocalizedCompanyExperienceId = "confidential-client-software-engineer" | "various-clients-freelance-developer" | "self-taught-junior-developer" | "self-taught-computing-beginnings";
 
 export type LocalizedExperienceContent = {
 	[Id in ExperienceId]: LocalizedExperience & (Id extends LocalizedCompanyExperienceId ? Pick<Experience, "company"> : { company?: never });

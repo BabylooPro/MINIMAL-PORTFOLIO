@@ -35,6 +35,18 @@ const experienceContent = {
 		location: "Switzerland - Remote, On-site",
 		description: "Delivered backend, automation, web, mobile, and game development solutions for various clients.",
 	},
+	"self-taught-junior-developer": {
+		company: "Personal Projects",
+		role: "Junior Developer",
+		location: "Switzerland",
+		description: "Self-taught start in computing: modding existing games and building games, learning how PCs and software work, writing software and contributing to projects.",
+	},
+	"self-taught-computing-beginnings": {
+		company: "Personal Learning",
+		role: "Computing Beginnings",
+		location: "Switzerland",
+		description: "Discovered computing from the age of 8: exploring Windows, hardware, software, and games, with first hands-on technical tinkering before learning to code.",
+	},
 } satisfies LocalizedExperienceContent;
 
 const skillGroupLabels = {

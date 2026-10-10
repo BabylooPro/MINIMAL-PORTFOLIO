@@ -35,6 +35,18 @@ const experienceContent = {
 		location: "Schweiz - Remote, vor Ort",
 		description: "Bereitstellung von Lösungen für Backend, Automatisierung, Web, Mobile und Spieleentwicklung für verschiedene Kunden.",
 	},
+	"self-taught-junior-developer": {
+		company: "Eigene Projekte",
+		role: "Junior-Entwickler",
+		location: "Schweiz",
+		description: "Autodidaktischer Einstieg in die Informatik: Modding bestehender Spiele und Entwicklung eigener Spiele, Verstehen von PCs und Software, Entwicklung von Software und Beiträge zu Projekten.",
+	},
+	"self-taught-computing-beginnings": {
+		company: "Eigenes Lernen",
+		role: "Erste Schritte in der Informatik",
+		location: "Schweiz",
+		description: "Einstieg in die Informatik ab dem Alter von 8 Jahren: Erkundung von Windows, Hardware, Software und Spielen sowie erste technische Experimente, noch vor dem Programmieren.",
+	},
 } satisfies LocalizedExperienceContent;
 
 const skillGroupLabels = {
