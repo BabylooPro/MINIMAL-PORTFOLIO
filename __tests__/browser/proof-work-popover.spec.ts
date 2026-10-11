@@ -7,7 +7,7 @@ test("keeps the mobile Proof Work popover above the sticky header and restores f
 
 	const trigger = page.locator("[data-popover-trigger]");
 	await revealBelowStickyHeader(trigger);
-	await trigger.click();
+	await trigger.press("Enter");
 
 	const popover = page.locator("#proof-work");
 	const closeButton = popover.getByRole("button", { name: "Close" });
