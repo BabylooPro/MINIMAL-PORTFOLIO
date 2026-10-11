@@ -125,23 +125,6 @@ main > * {
 	}
 }
 
-@keyframes header-details-out {
-	to {
-		opacity: 0;
-		translate: 0 -0.5rem;
-	}
-}
-
-@supports (animation-timeline: scroll()) {
-	@media (width < 40rem) and (prefers-reduced-motion: no-preference) {
-		[data-header-scroll-content] {
-			animation: header-details-out linear both;
-			animation-timeline: scroll(root);
-			animation-range: 0 var(--header-details-height);
-		}
-	}
-}
-
 @layer base {
 	a {
 		color: inherit;
