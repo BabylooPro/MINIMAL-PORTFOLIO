@@ -78,7 +78,13 @@ test("persists the theme and applies desktop and mobile header states", async ({
 	await page.evaluate(() => window.scrollTo(0, 200));
 	await expect(page.locator("[data-page-header]")).toHaveAttribute("data-fully-compact", "");
 
+	const details = page.locator("[data-header-scroll-hidden]");
+
 	await page.setViewportSize({ width: 390, height: 844 });
-	await page.evaluate(() => window.scrollTo(0, 100));
-	await expect(page.locator("[data-header-scroll-hidden]")).toHaveAttribute("data-collapsed", "");
+	await page.evaluate(() => window.scrollTo({ top: 90, behavior: "instant" }));
+	await expect.poll(() => details.evaluate((element) => getComputedStyle(element).opacity)).toBe("0.5");
+	await expect(details).not.toHaveAttribute("inert");
+
+	await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));
+	await expect(details).toHaveAttribute("inert", "");
 });

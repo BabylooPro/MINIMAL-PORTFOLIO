@@ -3,7 +3,7 @@ import {
 	resetHeaderIdentityStyles, updateBackToTopVisibility, updateCollapsibleElements, updateDesktopScrollState,
 	updateHeaderIdentity, updateMobileScrollState,
 } from "@/src/components/utils/behavior/header-scroll-dom";
-import { isDocumentAtBottom } from "@/src/components/utils/behavior/header-scroll-state";
+import { isDocumentAtBottom, progressBetween } from "@/src/components/utils/behavior/header-scroll-state";
 
 
 export function initializeScrollStateController(): void {
@@ -18,7 +18,6 @@ export function initializeScrollStateController(): void {
 		if (collapseMode === mode) return false;
 		collapseMode = mode;
 
-		resetCollapsibleElements();
 		resetHeaderIdentityStyles();
 
 		return true;
@@ -28,14 +27,15 @@ export function initializeScrollStateController(): void {
 		animationFrame = undefined;
 		updateBackToTopVisibility();
 
+		const progress = progressBetween(scrollY, 0, 180);
+
 		if (!desktopViewport.matches) {
 			if (setCollapseMode("mobile")) resetDesktopHeaderStyles();
 
 			updateMobileScrollState();
+			updateCollapsibleElements(progress);
 			return;
 		}
-
-		const progress = Math.min(scrollY / 180, 1);
 
 		setCollapseMode("desktop");
 		updateDesktopScrollState(progress, isDocumentAtBottom());
@@ -48,22 +48,12 @@ export function initializeScrollStateController(): void {
 		animationFrame = requestAnimationFrame(updateScrollState);
 	}
 
-	function handleScroll(): void {
-		if (!desktopViewport.matches) {
-			updateBackToTopVisibility();
-			updateMobileScrollState();
-			return;
-		}
-
-		scheduleScrollStateUpdate();
-	}
-
 	function handleObservedResize(): void {
 		measureHeaderElements();
 		scheduleScrollStateUpdate();
 	}
 
-	addEventListener("scroll", handleScroll, { passive: true });
+	addEventListener("scroll", scheduleScrollStateUpdate, { passive: true });
 	addEventListener("resize", scheduleScrollStateUpdate);
 	addEventListener("pageshow", updateScrollState);
 	addEventListener("beforeprint", resetCollapsibleElements);
