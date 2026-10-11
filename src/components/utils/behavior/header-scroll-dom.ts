@@ -68,10 +68,7 @@ export function measureHeaderElements(): void {
 	if (collapsibleContent) {
 		const height = collapsibleContent.getBoundingClientRect().height;
 
-		if (height > 0) {
-			collapsibleHeight = height;
-			pageTop?.style.setProperty("--header-details-height", `${height}px`);
-		}
+		if (height > 0) collapsibleHeight = height;
 	}
 }
 
@@ -111,7 +108,6 @@ export function resetCollapsibleElements(): void {
 
 export function updateMobileScrollState(): void {
 	header?.toggleAttribute("data-scrolled", scrollY > 0);
-	collapsible?.toggleAttribute("inert", scrollY >= collapsibleHeight);
 }
 
 export function resetDesktopHeaderStyles(): void {

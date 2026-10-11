@@ -18,7 +18,6 @@ export function initializeScrollStateController(): void {
 		if (collapseMode === mode) return false;
 		collapseMode = mode;
 
-		resetCollapsibleElements();
 		resetHeaderIdentityStyles();
 
 		return true;
@@ -28,14 +27,15 @@ export function initializeScrollStateController(): void {
 		animationFrame = undefined;
 		updateBackToTopVisibility();
 
+		const progress = progressBetween(scrollY, 0, 180);
+
 		if (!desktopViewport.matches) {
 			if (setCollapseMode("mobile")) resetDesktopHeaderStyles();
 
 			updateMobileScrollState();
+			updateCollapsibleElements(progress);
 			return;
 		}
-
-		const progress = progressBetween(scrollY, 0, 180);
 
 		setCollapseMode("desktop");
 		updateDesktopScrollState(progress, isDocumentAtBottom());
