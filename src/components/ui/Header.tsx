@@ -72,7 +72,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 											"max-sm:contents",
 										].join(" ")}
 									>
-										<a href={getLocalePath(currentLocale)} className="size-10 rounded-md max-sm:col-start-1 max-sm:row-span-2">
+										<a href={getLocalePath(currentLocale)} className="size-10 rounded-md max-sm:col-start-1 max-sm:row-span-2" data-header-morph="avatar">
 											<span className="sr-only">{portfolio.name}</span>
 
 											<img
@@ -83,7 +83,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 											/>
 										</a>
 
-										<span className="max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none">
+										<span className="max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none" data-header-morph="name">
 											{portfolio.name}
 										</span>
 									</IdentityHeading>
@@ -117,6 +117,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 											// DESKTOP COMPACT TRANSITION
 											"sm:block sm:pb-1 sm:group-data-fully-compact/header:pb-0",
 										].join(" ")}
+										data-header-morph="role"
 									>
 										{portfolio.role}
 									</p>

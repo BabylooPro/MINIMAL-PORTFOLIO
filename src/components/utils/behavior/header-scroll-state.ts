@@ -6,6 +6,10 @@ export function progressBetween(value: number, start: number, end: number): numb
 	return Math.min(Math.max((value - start) / (end - start), 0), 1);
 }
 
+export function smoothstep(progress: number): number {
+	return progress * progress * (3 - 2 * progress);
+}
+
 export function isDocumentAtBottom(): boolean {
 	return scrollY + innerHeight >= document.documentElement.scrollHeight - 1;
 }

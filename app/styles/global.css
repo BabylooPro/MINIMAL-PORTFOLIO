@@ -107,6 +107,24 @@ main > * {
 	overflow-x: clip;
 }
 
+@media (width >= 40rem) {
+	[data-header-morph="avatar"] {
+		translate: 0 calc(var(--header-morph) * 0.5rem);
+	}
+
+	[data-header-morph="name"] {
+		transform-origin: left;
+		translate: 0 calc(var(--header-morph) * -0.125rem);
+		scale: calc(1 - var(--header-morph) / 3);
+	}
+
+	[data-header-morph="role"] {
+		transform-origin: 0 0.75rem;
+		translate: calc(var(--header-morph) * 3.25rem) calc(var(--header-morph) * -1.1875rem);
+		scale: calc(1 - var(--header-morph) / 8);
+	}
+}
+
 @layer base {
 	a {
 		color: inherit;

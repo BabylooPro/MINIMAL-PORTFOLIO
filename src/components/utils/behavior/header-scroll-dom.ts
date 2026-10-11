@@ -1,4 +1,4 @@
-import { interpolate, progressBetween } from "@/src/components/utils/behavior/header-scroll-state";
+import { interpolate, progressBetween, smoothstep } from "@/src/components/utils/behavior/header-scroll-state";
 
 let backToTop: HTMLAnchorElement | null = null;
 
@@ -88,22 +88,19 @@ export function updateCollapsibleElements(progress: number): void {
 export function updateHeaderIdentity(progress: number): void {
 	if (!identity || !compactIdentity || !identityTransition || !identityHeight || !compactIdentityHeight) return;
 
-	const identityProgress = progressBetween(progress, 0.65, 1);
-	const isCompactIdentity = identityProgress >= 0.3;
+	const morphProgress = smoothstep(progressBetween(progress, 0.65, 0.9));
 
-	identityTransition.style.height = `${interpolate(identityHeight, compactIdentityHeight, progressBetween(identityProgress, 0.3, 1))}px`;
-	identity.style.opacity = isCompactIdentity ? "0" : "1";
-	identity.style.transform = "none";
-	compactIdentity.style.opacity = isCompactIdentity ? "1" : "0";
-	compactIdentity.style.transform = "none";
+	identityTransition.style.height = `${interpolate(identityHeight, compactIdentityHeight, morphProgress)}px`;
+	identityTransition.style.setProperty("--header-morph", morphProgress as unknown as string);
+	identity.style.opacity = (1 - progressBetween(progress, 0.95, 1)) as unknown as string;
+	compactIdentity.style.opacity = progressBetween(progress, 0.9, 0.95) as unknown as string;
 }
 
 export function resetHeaderIdentityStyles(): void {
 	identityTransition?.style.removeProperty("height");
+	identityTransition?.style.removeProperty("--header-morph");
 	identity?.style.removeProperty("opacity");
-	identity?.style.removeProperty("transform");
 	compactIdentity?.style.removeProperty("opacity");
-	compactIdentity?.style.removeProperty("transform");
 }
 
 export function resetCollapsibleElements(): void {
