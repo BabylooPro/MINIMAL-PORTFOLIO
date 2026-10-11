@@ -168,12 +168,16 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 								className={[
 									// COLLAPSIBLE CONTAINER
 									"overflow-hidden contain-[layout_paint] will-change-[height,opacity]",
-									// BOTTOM-ANCHORED CONTENT
-									"flex flex-col justify-end",
+									// MOBILE MEASURED HEIGHT AND MOTION
+									"max-sm:data-ready:max-h-(--header-details-height) max-sm:data-ready:[transition:max-height_380ms_ease,opacity_320ms_linear,transform_380ms_ease] max-sm:data-ready:will-change-[opacity,transform] max-sm:motion-reduce:transition-none",
+									// MOBILE COLLAPSED STATE
+									"max-sm:data-ready:data-collapsed:max-h-0 max-sm:data-collapsed:-translate-y-2 max-sm:data-collapsed:opacity-0",
+									// DESKTOP BOTTOM-ANCHORED CONTENT
+									"sm:flex sm:flex-col sm:justify-end",
 								].join(" ")}
 								data-header-scroll-hidden
 							>
-								<div className="max-sm:pt-4 flex-none" data-header-scroll-content>
+								<div className="max-sm:pt-4 sm:flex-none" data-header-scroll-content>
 									<p>{portfolio.location}</p>
 
 									{portfolio.links.length > 0 ? (

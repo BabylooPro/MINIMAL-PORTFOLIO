@@ -65,10 +65,13 @@ export function measureHeaderElements(): void {
 		if (compactHeight > 0) compactIdentityHeight = compactHeight;
 	}
 
-	if (collapsibleContent) {
+	if (collapsibleContent && collapsible) {
 		const height = collapsibleContent.getBoundingClientRect().height;
 
-		if (height > 0) collapsibleHeight = height;
+		if (height > 0) {
+			collapsibleHeight = height;
+			collapsible.style.setProperty("--header-details-height", `${height}px`);
+		}
 	}
 }
 
@@ -103,11 +106,17 @@ export function resetHeaderIdentityStyles(): void {
 export function resetCollapsibleElements(): void {
 	collapsible?.style.removeProperty("height");
 	collapsible?.style.removeProperty("opacity");
+	collapsible?.removeAttribute("data-collapsed");
 	collapsible?.removeAttribute("inert");
 }
 
 export function updateMobileScrollState(): void {
+	const detailsCollapsed = scrollY > 24;
+
 	header?.toggleAttribute("data-scrolled", scrollY > 0);
+
+	collapsible?.toggleAttribute("data-collapsed", detailsCollapsed);
+	collapsible?.toggleAttribute("inert", detailsCollapsed);
 }
 
 export function resetDesktopHeaderStyles(): void {
