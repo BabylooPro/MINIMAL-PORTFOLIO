@@ -79,10 +79,14 @@ test("persists the theme and applies desktop and mobile header states", async ({
 	await expect(page.locator("[data-page-header]")).toHaveAttribute("data-fully-compact", "");
 
 	const details = page.locator("[data-header-scroll-hidden]");
+	const headerBottom = () => page.locator("[data-page-header-shell]").evaluate((element) => element.getBoundingClientRect().bottom);
 
 	await page.setViewportSize({ width: 390, height: 844 });
+	await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+	const expandedHeaderBottom = await headerBottom();
+
 	await page.evaluate(() => window.scrollTo({ top: 90, behavior: "instant" }));
-	await expect.poll(() => details.evaluate((element) => getComputedStyle(element).opacity)).toBe("0.5");
+	await expect.poll(headerBottom).toBeCloseTo(expandedHeaderBottom - 90);
 	await expect(details).not.toHaveAttribute("inert");
 
 	await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));

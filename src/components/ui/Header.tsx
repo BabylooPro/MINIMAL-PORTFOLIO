@@ -32,7 +32,17 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 		<>
 			<span aria-hidden="true" className="block h-0" id="top" />
 
-			<header className="sticky top-0 z-40 bg-(--background-color) pt-[env(safe-area-inset-top)]" data-page-top data-page-header-shell tabIndex={-1}>
+			<header
+				className={[
+					// STICKY SHELL
+					"sticky top-0 z-40 bg-(--background-color) pt-[env(safe-area-inset-top)]",
+					// MOBILE DETAILS SCROLL OUT BEFORE THE SHELL STICKS
+					"max-sm:top-[calc(var(--header-details-height,0px)*-1)]",
+				].join(" ")}
+				data-page-top
+				data-page-header-shell
+				tabIndex={-1}
+			>
 				<Container>
 					<div
 						className={[
@@ -41,11 +51,18 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 							// SCROLL STATE TRANSITION
 							"transition-colors duration-150 ease-[ease] data-scrolled:[--header-border-color:var(--border-color)]",
 							// MOBILE SPACING
-							"max-sm:pb-3 max-sm:pt-3",
+							"max-sm:pb-3 max-sm:pt-0",
 						].join(" ")}
 						data-page-header
 					>
-						<div className="flex items-start justify-between gap-4">
+						<div
+							className={[
+								// IDENTITY ROW
+								"flex items-start justify-between gap-4",
+								// MOBILE PINNED ROW ABOVE THE SCROLLING DETAILS
+								"max-sm:sticky max-sm:top-0 max-sm:z-10 max-sm:-mt-[env(safe-area-inset-top)] max-sm:bg-(--background-color) max-sm:pt-[calc(env(safe-area-inset-top)+0.75rem)]",
+							].join(" ")}
+						>
 							<div
 								className={[
 									// FLEXIBLE HEADER IDENTITY
