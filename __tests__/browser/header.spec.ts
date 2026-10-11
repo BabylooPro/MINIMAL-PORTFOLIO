@@ -75,7 +75,7 @@ test("persists the theme and applies desktop and mobile header states", async ({
 	await page.reload();
 	await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 
-	await page.evaluate(() => window.scrollTo(0, 200));
+	await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));
 	await expect(page.locator("[data-page-header]")).toHaveAttribute("data-fully-compact", "");
 
 	const details = page.locator("[data-header-scroll-hidden]");
