@@ -80,6 +80,7 @@ test("persists the theme and applies desktop and mobile header states", async ({
 
 	const details = page.locator("[data-header-scroll-hidden]");
 	const headerBottom = () => page.locator("[data-page-header-shell]").evaluate((element) => element.getBoundingClientRect().bottom);
+	const detailsOpacity = () => page.locator("[data-header-scroll-content]").evaluate((element) => Number(getComputedStyle(element).opacity));
 
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
@@ -87,6 +88,8 @@ test("persists the theme and applies desktop and mobile header states", async ({
 
 	await page.evaluate(() => window.scrollTo({ top: 90, behavior: "instant" }));
 	await expect.poll(headerBottom).toBeCloseTo(expandedHeaderBottom - 90);
+	await expect.poll(detailsOpacity).toBeLessThan(1);
+	expect(await detailsOpacity()).toBeGreaterThan(0);
 	await expect(details).not.toHaveAttribute("inert");
 
 	await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));
