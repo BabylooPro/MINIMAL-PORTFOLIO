@@ -3,8 +3,8 @@ import type { Messages } from "@/src/lib/i18n/messages/types";
 export const enMessages = {
 	meta: {
 		title: "Max Remy - Developer",
-		description: "Self-taught developer with over ten years of hands-on development.",
-		ogDescription: "Self-taught freelance developer based in Vaud, Switzerland, with over ten years of hands-on development.",
+		description: "Full-stack developer building C#/.NET backends, Apple apps and React/Next.js web interfaces, with over ten years of hands-on development.",
+		ogDescription: "Freelance developer based in Vaud, Switzerland, building C#/.NET backends, Apple apps and React/Next.js web interfaces, with over ten years of hands-on development.",
 		socialImageAlt: "Portrait of Max Remy wearing swim goggles and giving a thumbs-up.",
 	},
 	notFound: {

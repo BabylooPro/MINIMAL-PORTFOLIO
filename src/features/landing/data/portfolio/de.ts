@@ -63,7 +63,7 @@ export const portfolioDe = {
 	...sharedPortfolioDetails,
 	role: "Softwareentwickler | Full-Stack-Entwickler | Bergsportler",
 	location: "Moudon, Waadt, Schweiz",
-	summary: "Ein Schweizer Taschenmesser-Entwickler mit über zehn Jahren Entwicklungspraxis.\nVollständig autodidaktisch, ohne formalen Abschluss.",
+	summary: "Ich konzipiere und entwickle C#/.NET-Backends, Apple-Apps mit Swift/SwiftUI und Weboberflächen mit React/Next.js, mit Docker und CI/CD.\nSchweizer Taschenmesser-Entwickler mit über zehn Jahren Entwicklungspraxis, seit 2017 selbstständig.\nAutodidakt, durch die Praxis ausgebildet.",
 	languages: [
 		{
 			label: "Französisch - Muttersprache (C2)",

@@ -63,7 +63,7 @@ export const portfolioFr = {
 	...sharedPortfolioDetails,
 	role: "Ingénieur logiciel | Développeur full-stack | Athlète de montagne",
 	location: "Moudon, Vaud, Suisse",
-	summary: "Un développeur couteau suisse avec plus de dix ans de pratique du développement.\nEntièrement autodidacte, sans diplôme formel.",
+	summary: "Je conçois et développe des backends C#/.NET, des apps Apple en Swift/SwiftUI et des interfaces web React/Next.js, avec Docker et la CI/CD.\nDéveloppeur couteau suisse avec plus de dix ans de pratique du développement, en indépendant depuis 2017.\nAutodidacte, formé par la pratique.",
 	languages: [
 		{
 			label: "Français - Maternelle (C2)",

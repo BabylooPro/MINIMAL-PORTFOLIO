@@ -3,8 +3,8 @@ import type { Messages } from "@/src/lib/i18n/messages/types";
 export const deMessages = {
 	meta: {
 		title: "Max Remy - Entwickler",
-		description: "Autodidaktischer Entwickler mit über zehn Jahren Entwicklungspraxis.",
-		ogDescription: "Autodidaktischer freiberuflicher Entwickler in Waadt, Schweiz, mit über zehn Jahren Entwicklungspraxis.",
+		description: "Full-Stack-Entwickler für C#/.NET-Backends, Apple-Apps und Weboberflächen mit React/Next.js, mit über zehn Jahren Entwicklungspraxis.",
+		ogDescription: "Freiberuflicher Entwickler in Waadt, Schweiz, für C#/.NET-Backends, Apple-Apps und Weboberflächen mit React/Next.js, mit über zehn Jahren Entwicklungspraxis.",
 		socialImageAlt: "Porträt von Max Remy mit Schwimmbrille und erhobenem Daumen.",
 	},
 	notFound: {
