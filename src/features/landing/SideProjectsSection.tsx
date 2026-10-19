@@ -23,6 +23,7 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 			<ul className="mt-4 grid grid-cols-1 gap-x-3 sm:grid-cols-2">
 				{generatedProjects.map((project) => {
 					const localizedProject = content.projects[project.slug];
+					const title = localizedProject?.title ?? project.name;
 					const description = localizedProject?.description ?? project.githubDescription;
 					const hasTechnologies = project.primaryLanguage !== null || project.topics.length > 0;
 					const createdAt = formatSideProjectDate(locale, project.createdAt);
@@ -31,7 +32,7 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 						<li key={project.slug} className="row-span-5 grid grid-rows-subgrid">
 							<article className="row-span-5 grid grid-rows-subgrid">
 								<h3 className="pt-2 font-semibold text-(--foreground-color)">
-									{localizedProject?.title ?? project.name}
+									{title}
 								</h3>
 
 								{description ? (
@@ -66,6 +67,7 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 								<p className="mt-3 pb-5 text-sm font-medium text-(--foreground-color)">
 									<ExternalLink className="hover:underline focus-visible:underline" href={project.repositoryUrl}>
 										{content.repositoryLabel}
+										<span className="sr-only">, {title}</span>
 									</ExternalLink>
 
 									{project.homepageUrl ? (<>
@@ -75,6 +77,7 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 
 										<ExternalLink className="hover:underline focus-visible:underline" href={project.homepageUrl}>
 											{content.liveDemoLabel}
+											<span className="sr-only">, {title}</span>
 										</ExternalLink>
 									</>) : null}
 								</p>
