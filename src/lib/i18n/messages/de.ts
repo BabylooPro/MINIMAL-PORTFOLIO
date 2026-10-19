@@ -3,8 +3,8 @@ import type { Messages } from "@/src/lib/i18n/messages/types";
 export const deMessages = {
 	meta: {
 		title: "Max Remy - Entwickler",
-		description: "Autodidaktischer Entwickler mit 10 Jahren Erfahrung als Freelancer.",
-		ogDescription: "Autodidaktischer freiberuflicher Entwickler in Waadt, Schweiz, mit 10 Jahren Erfahrung.",
+		description: "Autodidaktischer Entwickler mit über zehn Jahren Entwicklungspraxis.",
+		ogDescription: "Autodidaktischer freiberuflicher Entwickler in Waadt, Schweiz, mit über zehn Jahren Entwicklungspraxis.",
 		socialImageAlt: "Porträt von Max Remy mit Schwimmbrille und erhobenem Daumen.",
 	},
 	notFound: {

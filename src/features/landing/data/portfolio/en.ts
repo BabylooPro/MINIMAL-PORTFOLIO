@@ -63,7 +63,7 @@ export const portfolioEn = {
 	...sharedPortfolioDetails,
 	role: "Software Engineer | Full-Stack Developer | Mountain Athlete",
 	location: "Moudon, Vaud, Switzerland",
-	summary: "A Swiss Army knife developer with 10 years of freelance experience.\nEntirely self-taught, with no formal degree.",
+	summary: "A Swiss Army knife developer with over ten years of hands-on development.\nEntirely self-taught, with no formal degree.",
 	languages: [
 		{
 			label: "French - Native (C2)",
