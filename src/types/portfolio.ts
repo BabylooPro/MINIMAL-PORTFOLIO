@@ -21,6 +21,7 @@ export type SkillGroup = {
 	id: string;
 	label: string;
 	skills: readonly string[];
+	core?: boolean;
 };
 
 export type Language = {

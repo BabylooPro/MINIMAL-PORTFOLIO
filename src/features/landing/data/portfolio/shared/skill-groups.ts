@@ -1,14 +1,15 @@
 import type { SkillGroup } from "@/src/types/portfolio";
 
-type SkillGroupMetadata = Pick<SkillGroup, "id" | "skills">;
+type SkillGroupMetadata = Pick<SkillGroup, "id" | "skills" | "core">;
 
 const sharedSkillGroups = [
-	{ id: "programming-languages", skills: ["C#", "Python", "Swift", "JavaScript", "TypeScript"] },
-	{ id: "backend", skills: [".NET", "ASP.NET Core", "Django", "Node.js", "Express.js"] },
-	{ id: "frontend", skills: ["React.js", "Next.js", "HTML", "CSS", "Tailwind CSS", "SwiftUI", "Flutter"] },
+	{ id: "dotnet-backend", skills: ["C#", ".NET", "ASP.NET Core", "REST APIs"], core: true },
+	{ id: "apple", skills: ["Swift", "SwiftUI"], core: true },
+	{ id: "web", skills: ["TypeScript", "JavaScript", "React.js", "Next.js", "HTML", "CSS", "Tailwind CSS"], core: true },
+	{ id: "devops-cloud", skills: ["Docker", "GitHub Actions", "CI/CD", "Kubernetes", "AWS", "GCP", "Azure"], core: true },
+	{ id: "other-stacks", skills: ["Python", "Django", "Node.js", "Express.js", "Flutter"] },
 	{ id: "databases", skills: ["MySQL", "NoSQL", "SQLite", "PostgreSQL"] },
-	{ id: "devops-cloud", skills: ["Docker", "GitHub Actions", "AWS", "GCP", "Azure", "Kubernetes"] },
-	{ id: "practices", skills: ["REST APIs", "CI/CD", "TDD", "BDD", "Agile/Scrum", "HERMES"] },
+	{ id: "practices", skills: ["TDD", "BDD", "Agile/Scrum", "HERMES"] },
 	{ id: "platform", skills: ["Windows", "MacOS", "Linux"] },
 ] as const satisfies readonly SkillGroupMetadata[];
 

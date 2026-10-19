@@ -50,11 +50,12 @@ const experienceContent = {
 } satisfies LocalizedExperienceContent;
 
 const skillGroupLabels = {
-	"programming-languages": "Programmiersprachen",
-	backend: "Backend",
-	frontend: "Frontend",
-	databases: "Datenbanken",
+	"dotnet-backend": "C#/.NET-Backend",
+	apple: "Apple",
+	web: "Web",
 	"devops-cloud": "DevOps & Cloud",
+	"other-stacks": "Weitere Sprachen & Frameworks",
+	databases: "Datenbanken",
 	practices: "Praktiken",
 	platform: "Plattformen",
 } satisfies LocalizedSkillGroupLabels;
