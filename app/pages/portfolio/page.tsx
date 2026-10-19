@@ -20,6 +20,14 @@ type PortfolioPageProps = {
 function PortfolioPage({ locale, dictionary, showSideProjects }: Readonly<PortfolioPageProps>) {
 	const { messages, portfolio } = dictionary;
 	const email = portfolio.links.find((link) => link.href.startsWith("mailto:"));
+	const sectionLinks = [
+		{ id: "proof-work-title", label: messages.sections.proofWork },
+		{ id: "skills-title", label: messages.sections.skills },
+		{ id: "languages-title", label: messages.sections.languages },
+		...(showSideProjects ? [{ id: "side-projects-title", label: messages.sections.sideProjects }] : []),
+		{ id: "experience-title", label: messages.sections.experience },
+		...(email ? [{ id: "contact-title", label: messages.sections.contact }] : []),
+	];
 
 	return (
 		<RootLayout dictionary={dictionary} locale={locale}>
@@ -28,6 +36,18 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: Readonly<Portfo
 					summary={portfolio.summary}
 					title={messages.sections.profile}
 				/>
+
+				<nav aria-label={messages.labels.sectionNavigation} className="no-print">
+					<ul className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+						{sectionLinks.map(({ id, label }) => (
+							<li key={id}>
+								<a className="underline underline-offset-2 hover:text-(--muted-color)" href={`#${id}`}>
+									{label}
+								</a>
+							</li>
+						))}
+					</ul>
+				</nav>
 
 				<ProofWorkSection
 					content={messages.proofWork}

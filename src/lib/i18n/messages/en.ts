@@ -26,6 +26,7 @@ export const enMessages = {
 		home: "Home",
 		languageSwitcher: "Language",
 		present: "Present",
+		sectionNavigation: "On this page",
 		skipToContent: "Skip to content",
 		email: "Email",
 		phone: "Phone",

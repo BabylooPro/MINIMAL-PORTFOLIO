@@ -26,6 +26,7 @@ export const deMessages = {
 		home: "Startseite",
 		languageSwitcher: "Sprache",
 		present: "Heute",
+		sectionNavigation: "Auf dieser Seite",
 		skipToContent: "Zum Inhalt springen",
 		email: "E-Mail",
 		phone: "Telefon",
