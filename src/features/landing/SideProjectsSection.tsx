@@ -26,7 +26,7 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 					const title = localizedProject?.title ?? project.name;
 					const description = localizedProject?.description ?? project.githubDescription;
 					const hasTechnologies = project.primaryLanguage !== null || project.topics.length > 0;
-					const createdAt = formatSideProjectDate(locale, project.createdAt);
+					const lastActivity = formatSideProjectDate(locale, project.pushedAt);
 
 					return (
 						<li key={project.slug} className="row-span-5 grid grid-rows-subgrid">
@@ -61,7 +61,7 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 								)}
 
 								<p className="mt-2 text-sm text-(--muted-color)">
-									{content.createdLabel} {createdAt}
+									{content.lastActivityLabel} {lastActivity}
 								</p>
 
 								<p className="mt-3 pb-5 text-sm font-medium text-(--foreground-color)">

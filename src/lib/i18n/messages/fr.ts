@@ -109,7 +109,7 @@ export const frMessages = {
 			"pypi.org": "Voir sur PyPI",
 			"marketplace.visualstudio.com": "Voir l’extension",
 		},
-		createdLabel: "Créé le",
+		lastActivityLabel: "Dernière activité le",
 		projects: {
 			"babyloopro/contactform.csharp": {
 				title: "ContactForm.csharp",

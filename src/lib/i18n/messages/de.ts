@@ -112,7 +112,7 @@ export const deMessages = {
 			"pypi.org": "Auf PyPI ansehen",
 			"marketplace.visualstudio.com": "Erweiterung ansehen",
 		},
-		createdLabel: "Erstellt",
+		lastActivityLabel: "Letzte Aktivität am",
 		projects: {
 			"babyloopro/contactform.csharp": {
 				title: "ContactForm.csharp",

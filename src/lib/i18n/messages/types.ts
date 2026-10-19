@@ -103,7 +103,7 @@ export type Messages = {
 		repositoryLabel: string;
 		homepageLabel: string;
 		homepageLabels: Record<"pypi.org" | "marketplace.visualstudio.com", string>;
-		createdLabel: string;
+		lastActivityLabel: string;
 		projects: {
 			[repositorySlug: string]: {
 				title: string;

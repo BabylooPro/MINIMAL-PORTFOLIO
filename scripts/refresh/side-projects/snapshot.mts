@@ -54,7 +54,7 @@ export function buildSnapshot(repositoriesByGitHubUser, configuration) {
 
 export async function writeSnapshot(outputPath, snapshot) {
 	const temporaryPath = `${outputPath}.tmp`;
-	const properties = ["slug", "name", "repositoryUrl", "homepageUrl", "githubDescription", "primaryLanguage", "createdAt", "topics"];
+	const properties = ["slug", "name", "repositoryUrl", "homepageUrl", "githubDescription", "primaryLanguage", "pushedAt", "topics"];
 	const serializedSnapshot = `${[ "[", snapshot.map((project) => {
 		const serializedProperties = properties.map((property, index) => {
 			const value = property === "topics" ? `[${project[property].map((topic) => JSON.stringify(topic)).join(", ")}]` : JSON.stringify(project[property]);

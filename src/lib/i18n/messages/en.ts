@@ -112,7 +112,7 @@ export const enMessages = {
 			"pypi.org": "View on PyPI",
 			"marketplace.visualstudio.com": "View extension",
 		},
-		createdLabel: "Created",
+		lastActivityLabel: "Last activity",
 		projects: {
 			"babyloopro/contactform.csharp": {
 				title: "ContactForm.csharp",

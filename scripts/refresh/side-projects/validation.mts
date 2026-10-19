@@ -47,7 +47,7 @@ export function isGitHubRepository(value) {
 		isNullableString(value.homepage) &&
 		isNullableString(value.description) &&
 		isNullableString(value.language) &&
-		isNonEmptyString(value.created_at) &&
+		isNonEmptyString(value.pushed_at) &&
 		Array.isArray(value.topics) &&
 		value.topics.every((topic) => typeof topic === "string") &&
 		typeof value.fork === "boolean" &&
@@ -79,8 +79,8 @@ function normalizeHomepageUrl(value) {
 	return value;
 }
 
-function validateCreatedAt(value) {
-	if (!isNonEmptyString(value) || Number.isNaN(Date.parse(value))) throw createPermanentError(`Repository created_at value is invalid: ${value}`);
+function validatePushedAt(value) {
+	if (!isNonEmptyString(value) || Number.isNaN(Date.parse(value))) throw createPermanentError(`Repository pushed_at value is invalid: ${value}`);
 	return value;
 }
 
@@ -95,7 +95,7 @@ export function createGeneratedSideProject(repository, selection) {
 		homepageUrl: normalizeHomepageUrl(repository.homepage),
 		githubDescription: repository.description,
 		primaryLanguage: repository.language,
-		createdAt: validateCreatedAt(repository.created_at),
+		pushedAt: validatePushedAt(repository.pushed_at),
 		topics: [...repository.topics].map((topic) => topic.trim()).filter(Boolean).sort((first, second) => Number(first > second) - Number(first < second)).slice(0, 3),
 	};
 }
@@ -110,14 +110,14 @@ function validateSnapshotProject(value, index) {
 		(value.homepageUrl === null || (typeof value.homepageUrl === "string" && isHttpsUrl(value.homepageUrl))) &&
 		isNullableString(value.githubDescription) &&
 		isNullableString(value.primaryLanguage) &&
-		isNonEmptyString(value.createdAt) &&
+		isNonEmptyString(value.pushedAt) &&
 		Array.isArray(value.topics) &&
 		value.topics.length <= 3 &&
 		value.topics.every(isNonEmptyString);
 
 	if (!valid) throw createPermanentError(`Side Projects snapshot entry at index ${index} is invalid.`);
 
-	validateCreatedAt(value.createdAt);
+	validatePushedAt(value.pushedAt);
 	return value;
 }
 
