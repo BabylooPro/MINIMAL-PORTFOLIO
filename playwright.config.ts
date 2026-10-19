@@ -14,7 +14,7 @@ export default defineConfig({
 		},
 		{
 			name: "webkit-proof-work",
-			grep: /Proof Work|language tooltips|pointer capabilities/,
+			grep: /Proof Work/,
 			use: { browserName: "webkit" },
 		},
 	],

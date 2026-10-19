@@ -26,7 +26,6 @@ export const frMessages = {
 		email: "E-mail",
 		phone: "Téléphone",
 		backToPortfolio: "Retour au portfolio",
-		moreInformation: "Plus d’informations",
 		close: "Fermer",
 	},
 	footer: {

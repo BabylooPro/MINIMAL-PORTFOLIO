@@ -41,7 +41,6 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: Readonly<Portfo
 
 				<LanguagesSection
 					languages={portfolio.languages}
-					moreInformationLabel={messages.labels.moreInformation}
 					title={messages.sections.languages}
 				/>
 
