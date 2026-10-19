@@ -104,7 +104,11 @@ export const frMessages = {
 	},
 	sideProjects: {
 		repositoryLabel: "Dépôt",
-		liveDemoLabel: "Démo en ligne",
+		homepageLabel: "Page du projet",
+		homepageLabels: {
+			"pypi.org": "Voir sur PyPI",
+			"marketplace.visualstudio.com": "Voir l’extension",
+		},
 		createdLabel: "Créé le",
 		projects: {
 			"babyloopro/contactform.csharp": {

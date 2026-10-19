@@ -76,7 +76,7 @@ export function SideProjectsSection({ content, locale, title }: Readonly<SidePro
 										</span>
 
 										<ExternalLink className="hover:underline focus-visible:underline" href={project.homepageUrl}>
-											{content.liveDemoLabel}
+											{(content.homepageLabels as Partial<Record<string, string>>)[new URL(project.homepageUrl).hostname] ?? content.homepageLabel}
 											<span className="sr-only">, {title}</span>
 										</ExternalLink>
 									</>) : null}

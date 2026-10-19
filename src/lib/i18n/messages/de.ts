@@ -107,7 +107,11 @@ export const deMessages = {
 	},
 	sideProjects: {
 		repositoryLabel: "Repository",
-		liveDemoLabel: "Live-Demo",
+		homepageLabel: "Projektseite",
+		homepageLabels: {
+			"pypi.org": "Auf PyPI ansehen",
+			"marketplace.visualstudio.com": "Erweiterung ansehen",
+		},
 		createdLabel: "Erstellt",
 		projects: {
 			"babyloopro/contactform.csharp": {

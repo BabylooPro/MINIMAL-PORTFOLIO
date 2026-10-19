@@ -101,7 +101,8 @@ export type Messages = {
 	};
 	sideProjects: {
 		repositoryLabel: string;
-		liveDemoLabel: string;
+		homepageLabel: string;
+		homepageLabels: Record<"pypi.org" | "marketplace.visualstudio.com", string>;
 		createdLabel: string;
 		projects: {
 			[repositorySlug: string]: {
