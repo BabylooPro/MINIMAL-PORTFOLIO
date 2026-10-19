@@ -9,20 +9,20 @@ const experienceContent = {
 		role: "Software Engineer",
 		employmentType: "Freelance",
 		location: "Remote, On-site",
-		description: "Built a Swift/SwiftUI breathwork app for iOS and watchOS, integrating Apple Watch, Garmin, HealthKit, and real-time HR/HRV biofeedback.",
+		description: "Breathwork app for iOS and watchOS. Built the app and its Apple Watch, Garmin and HealthKit integrations, with real-time HR/HRV biofeedback. Stack: Swift, SwiftUI.",
 	},
 	"confidential-client-software-engineer": {
 		company: "Confidential Client",
 		role: "Software Engineer",
 		employmentType: "Freelance",
 		location: "Fully remote",
-		description: "Designed and built a distributed cryptocurrency arbitrage platform using C#, ASP.NET Core, MAUI, Docker, Grafana, and Prometheus.",
+		description: "Distributed cryptocurrency arbitrage platform, which I designed and built. Stack: C#, ASP.NET Core, MAUI, Docker, Grafana, Prometheus.",
 	},
 	"new-tells-studio-frontend-developer": {
 		role: "Frontend Developer",
 		employmentType: "Freelance",
 		location: "Fully remote",
-		description: "Built a responsive Next.js portfolio from Figma, with Rive animations for a motion design company.",
+		description: "Portfolio for a motion design company. Built a responsive site from the Figma designs, with Rive animations. Stack: Next.js, Rive.",
 	},
 	"max-remy-dev-founder": {
 		role: "Founder",
@@ -37,15 +37,9 @@ const experienceContent = {
 	},
 	"self-taught-junior-developer": {
 		company: "Personal Projects",
-		role: "Junior Developer",
+		role: "Self-Taught Path",
 		location: "Switzerland",
-		description: "Self-taught start in computing: modding existing games and building games, learning how PCs and software work, writing software and contributing to projects.",
-	},
-	"self-taught-computing-beginnings": {
-		company: "Personal Learning",
-		role: "Computing Beginnings",
-		location: "Switzerland",
-		description: "Discovered computing from the age of 8: exploring Windows, hardware, software, and games, with first hands-on technical tinkering before learning to code.",
+		description: "Discovered computing at the age of 8, then learned on my own: modding and building games, how PCs and software work, first software and contributions to projects.",
 	},
 } satisfies LocalizedExperienceContent;
 
