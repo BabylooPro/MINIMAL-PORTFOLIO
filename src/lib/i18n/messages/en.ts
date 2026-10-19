@@ -20,7 +20,7 @@ export const enMessages = {
 		sideProjects: "Public Side Projects",
 	},
 	labels: {
-		downloadCv: "Download CV",
+		downloadCv: "View CV · PDF",
 		home: "Home",
 		languageSwitcher: "Language",
 		present: "Present",
@@ -46,8 +46,8 @@ export const enMessages = {
 			languageTitle: "Language",
 			languageDescription:
 				"The site reads your browser language to redirect French and German browsers to their localized URLs. English and unsupported languages stay on the English root page. That detection happens locally, is not stored, and is not sent to Max Remy Dev. Choosing a language manually uses a link to the corresponding URL and is not stored either.",
-			cvDownloadTitle: "CV download",
-			cvDownloadDescription: "The Download CV link provides a static PDF file. This portfolio uses no form or analytics tool to identify downloads.",
+			cvDownloadTitle: "Viewing the CV",
+			cvDownloadDescription: "The View CV · PDF link opens a static PDF file in a new tab. This portfolio uses no form or analytics tool to identify views or downloads.",
 			hostingTitle: "Hosting",
 			hostingDescription:
 				"This site and its static files are hosted on Cloudflare Pages, and its media files, including the CV, are delivered from Cloudflare R2. Cloudflare acts as the data processor for hosting and content delivery. In providing these services, Cloudflare may process technical connection data, including the IP address, browser information, the date and time of the request, and the requested resource. Depending on the service and its configuration, this data may be processed in the United States and other countries.",

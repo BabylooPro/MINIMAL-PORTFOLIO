@@ -20,7 +20,7 @@ export const frMessages = {
 		sideProjects: "Projets personnels publics",
 	},
 	labels: {
-		downloadCv: "Télécharger le CV",
+		downloadCv: "Voir le CV · PDF (anglais)",
 		home: "Accueil",
 		languageSwitcher: "Langue",
 		present: "Aujourd’hui",
@@ -46,8 +46,8 @@ export const frMessages = {
 			languageTitle: "Langue",
 			languageDescription:
 				"Le site lit la langue configurée dans votre navigateur afin de rediriger les navigateurs en français et en allemand vers leurs URL localisées. L’anglais et les langues non prises en charge restent sur la page d’accueil anglaise. Cette détection s’effectue localement, n’est pas enregistrée et n’est pas transmise à Max Remy Dev. Le choix manuel d’une langue utilise un lien vers l’URL correspondante et n’est pas enregistré non plus.",
-			cvDownloadTitle: "Téléchargement du CV",
-			cvDownloadDescription: "Le lien « Télécharger le CV » met à disposition un fichier PDF statique. Le portfolio n’utilise ni formulaire, ni outil de mesure pour identifier les téléchargements.",
+			cvDownloadTitle: "Consultation du CV",
+			cvDownloadDescription: "Le lien « Voir le CV · PDF (anglais) » ouvre un fichier PDF statique dans un nouvel onglet. Le portfolio n’utilise ni formulaire, ni outil de mesure pour identifier les consultations ou les téléchargements.",
 			hostingTitle: "Hébergement",
 			hostingDescription: "Ce site et ses fichiers statiques sont hébergés sur Cloudflare Pages, et ses fichiers média, y compris le CV, sont diffusés depuis Cloudflare R2. Cloudflare agit comme sous-traitant pour l’hébergement et la diffusion du contenu. Dans le cadre de ces services, Cloudflare peut traiter des données techniques de connexion, notamment l’adresse IP, les informations du navigateur, la date et l’heure de la requête ainsi que la ressource demandée. Selon le service et sa configuration, ces données peuvent être traitées aux États-Unis et dans d’autres pays.",
 			hostingPrivacyPolicyLabel: "Politique de confidentialité de Cloudflare",

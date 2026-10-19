@@ -214,6 +214,9 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 										<a
 											className="mt-1 inline-flex underline underline-offset-2 hover:text-(--muted-color)"
 											href={getMediaUrl("/CV_Developer_Max_Remy.pdf")}
+											hrefLang="en"
+											rel="noopener noreferrer"
+											target="_blank"
 										>
 											{labels.downloadCv}
 										</a>

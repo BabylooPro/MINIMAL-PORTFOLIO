@@ -20,7 +20,7 @@ export const deMessages = {
 		sideProjects: "Öffentliche Nebenprojekte",
 	},
 	labels: {
-		downloadCv: "Lebenslauf herunterladen",
+		downloadCv: "Lebenslauf ansehen · PDF (Englisch)",
 		home: "Startseite",
 		languageSwitcher: "Sprache",
 		present: "Heute",
@@ -46,8 +46,8 @@ export const deMessages = {
 			languageTitle: "Sprache",
 			languageDescription:
 				"Die Website liest die im Browser konfigurierte Sprache aus, um Browser auf Französisch und Deutsch zu ihren lokalisierten URLs weiterzuleiten. Englisch und nicht unterstützte Sprachen verbleiben auf der englischen Startseite. Diese Erkennung erfolgt lokal, wird nicht gespeichert und nicht an Max Remy Dev übermittelt. Die manuelle Sprachauswahl verwendet einen Link zur entsprechenden URL und wird ebenfalls nicht gespeichert.",
-			cvDownloadTitle: "Lebenslauf herunterladen",
-			cvDownloadDescription: "Der Link zum Herunterladen des Lebenslaufs stellt eine statische PDF-Datei bereit. Dieses Portfolio verwendet weder ein Formular noch ein Analyse-Tool, um Downloads zu identifizieren.",
+			cvDownloadTitle: "Lebenslauf ansehen",
+			cvDownloadDescription: "Der Link zum Ansehen des Lebenslaufs öffnet eine statische englischsprachige PDF-Datei in einem neuen Tab. Dieses Portfolio verwendet weder ein Formular noch ein Analyse-Tool, um Aufrufe oder Downloads zu identifizieren.",
 			hostingTitle: "Hosting",
 			hostingDescription:
 				"Diese Website und ihre statischen Dateien werden auf Cloudflare Pages gehostet, ihre Mediendateien, einschliesslich des Lebenslaufs, werden über Cloudflare R2 bereitgestellt. Cloudflare handelt als Auftragsverarbeiter für das Hosting und die Bereitstellung der Inhalte. Im Rahmen dieser Dienste kann Cloudflare technische Verbindungsdaten verarbeiten, darunter die IP-Adresse, Browserinformationen, Datum und Uhrzeit der Anfrage sowie die angeforderte Ressource. Je nach Dienst und Konfiguration können diese Daten in den USA und anderen Ländern verarbeitet werden.",
