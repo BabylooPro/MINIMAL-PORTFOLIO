@@ -99,7 +99,7 @@ export type Messages = {
 		tooltipLabel: string;
 		previousVideo: string;
 		nextVideo: string;
-		video: string;
+		videos: readonly [string, string, string, string, string, string];
 		videoCounterTemplate: string;
 	};
 	sideProjects: {

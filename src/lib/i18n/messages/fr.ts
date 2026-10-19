@@ -102,7 +102,14 @@ export const frMessages = {
 		tooltipLabel: "À propos de la démonstration de savoir-faire",
 		previousVideo: "Vidéo précédente",
 		nextVideo: "Vidéo suivante",
-		video: "Timelapse",
+		videos: [
+			"Intégration de l’API Google Agenda · C#, ASP.NET Core",
+			"Route API de support · Next.js, TypeScript",
+			"Configuration de l’API minimale ContactForm · C#, .NET 8",
+			"Système d’articles avec slugs · Next.js",
+			"Réglage de la durée des notifications · Swift, SwiftUI",
+			"Système d’articles avec slugs · Next.js",
+		],
 		videoCounterTemplate: "Vidéo {current} sur {total}",
 	},
 	sideProjects: {

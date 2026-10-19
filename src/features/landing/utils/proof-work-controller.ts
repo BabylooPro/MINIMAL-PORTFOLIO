@@ -3,6 +3,7 @@ import { isDesktopGesture } from "@/src/components/utils/behavior/pointer-mode";
 type VideoDefinition = {
 	source: string;
 	preview: string;
+	title: string;
 };
 
 function formatCounter(template: string, current: number, total: number): string {
@@ -22,7 +23,6 @@ function initializeCarousel(carousel: HTMLElement): void {
 	const videos = parsedVideos as VideoDefinition[];
 
 	const counterTextTemplate = carousel.dataset.counterTemplate as string;
-	const playerLabel = carousel.dataset.videoLabel as string;
 
 	const previousControl = carousel.querySelector('[data-proof-work-direction="previous"]') as HTMLButtonElement;
 	const nextControl = carousel.querySelector('[data-proof-work-direction="next"]') as HTMLButtonElement;
@@ -35,6 +35,7 @@ function initializeCarousel(carousel: HTMLElement): void {
 	const videoPlayer = carousel.querySelector("[data-proof-work-player]") as HTMLVideoElement;
 	const videoSource = videoPlayer?.querySelector("source") as HTMLSourceElement;
 	const counterElement = carousel.querySelector("[data-proof-work-counter]") as HTMLElement;
+	const titleElement = carousel.querySelector("[data-proof-work-title]") as HTMLElement;
 
 	let activeIndex = 0;
 	let isPlayerVisible = false;
@@ -111,7 +112,7 @@ function initializeCarousel(carousel: HTMLElement): void {
 	function renderActiveVideo(shouldReload: boolean): void {
 		const activeVideo = videoAt(activeIndex);
 
-		videoPlayer.setAttribute("aria-label", `${playerLabel} ${activeIndex + 1}`);
+		titleElement.textContent = activeVideo.title;
 		videoPlayer.poster = activeVideo.preview;
 
 		if (shouldReload) {

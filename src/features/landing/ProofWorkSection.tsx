@@ -111,8 +111,7 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 			className="no-print"
 			data-proof-work-carousel
 			data-counter-template={content.videoCounterTemplate}
-			data-video-label={content.video}
-			data-videos={JSON.stringify(videos)}
+			data-videos={JSON.stringify(videos.map((video, index) => ({ ...video, title: content.videos[index] })))}
 			labelledBy="proof-work-title"
 		>
 			<div
@@ -173,7 +172,7 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 							</div>
 
 							<video
-								aria-label={`${content.video} 1`}
+								aria-labelledby="proof-work-clip"
 								className={[
 									// NATIVE PLAYER UI
 									"scheme-dark",
@@ -204,7 +203,11 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 					/>
 				</div>
 
-				<p aria-live="polite" className="mt-3 text-center text-sm text-(--muted-color)" data-proof-work-counter>
+				<p className="mt-3 text-center text-sm font-medium text-(--foreground-color)" data-proof-work-title id="proof-work-clip">
+					{content.videos[0]}
+				</p>
+
+				<p aria-live="polite" className="mt-1 text-center text-sm text-(--muted-color)" data-proof-work-counter>
 					{formatVideoCounter(content.videoCounterTemplate, 1, videos.length)}
 				</p>
 			</div>

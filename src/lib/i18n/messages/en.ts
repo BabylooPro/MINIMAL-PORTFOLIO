@@ -105,7 +105,14 @@ export const enMessages = {
 		tooltipLabel: "About Proof of Work",
 		previousVideo: "Previous video",
 		nextVideo: "Next video",
-		video: "Timelapse",
+		videos: [
+			"Google Calendar API integration · C#, ASP.NET Core",
+			"Support API route · Next.js, TypeScript",
+			"ContactForm minimal API setup · C#, .NET 8",
+			"Article system with slug support · Next.js",
+			"Notification duration settings · Swift, SwiftUI",
+			"Article system with slug support · Next.js",
+		],
 		videoCounterTemplate: "Video {current} of {total}",
 	},
 	sideProjects: {

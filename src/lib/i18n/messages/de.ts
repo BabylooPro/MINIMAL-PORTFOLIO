@@ -105,7 +105,14 @@ export const deMessages = {
 		tooltipLabel: "Über die Arbeitsproben",
 		previousVideo: "Vorheriges Video",
 		nextVideo: "Nächstes Video",
-		video: "Zeitraffer",
+		videos: [
+			"Integration der Google-Kalender-API · C#, ASP.NET Core",
+			"Support-API-Route · Next.js, TypeScript",
+			"Einrichtung der ContactForm-Minimal-API · C#, .NET 8",
+			"Artikelsystem mit Slugs · Next.js",
+			"Einstellung der Benachrichtigungsdauer · Swift, SwiftUI",
+			"Artikelsystem mit Slugs · Next.js",
+		],
 		videoCounterTemplate: "Video {current} von {total}",
 	},
 	sideProjects: {
