@@ -128,6 +128,15 @@ test("renders a localized static not-found page for every locale", async ({ page
 	}
 });
 
+test("ends the portfolio with a contact section", async ({ page }) => {
+	await page.goto("/en/");
+
+	const contact = page.locator("main > section").last();
+
+	await expect(contact.getByRole("heading", { name: "Contact" })).toBeVisible();
+	await expect(contact.getByRole("link", { name: "maxremy.dev@gmail.com" })).toHaveAttribute("href", "mailto:maxremy.dev@gmail.com");
+});
+
 test("keeps localized legal links and language switching on every locale", async ({ page }) => {
 	for (const locale of locales) {
 		await page.goto(getLegalPagePath(locale, "privacy"));

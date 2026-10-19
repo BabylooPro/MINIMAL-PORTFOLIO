@@ -181,7 +181,9 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 																<a
 																	aria-label={getContactLinkLabel(link, labels)}
 																	href={link.href}
-																	className="underline underline-offset-2 hover:text-(--muted-color)"
+																	className={link.href.startsWith("mailto:")
+																		? "inline-flex rounded-md border border-(--border-color) px-2 py-0.5 font-medium text-(--foreground-color) transition-[background-color,color] hover:bg-(--foreground-color) hover:text-(--background-color) focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2 print:border-0 print:p-0"
+																		: "underline underline-offset-2 hover:text-(--muted-color)"}
 																>
 																	{link.label}
 																</a>
