@@ -96,7 +96,6 @@ export type Messages = {
 	proofWork: {
 		description: string;
 		summary: string;
-		postscript: string;
 		tooltipLabel: string;
 		previousVideo: string;
 		nextVideo: string;

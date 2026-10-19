@@ -100,9 +100,8 @@ export const deMessages = {
 		},
 	},
 	proofWork: {
-		description: "Echte Entwicklungssessions, in denen ich den Code selbst schreibe, verdichtet zu ultraschnellen Zeitraffern. Ich nutze darin wenig bis keine KI, einfach, um das gute alte Gefühl wiederzufinden :)\n\nLangsamere Versionen gibt es auf meinem YouTube-Kanal.",
+		description: "Echte Entwicklungssessions, in denen ich den Code selbst schreibe, verdichtet zu Zeitraffern. Langsamere Versionen gibt es auf meinem YouTube-Kanal.\n\nAußerhalb dieser Videos nutze ich agentische KI, um schneller voranzukommen, aber Architektur, Code und technische Entscheidungen bleiben bei mir.",
 		summary: "Zeitraffer von echten Entwicklungssessions.",
-		postscript: "P.S. Außerhalb dieser Videos nutze ich agentische KI, um schneller voranzukommen, aber niemals für „Vibe Coding“. Denken, Architektur, Code und technische Entscheidungen bleiben bei mir.",
 		tooltipLabel: "Über die Arbeitsproben",
 		previousVideo: "Vorheriges Video",
 		nextVideo: "Nächstes Video",
