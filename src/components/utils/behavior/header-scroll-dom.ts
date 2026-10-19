@@ -56,6 +56,20 @@ export function updateBackToTopVisibility(): void {
 	backToTop?.toggleAttribute("hidden", scrollY === 0);
 }
 
+export function keepFocusClear(): void {
+	const element = document.activeElement;
+	if (!(element instanceof HTMLElement) || !pageTop || !footer || !element.matches(":focus-visible")) return;
+	if (pageTop.contains(element) || footer.contains(element) || getComputedStyle(element).position === "fixed") return;
+
+	const box = element.getBoundingClientRect();
+	const top = pageTop.getBoundingClientRect().bottom;
+	const bottom = (backToTop && !backToTop.hidden ? backToTop : footer).getBoundingClientRect().top;
+	if (box.height + 32 > bottom - top) return;
+
+	if (box.top < top) scrollBy({ top: box.top - top - 16, behavior: "instant" });
+	else if (box.bottom > bottom) scrollBy({ top: box.bottom - bottom + 16, behavior: "instant" });
+}
+
 export function measureHeaderElements(): void {
 	if (identity && compactIdentity) {
 		const normalHeight = identity.getBoundingClientRect().height;

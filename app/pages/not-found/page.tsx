@@ -10,7 +10,7 @@ export function NotFoundPage({ dictionary, locale }: Readonly<NotFoundPageProps>
 
 	return (
 		<RootLayout dictionary={dictionary} locale={locale} usePageHeading={false}>
-			<main className="mt-6 flex min-h-[calc(100dvh-28rem)] items-center justify-center sm:mt-0">
+			<main className="mt-6 flex min-h-[calc(100dvh-28rem)] items-center justify-center pb-44 sm:mt-0">
 				<section aria-labelledby="not-found-title">
 					<p className="text-sm font-medium tracking-[0.2em] text-(--muted-color)">
 						404

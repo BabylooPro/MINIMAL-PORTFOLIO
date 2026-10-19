@@ -1,5 +1,5 @@
 import {
-	bindBackToTop, markCollapsibleElementsReady, measureHeaderElements, observeHeaderElements, queryScrollStateElements, resetCollapsibleElements, resetDesktopHeaderStyles,
+	bindBackToTop, keepFocusClear, markCollapsibleElementsReady, measureHeaderElements, observeHeaderElements, queryScrollStateElements, resetCollapsibleElements, resetDesktopHeaderStyles,
 	resetHeaderIdentityStyles, updateBackToTopVisibility, updateCollapsibleElements, updateDesktopScrollState,
 	updateHeaderIdentity, updateMobileScrollState,
 } from "@/src/components/utils/behavior/header-scroll-dom";
@@ -13,6 +13,11 @@ export function initializeScrollStateController(): void {
 
 	let animationFrame: number | undefined;
 	let collapseMode: "desktop" | "mobile" | undefined;
+	let focusCheckDeadline = 0;
+
+	function checkFocus(): void {
+		if (performance.now() < focusCheckDeadline) keepFocusClear();
+	}
 
 	function setCollapseMode(mode: "desktop" | "mobile"): boolean {
 		if (collapseMode === mode) return false;
@@ -32,6 +37,7 @@ export function initializeScrollStateController(): void {
 			if (setCollapseMode("mobile")) resetDesktopHeaderStyles();
 
 			updateMobileScrollState();
+			checkFocus();
 			return;
 		}
 
@@ -41,6 +47,7 @@ export function initializeScrollStateController(): void {
 		updateDesktopScrollState(progress, isDocumentAtBottom());
 		updateHeaderIdentity(progress);
 		updateCollapsibleElements(progress);
+		checkFocus();
 	}
 
 	function scheduleScrollStateUpdate(): void {
@@ -52,6 +59,7 @@ export function initializeScrollStateController(): void {
 		if (!desktopViewport.matches) {
 			updateBackToTopVisibility();
 			updateMobileScrollState();
+			checkFocus();
 			return;
 		}
 
@@ -64,6 +72,10 @@ export function initializeScrollStateController(): void {
 	}
 
 	addEventListener("scroll", handleScroll, { passive: true });
+	addEventListener("focusin", () => {
+		focusCheckDeadline = performance.now() + 600;
+		scheduleScrollStateUpdate();
+	});
 	addEventListener("resize", scheduleScrollStateUpdate);
 	addEventListener("pageshow", updateScrollState);
 	addEventListener("beforeprint", resetCollapsibleElements);
