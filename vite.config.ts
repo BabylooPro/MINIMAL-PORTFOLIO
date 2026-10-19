@@ -1,6 +1,5 @@
-import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 import tailwindcss from "@tailwindcss/vite";
@@ -19,22 +18,7 @@ const themeBootstrapPath = fileURLToPath(new URL("./src/features/themes/theme-bo
 const localeRedirectPath = fileURLToPath(new URL("./src/features/locale/locale-redirect.ts", import.meta.url));
 
 const gitignorePath = fileURLToPath(new URL("./.gitignore", import.meta.url));
-const gitExecutablePaths = ["/usr/bin/git", "/usr/local/bin/git", "/opt/homebrew/bin/git"];
-const gitExecutablePath = process.env.GIT_EXECUTABLE_PATH ?? (process.platform === "win32" ? "git" : gitExecutablePaths.find((candidate) => existsSync(candidate)));
-
 const packageVersion: string = JSON.parse(readFileSync(fileURLToPath(new URL("./package.json", import.meta.url)), "utf8")).version;
-
-function readBuildNumber(): string {
-	if (!gitExecutablePath) return "0";
-
-	try {
-		return execFileSync(gitExecutablePath, ["rev-list", "--count", "HEAD"], { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim() || "0";
-	} catch {
-		return "0";
-	}
-}
-
-const buildNumber = readBuildNumber();
 
 const indexHtmlPath = fileURLToPath(new URL("./index.html", import.meta.url));
 
@@ -216,7 +200,6 @@ const inlineScriptsPlugin = inlineHeadScripts([
 export default defineConfig({
 	define: {
 		"import.meta.env.VITE_APP_VERSION": JSON.stringify(packageVersion),
-		"import.meta.env.VITE_APP_BUILD": JSON.stringify(buildNumber),
 	},
 	resolve: {
 		alias: aliases,

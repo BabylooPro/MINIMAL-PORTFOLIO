@@ -23,7 +23,7 @@ export function clearOverlayTimer(overlay: Overlay): void {
 	overlay.timer = undefined;
 }
 
-export function isOverlayEngaged({ panel, root, trigger }: Overlay): boolean {
+function isOverlayEngaged({ panel, root, trigger }: Overlay): boolean {
 	return trigger.matches(":hover") || panel.matches(":hover") || root.contains(document.activeElement);
 }
 

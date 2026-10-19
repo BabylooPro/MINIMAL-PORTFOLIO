@@ -1,6 +1,5 @@
 import { ArrowUpIcon } from "@/src/components/icons/ArrowUpIcon";
 import { Container } from "@/src/components/ui/Container";
-import { Tooltip } from "@/src/components/ui/Tooltip";
 import { ThemeSwitcher } from "@/src/features/themes/ThemeSwitcher";
 import { getLegalPagePath, type LegalPageId, type Locale, legalPageIds } from "@/src/lib/i18n/config";
 
@@ -18,7 +17,6 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: R
 	const year = new Date().getFullYear();
 
 	const version: string = import.meta.env.VITE_APP_VERSION;
-	const build: string = import.meta.env.VITE_APP_BUILD;
 
 	const legalLinks = legalPageIds.map((page) => ({ page, label: footer[page] }));
 
@@ -37,14 +35,9 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: R
 			<Container>
 				<div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 border-t border-(--border-color) py-3 sm:py-3 sm:transition-[padding] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:py-6">
 					<div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
-						<Tooltip
-							id="footer-version"
-							trigger={<>© {year} {company}</>}
-							triggerClassName="text-xs sm:transition-[font-size] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:text-sm"
-							triggerLabel={footer.version}
-						>
-							<p>v{version} ({build})</p>
-						</Tooltip>
+						<p className="text-xs sm:transition-[font-size] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:text-sm">
+							© {year} {company} · v{version}
+						</p>
 
 						<nav aria-label={footer.navigationLabel}>
 							<ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">

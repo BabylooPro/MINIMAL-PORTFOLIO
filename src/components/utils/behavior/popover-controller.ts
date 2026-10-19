@@ -1,6 +1,5 @@
 import { bindOverlayHover, clearOverlayTimer, collectOverlays, type Overlay } from "@/src/components/utils/behavior/overlay";
 import { isDesktopGesture, isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
-import { closeOpenTooltips } from "@/src/components/utils/behavior/tooltip-controller";
 
 type PopoverItem = Overlay & {
 	backdrop: HTMLElement;
@@ -40,7 +39,6 @@ function openPopover(popover: PopoverItem): void {
 
 	if (isTouch) {
 		for (const other of popovers) if (other !== popover) closePopover(other);
-		closeOpenTooltips();
 	}
 
 	popover.panel.hidden = false;
