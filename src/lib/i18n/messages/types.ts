@@ -24,6 +24,7 @@ export type Messages = {
 		home: string;
 		languageSwitcher: string;
 		present: string;
+		skipToContent: string;
 		email: string;
 		phone: string;
 		backToPortfolio: string;

@@ -134,3 +134,38 @@ test("keeps keyboard focus clear when the browser skips the focus scroll", async
 		return placement !== null && placement.top >= placement.headerBottom && placement.bottom <= placement.limit;
 	}).toBe(true);
 });
+
+for (const { heading, path } of [
+	{ heading: "Profile", path: "/en/" },
+	{ heading: "Privacy", path: "/en/privacy/" },
+]) {
+	test(`moves past the header with the skip link on ${path}`, async ({ browserName, page }) => {
+		const tab = browserName === "webkit" ? "Alt+Tab" : "Tab";
+
+		for (const viewport of [{ width: 1_280, height: 800 }, { width: 390, height: 844 }]) {
+			await page.setViewportSize(viewport);
+			await page.goto(path);
+
+			const skipLink = page.getByRole("link", { name: "Skip to content" });
+			const main = page.locator("main");
+
+			await page.keyboard.press(tab);
+			await expect(skipLink).toBeFocused();
+			await expect(skipLink).toBeInViewport();
+
+			await page.keyboard.press("Enter");
+			await expect(main).toBeFocused();
+
+			await expect.poll(() => main.getByRole("heading", { name: heading, exact: true }).evaluate((element) => {
+				const header = document.querySelector("[data-page-header-shell]");
+				if (!header) throw new Error("The page header shell must be rendered.");
+
+				const box = element.getBoundingClientRect();
+				return box.top >= header.getBoundingClientRect().bottom && box.bottom <= innerHeight;
+			})).toBe(true);
+
+			await page.keyboard.press(tab);
+			expect(await main.evaluate((element) => element.contains(document.activeElement) && element !== document.activeElement)).toBe(true);
+		}
+	});
+}

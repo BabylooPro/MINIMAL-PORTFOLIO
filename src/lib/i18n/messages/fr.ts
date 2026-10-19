@@ -26,6 +26,7 @@ export const frMessages = {
 		home: "Accueil",
 		languageSwitcher: "Langue",
 		present: "Aujourd’hui",
+		skipToContent: "Aller au contenu",
 		email: "E-mail",
 		phone: "Téléphone",
 		backToPortfolio: "Retour au portfolio",

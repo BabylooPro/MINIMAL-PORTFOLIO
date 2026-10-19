@@ -15,7 +15,7 @@ export function LegalPage({ dictionary, locale, page }: Readonly<LegalPageProps>
 
 	return (
 		<RootLayout dictionary={dictionary} locale={locale} page={page}>
-			<main className="mt-6 space-y-7 pb-44 sm:mt-0 sm:pb-44">
+			<main className="mt-6 scroll-mt-52 space-y-7 pb-44 outline-none sm:mt-0 sm:pb-44" id="main" tabIndex={-1}>
 				<article aria-labelledby="legal-page-title" className="space-y-7">
 					<header>
 						<a className="inline-flex text-sm underline underline-offset-2" href={getLocalePath(locale)}>

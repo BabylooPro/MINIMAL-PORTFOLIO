@@ -23,7 +23,7 @@ function PortfolioPage({ locale, dictionary, showSideProjects }: Readonly<Portfo
 
 	return (
 		<RootLayout dictionary={dictionary} locale={locale}>
-			<main className="mt-6 space-y-7 pb-44 sm:mt-0 sm:pb-44">
+			<main className="mt-6 scroll-mt-52 space-y-7 pb-44 outline-none sm:mt-0 sm:pb-44" id="main" tabIndex={-1}>
 				<ProfileSection
 					summary={portfolio.summary}
 					title={messages.sections.profile}
