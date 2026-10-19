@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Locator, type Page, test } from "@playwright/test";
 import { expectOverlayStack, revealBelowStickyHeader } from "./helpers";
 
 test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
@@ -236,4 +236,160 @@ test("opens the Proof Work popover by tap on a device that reports desktop point
 	await expect(popoverPanel).toBeHidden();
 
 	await context.close();
+});
+
+async function openDesktopProofWork(page: Page): Promise<{ popover: Locator; trigger: Locator }> {
+	await page.setViewportSize({ width: 1_280, height: 800 });
+	await page.goto("/en/");
+	await page.locator("[data-header-scroll-hidden][data-ready]").waitFor();
+
+	return { popover: page.locator("#proof-work"), trigger: page.locator("[data-popover-trigger]") };
+}
+
+function scrollTriggerUnderHeader(trigger: Locator): Promise<number> {
+	return trigger.evaluate(async (element) => {
+		scrollBy({ top: element.getBoundingClientRect().bottom, behavior: "instant" });
+		await new Promise((resolve) => setTimeout(resolve, 300));
+		return scrollY;
+	});
+}
+
+function readPopoverPlacement(popover: Locator): Promise<{ panelBelowHeader: boolean; focusedVisible: boolean }> {
+	return popover.evaluate((panel) => {
+		const header = document.querySelector("[data-page-header-shell]");
+		const footer = document.querySelector("[data-page-footer]");
+		const focused = document.activeElement;
+		if (!header || !footer || !focused) throw new Error("The header, footer and focused element must exist.");
+
+		const headerBottom = header.getBoundingClientRect().bottom;
+		const focusedBox = focused.getBoundingClientRect();
+
+		return {
+			panelBelowHeader: panel.getBoundingClientRect().top >= headerBottom,
+			focusedVisible: focusedBox.top >= headerBottom && focusedBox.bottom <= footer.getBoundingClientRect().top,
+		};
+	});
+}
+
+test("closes the desktop Proof Work popover without moving focus once its trigger scrolls under the header", async ({ page }) => {
+	const { popover, trigger } = await openDesktopProofWork(page);
+
+	await trigger.focus();
+	await expect(popover).toBeVisible();
+
+	await page.evaluate(() => scrollBy({ top: 20, behavior: "instant" }));
+	await page.waitForTimeout(300);
+	await expect(popover).toBeVisible();
+
+	const scrolledTo = await scrollTriggerUnderHeader(trigger);
+
+	await expect(popover).toBeHidden();
+	await expect(trigger).toHaveAttribute("aria-expanded", "false");
+	await expect(trigger).toBeFocused();
+	expect(await page.evaluate(() => scrollY)).toBe(scrolledTo);
+});
+
+test("closes a hovered desktop Proof Work popover without stealing focus from another control", async ({ page }) => {
+	const { popover, trigger } = await openDesktopProofWork(page);
+	const nextVideo = page.getByRole("button", { name: "Next video" });
+
+	await page.getByRole("button", { name: "System" }).click();
+	await nextVideo.evaluate((element) => (element as HTMLButtonElement).focus({ preventScroll: true }));
+	await trigger.hover();
+	await expect(popover).toBeVisible();
+
+	const scrolledTo = await scrollTriggerUnderHeader(trigger);
+
+	await expect(popover).toBeHidden();
+	await expect(nextVideo).toBeFocused();
+	expect(await page.evaluate(() => scrollY)).toBe(scrolledTo);
+});
+
+test("keeps a focused desktop Proof Work popover readable below the header while scrolling", async ({ page }) => {
+	const { popover, trigger } = await openDesktopProofWork(page);
+	const link = popover.getByRole("link", { name: "YouTube" });
+
+	await trigger.focus();
+	await link.focus();
+	await expect(popover).toBeVisible();
+
+	const scrolledTo = await scrollTriggerUnderHeader(trigger);
+
+	await expect(popover).toBeVisible();
+	await expect(link).toBeFocused();
+	await expect.poll(() => readPopoverPlacement(popover)).toEqual({ panelBelowHeader: true, focusedVisible: true });
+	expect(await page.evaluate(() => scrollY)).toBe(scrolledTo);
+
+	await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+	await expect.poll(() => popover.evaluate((panel) => panel.style.transform)).toBe("");
+	await expect(link).toBeFocused();
+
+	await scrollTriggerUnderHeader(trigger);
+	await expect(popover).toBeVisible();
+	await page.keyboard.press("Escape");
+
+	await expect(popover).toBeHidden();
+	await expect(trigger).toBeFocused();
+	await expect.poll(() => trigger.evaluate((element) => {
+		const header = document.querySelector("[data-page-header-shell]");
+		if (!header) throw new Error("The page header shell must be rendered.");
+		return element.getBoundingClientRect().top >= header.getBoundingClientRect().bottom;
+	})).toBe(true);
+});
+
+test("returns focus to a visible desktop Proof Work trigger on Escape without scrolling", async ({ page }) => {
+	const { popover, trigger } = await openDesktopProofWork(page);
+
+	await trigger.focus();
+	await popover.getByRole("link", { name: "YouTube" }).focus();
+	const scrollBefore = await page.evaluate(() => scrollY);
+
+	await page.keyboard.press("Escape");
+
+	await expect(popover).toBeHidden();
+	await expect(trigger).toBeFocused();
+	expect(await page.evaluate(() => scrollY)).toBe(scrollBefore);
+});
+
+test("drops the desktop Proof Work popover shift once focus returns to its trigger", async ({ page }) => {
+	const { popover, trigger } = await openDesktopProofWork(page);
+	const transform = () => popover.evaluate((panel) => panel.style.transform);
+
+	await trigger.focus();
+	await popover.getByRole("link", { name: "YouTube" }).focus();
+	await scrollTriggerUnderHeader(trigger);
+	await expect.poll(transform).not.toBe("");
+
+	await trigger.evaluate((element) => (element as HTMLButtonElement).focus({ preventScroll: true }));
+	await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+
+	await expect(popover).toBeVisible();
+	await expect.poll(transform).toBe("");
+});
+
+test("brings a desktop Proof Work trigger out from behind the footer when Escape returns focus", async ({ page }) => {
+	const { popover, trigger } = await openDesktopProofWork(page);
+
+	function readFooterGap(): Promise<number> {
+		return trigger.evaluate((element) => {
+			const limit = document.querySelector("[data-back-to-top]:not([hidden])") ?? document.querySelector("[data-page-footer]");
+			if (!limit) throw new Error("The footer must be rendered.");
+			return limit.getBoundingClientRect().top - element.getBoundingClientRect().bottom;
+		});
+	}
+
+	const triggerBottom = await trigger.evaluate((element) => element.getBoundingClientRect().bottom);
+	await page.setViewportSize({ width: 1_280, height: Math.ceil(triggerBottom) + 10 });
+
+	await page.getByRole("button", { name: "System" }).click();
+	await trigger.evaluate((element) => (element as HTMLButtonElement).focus({ preventScroll: true }));
+	await expect(popover).toBeVisible();
+	await popover.getByRole("link", { name: "YouTube" }).evaluate((element) => (element as HTMLAnchorElement).focus({ preventScroll: true }));
+	expect(await readFooterGap()).toBeLessThan(0);
+
+	await page.keyboard.press("Escape");
+
+	await expect(popover).toBeHidden();
+	await expect(trigger).toBeFocused();
+	await expect.poll(readFooterGap).toBeGreaterThanOrEqual(0);
 });

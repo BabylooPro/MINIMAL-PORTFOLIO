@@ -8,6 +8,15 @@ type PopoverItem = Overlay & {
 };
 
 let popovers: PopoverItem[] = [];
+let pageTop: HTMLElement | null = null;
+
+function getHeaderBottom(): number {
+	return pageTop?.getBoundingClientRect().bottom ?? 0;
+}
+
+function getFooterTop(): number {
+	return (document.querySelector("[data-back-to-top]:not([hidden])") ?? document.querySelector("[data-page-footer]"))?.getBoundingClientRect().top ?? innerHeight;
+}
 
 function isPopoverOpen(popover: PopoverItem): boolean {
 	return !popover.panel.hidden;
@@ -23,14 +32,29 @@ function closePopover(popover: PopoverItem, returnFocus = false): void {
 
 	const focusWasInPanel = popover.panel.contains(document.activeElement);
 	popover.panel.hidden = true;
+	popover.panel.style.transform = "";
 	popover.backdrop.hidden = true;
 	popover.trigger.setAttribute("aria-expanded", "false");
 	syncOverlayBlur();
 	if (!returnFocus || !focusWasInPanel) return;
 
+	const { bottom, top } = popover.trigger.getBoundingClientRect();
 	popover.isRestoringFocus = true;
-	popover.trigger.focus();
+	popover.trigger.focus({ preventScroll: top >= getHeaderBottom() && bottom <= getFooterTop() });
 	popover.isRestoringFocus = false;
+}
+
+function followScroll(popover: PopoverItem): void {
+	if (!isDesktopPointer() || !isPopoverOpen(popover)) return;
+
+	popover.panel.style.transform = "";
+	if (!popover.panel.contains(document.activeElement)) {
+		if (popover.trigger.getBoundingClientRect().bottom < getHeaderBottom()) closePopover(popover);
+		return;
+	}
+
+	const shift = getHeaderBottom() + 8 - popover.panel.getBoundingClientRect().top;
+	if (shift > 0) popover.panel.style.transform = `translateY(${shift}px)`;
 }
 
 function openPopover(popover: PopoverItem): void {
@@ -50,6 +74,7 @@ function openPopover(popover: PopoverItem): void {
 }
 
 export function initializePopoverController(): void {
+	pageTop = document.querySelector<HTMLElement>("[data-page-top]");
 	popovers = collectOverlays("popover").flatMap((overlay) => {
 		const backdrop = overlay.root.querySelector<HTMLElement>("[data-popover-backdrop]");
 		const closeButton = overlay.root.querySelector<HTMLButtonElement>("[data-popover-close]");
@@ -79,5 +104,6 @@ export function initializePopoverController(): void {
 		if (hadOpenPopover) event.preventDefault();
 	});
 
+	addEventListener("scroll", () => { for (const popover of popovers) followScroll(popover) }, { passive: true });
 	onPointerModeChange(() => { for (const popover of popovers) closePopover(popover, true) });
 }
