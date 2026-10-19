@@ -64,7 +64,7 @@ function VideoPreviewButton({ direction, label, positionClassName, video }: Read
 				// PREVIEW CARD SURFACE
 				"rounded-lg border border-(--border-color) bg-black p-0",
 				// POINTER AND KEYBOARD FEEDBACK
-				"cursor-pointer opacity-70 transition-[opacity,scale] hover:scale-[1.1] hover:opacity-100",
+				"cursor-pointer opacity-70 transition-[opacity,scale] hover:scale-[1.1] hover:opacity-100 motion-reduce:transition-none",
 				"focus-visible:scale-[1.1] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:-outline-offset-2",
 				// SCALE TOWARD THE ACTIVE CARD
 				direction === "previous" ? "origin-left" : "origin-right",

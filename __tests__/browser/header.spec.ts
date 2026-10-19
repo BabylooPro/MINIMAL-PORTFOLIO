@@ -73,6 +73,32 @@ test("morphs the desktop identity in step with the scroll position", async ({ pa
 	await expect.poll(nameScale).toBe(1);
 });
 
+test("keeps the desktop identity unscaled when reduced motion is requested", async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	await page.goto("/en/");
+	await page.locator("[data-header-scroll-hidden][data-ready]").waitFor();
+
+	const name = page.locator("[data-header-morph='name']");
+
+	for (const top of [140, 160, 175, 185, 200]) {
+		await page.evaluate((y) => scrollTo({ top: y, behavior: "instant" }), top);
+		await expect(name).toHaveCSS("scale", "none");
+
+		await expect.poll(() => page.evaluate(() => {
+			const frame = document.querySelector("[data-header-identity-transition]");
+			const identity = document.querySelector("[data-header-identity]");
+			const compact = document.querySelector("[data-header-compact-identity]");
+			if (!frame || !identity || !compact) throw new Error("The header identities must be rendered.");
+
+			const full = Number(getComputedStyle(identity).opacity);
+			const small = Number(getComputedStyle(compact).opacity);
+			const fitsFrame = frame.getBoundingClientRect().height >= identity.getBoundingClientRect().height - 0.5;
+
+			return (full === 1 && small === 0 && fitsFrame) || (full === 0 && small === 1);
+		}), `identity state at scrollY ${top}`).toBe(true);
+	}
+});
+
 test("persists the theme and applies desktop and mobile header states", async ({ page }) => {
 	await page.goto("/en/");
 

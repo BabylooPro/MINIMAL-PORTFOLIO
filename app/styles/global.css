@@ -95,7 +95,7 @@ main > * {
 	overflow-x: clip;
 }
 
-@media (width >= 40rem) {
+@media (width >= 40rem) and (prefers-reduced-motion: no-preference) {
 	[data-header-morph="avatar"] {
 		translate: 0 calc(var(--header-morph) * 0.5rem);
 	}
