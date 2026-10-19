@@ -1,24 +1,17 @@
 import { expect, test } from "@playwright/test";
 
-test("keeps the mobile role stable when reduced motion is requested", async ({ page }) => {
+test("keeps the professional role static on mobile", async ({ page }) => {
 	await page.clock.install();
-	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto("/en/");
 
-	const visibleRole = page.locator("[data-mobile-role]:not([hidden])");
-	const initialRole = await visibleRole.textContent();
+	const header = page.locator("[data-page-header]");
+	const role = header.getByText("Software Engineer", { exact: true });
 
-	if (!initialRole) throw new Error("The mobile role rotator needs a visible initial role.");
-
-	await page.clock.fastForward(5_100);
-	await expect(visibleRole).toHaveText(initialRole);
-
-	const allRoles = page.locator("[data-mobile-role]");
-	const roleCount = await allRoles.count();
-	expect(roleCount).toBeGreaterThan(1);
-
-	for (let index = 0; index < roleCount; index += 1) await expect(allRoles.nth(index)).toBeVisible();
+	await expect(role).toBeVisible();
+	await page.clock.fastForward(10_000);
+	await expect(role).toBeVisible();
+	expect(await header.innerText()).not.toContain("Mountain Athlete");
 });
 
 test("morphs the desktop identity in step with the scroll position", async ({ page }) => {

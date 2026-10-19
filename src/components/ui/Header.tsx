@@ -25,7 +25,7 @@ function getContactLinkLabel(link: Portfolio["links"][number], labels: HeaderPro
 export function Header({ currentLocale, labels, page, portfolio, usePageHeading = true }: Readonly<HeaderProps>) {
 	const IdentityHeading = usePageHeading ? "h1" : "p";
 	const contactLinks = portfolio.links.filter((link) => !isExternalHttpLink(link.href));
-	const mobileRoles = portfolio.role.split("|").map((role) => role.trim()).filter(Boolean);
+	const mobileRole = portfolio.role.split("|")[0]?.trim();
 	const profileLinks = portfolio.links.filter((link) => isExternalHttpLink(link.href));
 
 	return (
@@ -92,22 +92,11 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 										className={[
 											// MOBILE IDENTITY GRID
 											"max-sm:col-start-2 max-sm:row-start-2 max-sm:mt-0 max-sm:self-end max-sm:text-xs max-sm:leading-[1.2]",
-											// MOBILE ROLE TRANSITION
-											"max-sm:transition-opacity max-sm:duration-500 max-sm:ease-in-out max-sm:data-role-fading:opacity-0 max-sm:motion-reduce:transition-none",
 											// DESKTOP VISIBILITY
 											"sm:hidden",
 										].join(" ")}
-										data-mobile-role-rotator
 									>
-										<span className="sr-only">
-											{portfolio.role}
-										</span>
-
-										{mobileRoles.map((role, index) => (
-											<span aria-hidden="true" data-mobile-role hidden={index > 0} key={role}>
-												{role}
-											</span>
-										))}
+										{mobileRole}
 									</p>
 
 									<p
