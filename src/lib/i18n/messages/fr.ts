@@ -21,6 +21,7 @@ export const frMessages = {
 	},
 	labels: {
 		downloadCv: "Télécharger le CV",
+		home: "Accueil",
 		languageSwitcher: "Langue",
 		present: "Aujourd’hui",
 		email: "E-mail",

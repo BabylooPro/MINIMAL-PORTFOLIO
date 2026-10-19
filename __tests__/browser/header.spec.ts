@@ -14,6 +14,20 @@ test("keeps the professional role static on mobile", async ({ page }) => {
 	expect(await header.innerText()).not.toContain("Mountain Athlete");
 });
 
+test("names the identity heading once at desktop and mobile widths", async ({ page }) => {
+	for (const viewport of [{ width: 1_280, height: 800 }, { width: 390, height: 844 }]) {
+		await page.setViewportSize(viewport);
+		await page.goto("/en/");
+
+		const heading = page.getByRole("heading", { level: 1 });
+
+		await expect(heading).toHaveCount(1);
+		await expect(heading).toBeVisible();
+		await expect(heading).toHaveAccessibleName("Max Remy");
+		await expect(page.locator("[data-page-header]").getByRole("link", { name: "Home", exact: true })).toBeVisible();
+	}
+});
+
 test("morphs the desktop identity in step with the scroll position", async ({ page }) => {
 	await page.goto("/en/");
 	await page.locator("[data-header-scroll-hidden][data-ready]").waitFor();

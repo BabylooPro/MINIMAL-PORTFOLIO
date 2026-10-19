@@ -19,6 +19,7 @@ export type Messages = {
 	};
 	labels: {
 		downloadCv: string;
+		home: string;
 		languageSwitcher: string;
 		present: string;
 		email: string;

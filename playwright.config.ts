@@ -14,7 +14,7 @@ export default defineConfig({
 		},
 		{
 			name: "webkit-proof-work",
-			grep: /Proof Work/,
+			grep: /Proof Work|identity heading/,
 			use: { browserName: "webkit" },
 		},
 	],

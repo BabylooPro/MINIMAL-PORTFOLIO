@@ -21,6 +21,7 @@ export const deMessages = {
 	},
 	labels: {
 		downloadCv: "Lebenslauf herunterladen",
+		home: "Startseite",
 		languageSwitcher: "Sprache",
 		present: "Heute",
 		email: "E-Mail",

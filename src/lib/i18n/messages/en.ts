@@ -21,6 +21,7 @@ export const enMessages = {
 	},
 	labels: {
 		downloadCv: "Download CV",
+		home: "Home",
 		languageSwitcher: "Language",
 		present: "Present",
 		email: "Email",

@@ -10,7 +10,7 @@ import { isExternalHttpLink } from "@/src/utils/isExternalHttpLink";
 
 type HeaderProps = {
 	currentLocale: Locale;
-	labels: Pick<Messages["labels"], "downloadCv" | "email" | "languageSwitcher" | "phone">;
+	labels: Pick<Messages["labels"], "downloadCv" | "email" | "home" | "languageSwitcher" | "phone">;
 	page?: LegalPageId;
 	portfolio: Pick<Portfolio, "name" | "role" | "location" | "links">;
 	usePageHeading?: boolean;
@@ -64,29 +64,29 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 									].join(" ")}
 									data-header-identity
 								>
-									<IdentityHeading
+									<div
 										className={[
 											// DESKTOP TITLE LAYOUT
-											"flex items-center gap-3 text-3xl font-semibold tracking-tight text-(--foreground-color)",
+											"flex items-center gap-3",
 											// MOBILE GRID PARTICIPATION
 											"max-sm:contents",
 										].join(" ")}
 									>
 										<a href={getLocalePath(currentLocale)} className="size-10 rounded-md max-sm:col-start-1 max-sm:row-span-2" data-header-morph="avatar">
-											<span className="sr-only">{portfolio.name}</span>
-
 											<img
 												src="/myface.jpg"
-												alt=""
-												aria-hidden="true"
+												alt={labels.home}
 												className="size-full rounded-md object-cover"
 											/>
 										</a>
 
-										<span className="max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none" data-header-morph="name">
+										<IdentityHeading
+											className="text-3xl font-semibold tracking-tight text-(--foreground-color) max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none"
+											data-header-morph="name"
+										>
 											{portfolio.name}
-										</span>
-									</IdentityHeading>
+										</IdentityHeading>
+									</div>
 
 									<p
 										className={[
