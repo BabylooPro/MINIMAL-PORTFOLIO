@@ -67,7 +67,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 									<div
 										className={[
 											// DESKTOP TITLE LAYOUT
-											"flex items-center gap-3",
+											"flex items-center gap-3 text-3xl font-semibold tracking-tight text-(--foreground-color)",
 											// MOBILE GRID PARTICIPATION
 											"max-sm:contents",
 										].join(" ")}
@@ -81,7 +81,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 										</a>
 
 										<IdentityHeading
-											className="text-3xl font-semibold tracking-tight text-(--foreground-color) max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none"
+											className="max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none"
 											data-header-morph="name"
 										>
 											{portfolio.name}
