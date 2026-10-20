@@ -20,7 +20,7 @@ type SectionHeadingProps = {
 
 export function SectionHeading({ id, children, bordered = true }: Readonly<SectionHeadingProps>) {
 	return (
-		<h2 id={id} className={`text-lg font-semibold uppercase tracking-wider text-(--muted-color) ${bordered ? "border-b" : ""}`} >
+		<h2 id={id} className={`text-sm font-medium uppercase tracking-wider text-(--muted-color) ${bordered ? "border-b" : ""}`} >
 			{children}
 		</h2>
 	);
