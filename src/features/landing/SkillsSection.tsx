@@ -15,8 +15,8 @@ export function SkillsSection({ skillGroups, title }: Readonly<SkillsSectionProp
 
 			<ul className="mt-2 space-y-0.5">
 				{skillGroups.map((skillGroup) => (
-					<li key={skillGroup.id} className={skillGroup.core ? "leading-6" : "leading-6 text-(--muted-color)"}>
-						<h3 className={skillGroup.core ? "inline font-semibold text-(--foreground-color)" : "inline font-semibold"}>
+					<li key={skillGroup.id} className="leading-5">
+						<h3 className="inline font-semibold text-(--foreground-color)">
 							{skillGroup.label}:{" "}
 						</h3>
 
