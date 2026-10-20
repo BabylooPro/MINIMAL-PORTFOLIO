@@ -20,7 +20,7 @@ type GeneratedSideProject = {
 	homepageUrl: string | null;
 	githubDescription: string;
 	primaryLanguage: string;
-	createdAt: string;
+	pushedAt: string;
 	topics: string[];
 };
 
@@ -30,7 +30,7 @@ type Repository = {
 	homepage: string | null;
 	description: string;
 	language: string;
-	created_at: string;
+	pushed_at: string;
 	topics: string[];
 	fork: boolean;
 	archived: boolean;
@@ -49,7 +49,7 @@ function repository(name: string, { githubUser = "example-user", ...overrides }:
 		homepage: null,
 		description: `${name} description`,
 		language: "TypeScript",
-		created_at: "2026-01-01T12:00:00Z",
+		pushed_at: "2026-01-01T12:00:00Z",
 		topics: ["portfolio", "typescript", "static", "unused"],
 		fork: false,
 		archived: false,
@@ -66,7 +66,7 @@ function snapshot() {
 		homepageUrl: null,
 		githubDescription: `${selection.name} description`,
 		primaryLanguage: "TypeScript",
-		createdAt: "2026-01-01T12:00:00Z",
+		pushedAt: "2026-01-01T12:00:00Z",
 		topics: ["portfolio", "static", "typescript"],
 	}));
 }

@@ -3,8 +3,8 @@ import type { Messages } from "@/src/lib/i18n/messages/types";
 export const deMessages = {
 	meta: {
 		title: "Max Remy - Entwickler",
-		description: "Autodidaktischer Entwickler mit 10 Jahren Erfahrung als Freelancer.",
-		ogDescription: "Autodidaktischer freiberuflicher Entwickler in Waadt, Schweiz, mit 10 Jahren Erfahrung.",
+		description: "Autodidaktischer Entwickler mit 10+ Jahren Entwicklungspraxis.",
+		ogDescription: "Autodidaktischer freiberuflicher Entwickler in Waadt, Schweiz, mit 10+ Jahren Entwicklungspraxis.",
 		socialImageAlt: "Porträt von Max Remy mit Schwimmbrille und erhobenem Daumen.",
 	},
 	notFound: {
@@ -20,13 +20,14 @@ export const deMessages = {
 		sideProjects: "Öffentliche Nebenprojekte",
 	},
 	labels: {
-		downloadCv: "Lebenslauf herunterladen",
+		downloadCv: "Lebenslauf ansehen · PDF (Englisch)",
+		home: "Startseite",
 		languageSwitcher: "Sprache",
 		present: "Heute",
+		skipToContent: "Zum Inhalt springen",
 		email: "E-Mail",
 		phone: "Telefon",
 		backToPortfolio: "Zurück zum Portfolio",
-		moreInformation: "Weitere Informationen",
 		close: "Schliessen",
 	},
 	footer: {
@@ -47,8 +48,8 @@ export const deMessages = {
 			languageTitle: "Sprache",
 			languageDescription:
 				"Die Website liest die im Browser konfigurierte Sprache aus, um Browser auf Französisch und Deutsch zu ihren lokalisierten URLs weiterzuleiten. Englisch und nicht unterstützte Sprachen verbleiben auf der englischen Startseite. Diese Erkennung erfolgt lokal, wird nicht gespeichert und nicht an Max Remy Dev übermittelt. Die manuelle Sprachauswahl verwendet einen Link zur entsprechenden URL und wird ebenfalls nicht gespeichert.",
-			cvDownloadTitle: "Lebenslauf herunterladen",
-			cvDownloadDescription: "Der Link zum Herunterladen des Lebenslaufs stellt eine statische PDF-Datei bereit. Dieses Portfolio verwendet weder ein Formular noch ein Analyse-Tool, um Downloads zu identifizieren.",
+			cvDownloadTitle: "Lebenslauf ansehen",
+			cvDownloadDescription: "Der Link zum Ansehen des Lebenslaufs öffnet eine statische englischsprachige PDF-Datei in einem neuen Tab. Dieses Portfolio verwendet weder ein Formular noch ein Analyse-Tool, um Aufrufe oder Downloads zu identifizieren.",
 			hostingTitle: "Hosting",
 			hostingDescription:
 				"Diese Website und ihre statischen Dateien werden auf Cloudflare Pages gehostet, ihre Mediendateien, einschliesslich des Lebenslaufs, werden über Cloudflare R2 bereitgestellt. Cloudflare handelt als Auftragsverarbeiter für das Hosting und die Bereitstellung der Inhalte. Im Rahmen dieser Dienste kann Cloudflare technische Verbindungsdaten verarbeiten, darunter die IP-Adresse, Browserinformationen, Datum und Uhrzeit der Anfrage sowie die angeforderte Ressource. Je nach Dienst und Konfiguration können diese Daten in den USA und anderen Ländern verarbeitet werden.",
@@ -103,13 +104,24 @@ export const deMessages = {
 		tooltipLabel: "Über die Arbeitsproben",
 		previousVideo: "Vorheriges Video",
 		nextVideo: "Nächstes Video",
-		video: "Zeitraffer",
+		videos: [
+			"Integration der Google-Kalender-API · C#, ASP.NET Core",
+			"Support-API-Route · Next.js, TypeScript",
+			"Einrichtung der ContactForm-Minimal-API · C#, .NET 8",
+			"Artikelsystem mit Slugs · Next.js",
+			"Einstellung der Benachrichtigungsdauer · Swift, SwiftUI",
+			"Artikelsystem mit Slugs · Next.js",
+		],
 		videoCounterTemplate: "Video {current} von {total}",
 	},
 	sideProjects: {
 		repositoryLabel: "Repository",
-		liveDemoLabel: "Live-Demo",
-		createdLabel: "Erstellt",
+		homepageLabel: "Projektseite",
+		homepageLabels: {
+			"pypi.org": "Auf PyPI ansehen",
+			"marketplace.visualstudio.com": "Erweiterung ansehen",
+		},
+		lastActivityLabel: "Letzte Aktivität am",
 		projects: {
 			"babyloopro/contactform.csharp": {
 				title: "ContactForm.csharp",

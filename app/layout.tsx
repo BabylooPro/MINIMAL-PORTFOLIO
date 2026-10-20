@@ -22,6 +22,20 @@ export default function RootLayout({ children, dictionary, locale, page, usePage
 
 	return (
 		<div className="overflow-x-clip">
+			<a
+				className={[
+					// HIDDEN UNTIL FOCUSED
+					"not-focus:sr-only fixed left-4 top-4 z-50 rounded-md px-4 py-2 border border-(--border-color) bg-(--background-color)",
+					// TYPOGRAPHY
+					"text-sm font-medium text-(--foreground-color)",
+					// FOCUS
+					"focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:outline-offset-2",
+				].join(" ")}
+				href="#main"
+			>
+				{messages.labels.skipToContent}
+			</a>
+
 			<Header
 				currentLocale={locale}
 				labels={messages.labels}

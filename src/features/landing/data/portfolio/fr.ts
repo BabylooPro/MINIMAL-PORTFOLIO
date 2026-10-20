@@ -63,7 +63,7 @@ export const portfolioFr = {
 	...sharedPortfolioDetails,
 	role: "Ingénieur logiciel | Développeur full-stack | Athlète de montagne",
 	location: "Moudon, Vaud, Suisse",
-	summary: "Un développeur couteau suisse avec 10 ans d’expérience en freelance.\nEntièrement autodidacte, sans diplôme formel.",
+	summary: "Un développeur couteau suisse avec +10 ans de pratique du développement.\nEntièrement autodidacte, sans diplôme formel.",
 	languages: [
 		{
 			label: "Français - Maternelle (C2)",

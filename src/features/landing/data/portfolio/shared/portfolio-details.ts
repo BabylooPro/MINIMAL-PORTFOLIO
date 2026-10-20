@@ -9,6 +9,6 @@ export const sharedPortfolioDetails = {
 		{ label: "LinkedIn", href: "https://www.linkedin.com/in/maxremydev" },
 		{ label: "GitHub", href: "https://github.com/babyloopro" },
 		{ label: "YouTube", href: "https://www.youtube.com/@MaxRemyDev" },
-		{ label: "Twitter", href: "https://x.com/babyloopro" },
+		{ label: "X (Twitter)", href: "https://x.com/babyloopro" },
 	],
 } satisfies Pick<Portfolio, "name" | "company" | "links">;

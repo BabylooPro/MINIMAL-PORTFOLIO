@@ -41,7 +41,7 @@ export function Footer({ company, currentLocale, currentPage, footer, theme }: R
 							id="footer-version"
 							trigger={<>© {year} {company}</>}
 							triggerClassName="text-xs sm:transition-[font-size] sm:duration-150 sm:ease-[ease] sm:group-data-expanded/footer:text-sm"
-							triggerLabel={footer.version}
+							triggerLabel={`© ${year} ${company}, ${footer.version}`}
 						>
 							<p>v{version} ({build})</p>
 						</Tooltip>

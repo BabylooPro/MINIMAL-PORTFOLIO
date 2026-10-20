@@ -10,7 +10,7 @@ import { isExternalHttpLink } from "@/src/utils/isExternalHttpLink";
 
 type HeaderProps = {
 	currentLocale: Locale;
-	labels: Pick<Messages["labels"], "downloadCv" | "email" | "languageSwitcher" | "phone">;
+	labels: Pick<Messages["labels"], "downloadCv" | "email" | "home" | "languageSwitcher" | "phone">;
 	page?: LegalPageId;
 	portfolio: Pick<Portfolio, "name" | "role" | "location" | "links">;
 	usePageHeading?: boolean;
@@ -25,7 +25,7 @@ function getContactLinkLabel(link: Portfolio["links"][number], labels: HeaderPro
 export function Header({ currentLocale, labels, page, portfolio, usePageHeading = true }: Readonly<HeaderProps>) {
 	const IdentityHeading = usePageHeading ? "h1" : "p";
 	const contactLinks = portfolio.links.filter((link) => !isExternalHttpLink(link.href));
-	const mobileRoles = portfolio.role.split("|").map((role) => role.trim()).filter(Boolean);
+	const mobileRole = portfolio.role.split("|")[0]?.trim();
 	const profileLinks = portfolio.links.filter((link) => isExternalHttpLink(link.href));
 
 	return (
@@ -64,7 +64,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 									].join(" ")}
 									data-header-identity
 								>
-									<IdentityHeading
+									<div
 										className={[
 											// DESKTOP TITLE LAYOUT
 											"flex items-center gap-3 text-3xl font-semibold tracking-tight text-(--foreground-color)",
@@ -73,41 +73,30 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 										].join(" ")}
 									>
 										<a href={getLocalePath(currentLocale)} className="size-10 rounded-md max-sm:col-start-1 max-sm:row-span-2" data-header-morph="avatar">
-											<span className="sr-only">{portfolio.name}</span>
-
 											<img
 												src="/myface.jpg"
-												alt=""
-												aria-hidden="true"
+												alt={labels.home}
 												className="size-full rounded-md object-cover"
 											/>
 										</a>
 
-										<span className="max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none" data-header-morph="name">
+										<IdentityHeading
+											className="max-sm:col-start-2 max-sm:row-start-1 max-sm:self-start max-sm:text-xl max-sm:leading-none"
+											data-header-morph="name"
+										>
 											{portfolio.name}
-										</span>
-									</IdentityHeading>
+										</IdentityHeading>
+									</div>
 
 									<p
 										className={[
 											// MOBILE IDENTITY GRID
 											"max-sm:col-start-2 max-sm:row-start-2 max-sm:mt-0 max-sm:self-end max-sm:text-xs max-sm:leading-[1.2]",
-											// MOBILE ROLE TRANSITION
-											"max-sm:transition-opacity max-sm:duration-500 max-sm:ease-in-out max-sm:data-role-fading:opacity-0 max-sm:motion-reduce:transition-none",
 											// DESKTOP VISIBILITY
 											"sm:hidden",
 										].join(" ")}
-										data-mobile-role-rotator
 									>
-										<span className="sr-only">
-											{portfolio.role}
-										</span>
-
-										{mobileRoles.map((role, index) => (
-											<span aria-hidden="true" data-mobile-role hidden={index > 0} key={role}>
-												{role}
-											</span>
-										))}
+										{mobileRole}
 									</p>
 
 									<p
@@ -180,7 +169,7 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 								<div className="max-sm:pt-4 sm:flex-none" data-header-scroll-content>
 									<p>{portfolio.location}</p>
 
-									{portfolio.links.length > 0 ? (
+									{!page && portfolio.links.length > 0 ? (
 										<div className="mt-4">
 											{contactLinks.length > 0 ? (
 												<p>
@@ -221,12 +210,17 @@ export function Header({ currentLocale, labels, page, portfolio, usePageHeading 
 										</div>
 									) : null}
 
-									<a
-										className="mt-1 inline-flex underline underline-offset-2 hover:text-(--muted-color)"
-										href={getMediaUrl("/CV_Developer_Max_Remy.pdf")}
-									>
-										{labels.downloadCv}
-									</a>
+									{page ? null : (
+										<a
+											className="mt-1 inline-flex underline underline-offset-2 hover:text-(--muted-color)"
+											href={getMediaUrl("/CV_Developer_Max_Remy.pdf")}
+											hrefLang="en"
+											rel="noopener noreferrer"
+											target="_blank"
+										>
+											{labels.downloadCv}
+										</a>
+									)}
 								</div>
 							</div>
 

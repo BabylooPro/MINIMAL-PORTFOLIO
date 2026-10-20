@@ -1,3 +1,4 @@
+import { getVisibleBand, keepFocusClear } from "@/src/components/utils/behavior/header-scroll-dom";
 import { bindOverlayHover, clearOverlayTimer, collectOverlays, type Overlay } from "@/src/components/utils/behavior/overlay";
 import { isDesktopGesture, isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
 import { closeOpenTooltips } from "@/src/components/utils/behavior/tooltip-controller";
@@ -24,14 +25,32 @@ function closePopover(popover: PopoverItem, returnFocus = false): void {
 
 	const focusWasInPanel = popover.panel.contains(document.activeElement);
 	popover.panel.hidden = true;
+	popover.panel.style.transform = "";
 	popover.backdrop.hidden = true;
 	popover.trigger.setAttribute("aria-expanded", "false");
 	syncOverlayBlur();
 	if (!returnFocus || !focusWasInPanel) return;
 
 	popover.isRestoringFocus = true;
-	popover.trigger.focus();
+	popover.trigger.focus({ preventScroll: true });
 	popover.isRestoringFocus = false;
+	keepFocusClear(true);
+}
+
+function followScroll(popover: PopoverItem): void {
+	const { panel, trigger } = popover;
+	if (!isDesktopPointer() || panel.hidden) return;
+
+	const [top] = getVisibleBand();
+	panel.style.transform = "";
+
+	if (!panel.contains(document.activeElement)) {
+		if (trigger.getBoundingClientRect().bottom < top) closePopover(popover);
+		return;
+	}
+
+	const shift = top + 8 - panel.getBoundingClientRect().top;
+	if (shift > 0) panel.style.transform = `translateY(${shift}px)`;
 }
 
 function openPopover(popover: PopoverItem): void {
@@ -81,5 +100,6 @@ export function initializePopoverController(): void {
 		if (hadOpenPopover) event.preventDefault();
 	});
 
+	addEventListener("scroll", () => { for (const popover of popovers) followScroll(popover) }, { passive: true });
 	onPointerModeChange(() => { for (const popover of popovers) closePopover(popover, true) });
 }

@@ -9,14 +9,16 @@ test("updates the Proof Work carousel and exposes pause controls for reduced mot
 	const transitionLoader = page.locator("[data-proof-work-transition-loader]");
 
 	await expect(player).toHaveJSProperty("controls", true);
-	await expect(player).toHaveAttribute("aria-label", "Timelapse 1");
+	await expect(player).toHaveAccessibleName("Google Calendar API integration · C#, ASP.NET Core");
+	await expect(page.locator("[data-proof-work-title]")).toHaveText("Google Calendar API integration · C#, ASP.NET Core");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/1.mp4`);
 	await expect(player).toHaveCSS("color-scheme", "dark");
 	await expect(transitionLoader.locator("span")).toHaveClass(/size-20/);
 
 	await page.locator('[data-proof-work-direction="next"]').click();
 
-	await expect(player).toHaveAttribute("aria-label", "Timelapse 2");
+	await expect(player).toHaveAccessibleName("Support API route · Next.js, TypeScript");
+	await expect(page.locator("[data-proof-work-title]")).toHaveText("Support API route · Next.js, TypeScript");
 	await expect(player.locator("source")).toHaveAttribute("src", `${mediaOrigin}/videos/timelapse/2.mp4`);
 	await expect(player).toHaveAttribute("poster", /\/videos\/timelapse\/previews\/2\.avif$/);
 	await expect(page.locator("[data-proof-work-counter]")).toHaveText("Video 2 of 6");

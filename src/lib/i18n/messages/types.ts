@@ -19,12 +19,13 @@ export type Messages = {
 	};
 	labels: {
 		downloadCv: string;
+		home: string;
 		languageSwitcher: string;
 		present: string;
+		skipToContent: string;
 		email: string;
 		phone: string;
 		backToPortfolio: string;
-		moreInformation: string;
 		close: string;
 	};
 	footer: {
@@ -97,13 +98,14 @@ export type Messages = {
 		tooltipLabel: string;
 		previousVideo: string;
 		nextVideo: string;
-		video: string;
+		videos: readonly [string, string, string, string, string, string];
 		videoCounterTemplate: string;
 	};
 	sideProjects: {
 		repositoryLabel: string;
-		liveDemoLabel: string;
-		createdLabel: string;
+		homepageLabel: string;
+		homepageLabels: Record<"pypi.org" | "marketplace.visualstudio.com", string>;
+		lastActivityLabel: string;
 		projects: {
 			[repositorySlug: string]: {
 				title: string;

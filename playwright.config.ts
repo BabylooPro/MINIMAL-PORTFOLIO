@@ -14,7 +14,7 @@ export default defineConfig({
 		},
 		{
 			name: "webkit-proof-work",
-			grep: /Proof Work|language tooltips|pointer capabilities/,
+			grep: /Proof Work|identity heading|fixed header and footer|skip link|language tooltips|pointer capabilities/,
 			use: { browserName: "webkit" },
 		},
 	],

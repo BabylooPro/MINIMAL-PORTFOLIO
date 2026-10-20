@@ -16,6 +16,8 @@ let identity: HTMLElement | null = null;
 let identityHeight = 0;
 let identityTransition: HTMLElement | null = null;
 
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+
 let initialPaddingBottom = -1;
 let initialPaddingTop = -1;
 
@@ -56,6 +58,20 @@ export function updateBackToTopVisibility(): void {
 	backToTop?.toggleAttribute("hidden", scrollY === 0);
 }
 
+export function getVisibleBand(): [number, number] {
+	return [(pageTop as HTMLElement).getBoundingClientRect().bottom, (footer as HTMLElement).getBoundingClientRect().top - 44];
+}
+
+export function keepFocusClear(force?: boolean): void {
+	const element = document.activeElement;
+	if (!element?.closest("main") || !(force || element.matches(":focus-visible"))) return;
+
+	const box = element.getBoundingClientRect();
+	const [top, bottom] = getVisibleBand();
+	const offset = box.top < top ? box.top - top - 16 : Math.max(0, box.bottom - bottom + 16);
+	if (offset && box.height * 2 < innerHeight) scrollBy({ top: offset, behavior: "instant" });
+}
+
 export function measureHeaderElements(): void {
 	if (identity && compactIdentity) {
 		const normalHeight = identity.getBoundingClientRect().height;
@@ -88,12 +104,13 @@ export function updateCollapsibleElements(progress: number): void {
 export function updateHeaderIdentity(progress: number): void {
 	if (!identity || !compactIdentity || !identityTransition || !identityHeight || !compactIdentityHeight) return;
 
-	const morphProgress = smoothstep(progressBetween(progress, 0.65, 0.9));
+	const identityProgress = reducedMotion.matches ? +(progress >= 0.9) : progress;
+	const morphProgress = smoothstep(progressBetween(identityProgress, 0.65, 0.9));
 
 	identityTransition.style.height = `${interpolate(identityHeight, compactIdentityHeight, morphProgress)}px`;
 	identityTransition.style.setProperty("--header-morph", morphProgress as unknown as string);
-	identity.style.opacity = (1 - progressBetween(progress, 0.95, 1)) as unknown as string;
-	compactIdentity.style.opacity = progressBetween(progress, 0.9, 0.95) as unknown as string;
+	identity.style.opacity = (1 - progressBetween(identityProgress, 0.95, 1)) as unknown as string;
+	compactIdentity.style.opacity = progressBetween(identityProgress, 0.9, 0.95) as unknown as string;
 }
 
 export function resetHeaderIdentityStyles(): void {

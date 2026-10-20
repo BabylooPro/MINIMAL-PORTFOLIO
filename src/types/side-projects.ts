@@ -5,6 +5,6 @@ export type GeneratedSideProject = {
 	homepageUrl: string | null;
 	githubDescription: string | null;
 	primaryLanguage: string | null;
-	createdAt: string;
+	pushedAt: string;
 	topics: string[];
 };

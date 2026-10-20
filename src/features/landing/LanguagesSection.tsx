@@ -9,7 +9,6 @@ import { Tooltip } from "@/src/components/ui/Tooltip";
 import type { Language } from "@/src/types/portfolio";
 
 type LanguagesSectionProps = {
-	moreInformationLabel: string;
 	title: string;
 	languages: readonly Language[];
 };
@@ -22,7 +21,7 @@ const capabilityDefinitions = [
 	{ id: "writing", Icon: MessageIcon },
 ] as const satisfies readonly { id: LanguageCapability; Icon: ComponentType }[];
 
-export function LanguagesSection({ languages, moreInformationLabel, title }: Readonly<LanguagesSectionProps>) {
+export function LanguagesSection({ languages, title }: Readonly<LanguagesSectionProps>) {
 	if (languages.length === 0) return null;
 
 	return (
@@ -46,7 +45,7 @@ export function LanguagesSection({ languages, moreInformationLabel, title }: Rea
 										<Tooltip
 											id={`language-${languageIndex}-${id}`}
 											trigger={<Icon />}
-											triggerLabel={moreInformationLabel}
+											triggerLabel={`${language.label}, ${capability}`}
 										>
 											<p>{capability}</p>
 										</Tooltip>

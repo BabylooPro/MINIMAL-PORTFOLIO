@@ -1,5 +1,5 @@
 import {
-	bindBackToTop, markCollapsibleElementsReady, measureHeaderElements, observeHeaderElements, queryScrollStateElements, resetCollapsibleElements, resetDesktopHeaderStyles,
+	bindBackToTop, keepFocusClear, markCollapsibleElementsReady, measureHeaderElements, observeHeaderElements, queryScrollStateElements, resetCollapsibleElements, resetDesktopHeaderStyles,
 	resetHeaderIdentityStyles, updateBackToTopVisibility, updateCollapsibleElements, updateDesktopScrollState,
 	updateHeaderIdentity, updateMobileScrollState,
 } from "@/src/components/utils/behavior/header-scroll-dom";
@@ -64,6 +64,7 @@ export function initializeScrollStateController(): void {
 	}
 
 	addEventListener("scroll", handleScroll, { passive: true });
+	addEventListener("focusin", () => keepFocusClear());
 	addEventListener("resize", scheduleScrollStateUpdate);
 	addEventListener("pageshow", updateScrollState);
 	addEventListener("beforeprint", resetCollapsibleElements);

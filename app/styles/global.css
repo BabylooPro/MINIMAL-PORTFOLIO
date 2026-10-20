@@ -69,25 +69,13 @@ button {
 html {
 	background: var(--background-color);
 	scroll-behavior: smooth;
+	scroll-padding: 6rem 0 calc(8.5rem + env(safe-area-inset-bottom));
 	-webkit-tap-highlight-color: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {
 	html {
 		scroll-behavior: auto;
-	}
-
-	[data-mobile-role] + [data-mobile-role]::before {
-		content: " | ";
-	}
-}
-
-@layer base {
-	@media (prefers-reduced-motion: reduce) {
-		[data-mobile-role][hidden] {
-			/* biome-ignore lint/complexity/noImportantStyles: the Tailwind preflight rule this overrides is itself !important, so nothing else can win */
-			display: inline !important;
-		}
 	}
 }
 
@@ -107,7 +95,7 @@ main > * {
 	overflow-x: clip;
 }
 
-@media (width >= 40rem) {
+@media (width >= 40rem) and (prefers-reduced-motion: no-preference) {
 	[data-header-morph="avatar"] {
 		translate: 0 calc(var(--header-morph) * 0.5rem);
 	}

@@ -3,8 +3,8 @@ import type { Messages } from "@/src/lib/i18n/messages/types";
 export const enMessages = {
 	meta: {
 		title: "Max Remy - Developer",
-		description: "Self-taught developer with 10 years of freelance experience.",
-		ogDescription: "Self-taught freelance developer based in Vaud, Switzerland, with 10 years of experience.",
+		description: "Self-taught developer with 10+ years of hands-on development.",
+		ogDescription: "Self-taught freelance developer based in Vaud, Switzerland, with 10+ years of hands-on development.",
 		socialImageAlt: "Portrait of Max Remy wearing swim goggles and giving a thumbs-up.",
 	},
 	notFound: {
@@ -20,13 +20,14 @@ export const enMessages = {
 		sideProjects: "Public Side Projects",
 	},
 	labels: {
-		downloadCv: "Download CV",
+		downloadCv: "View CV · PDF",
+		home: "Home",
 		languageSwitcher: "Language",
 		present: "Present",
+		skipToContent: "Skip to content",
 		email: "Email",
 		phone: "Phone",
 		backToPortfolio: "Back to portfolio",
-		moreInformation: "More information",
 		close: "Close",
 	},
 	footer: {
@@ -47,8 +48,8 @@ export const enMessages = {
 			languageTitle: "Language",
 			languageDescription:
 				"The site reads your browser language to redirect French and German browsers to their localized URLs. English and unsupported languages stay on the English root page. That detection happens locally, is not stored, and is not sent to Max Remy Dev. Choosing a language manually uses a link to the corresponding URL and is not stored either.",
-			cvDownloadTitle: "CV download",
-			cvDownloadDescription: "The Download CV link provides a static PDF file. This portfolio uses no form or analytics tool to identify downloads.",
+			cvDownloadTitle: "Viewing the CV",
+			cvDownloadDescription: "The View CV · PDF link opens a static PDF file in a new tab. This portfolio uses no form or analytics tool to identify views or downloads.",
 			hostingTitle: "Hosting",
 			hostingDescription:
 				"This site and its static files are hosted on Cloudflare Pages, and its media files, including the CV, are delivered from Cloudflare R2. Cloudflare acts as the data processor for hosting and content delivery. In providing these services, Cloudflare may process technical connection data, including the IP address, browser information, the date and time of the request, and the requested resource. Depending on the service and its configuration, this data may be processed in the United States and other countries.",
@@ -103,13 +104,24 @@ export const enMessages = {
 		tooltipLabel: "About Proof of Work",
 		previousVideo: "Previous video",
 		nextVideo: "Next video",
-		video: "Timelapse",
+		videos: [
+			"Google Calendar API integration · C#, ASP.NET Core",
+			"Support API route · Next.js, TypeScript",
+			"ContactForm minimal API setup · C#, .NET 8",
+			"Article system with slug support · Next.js",
+			"Notification duration settings · Swift, SwiftUI",
+			"Article system with slug support · Next.js",
+		],
 		videoCounterTemplate: "Video {current} of {total}",
 	},
 	sideProjects: {
 		repositoryLabel: "Repository",
-		liveDemoLabel: "Live demo",
-		createdLabel: "Created",
+		homepageLabel: "Project page",
+		homepageLabels: {
+			"pypi.org": "View on PyPI",
+			"marketplace.visualstudio.com": "View extension",
+		},
+		lastActivityLabel: "Last activity",
 		projects: {
 			"babyloopro/contactform.csharp": {
 				title: "ContactForm.csharp",

@@ -64,7 +64,7 @@ function VideoPreviewButton({ direction, label, positionClassName, video }: Read
 				// PREVIEW CARD SURFACE
 				"rounded-lg border border-(--border-color) bg-black p-0",
 				// POINTER AND KEYBOARD FEEDBACK
-				"cursor-pointer opacity-70 transition-[opacity,scale] hover:scale-[1.1] hover:opacity-100",
+				"cursor-pointer opacity-70 transition-[opacity,scale] hover:scale-[1.1] hover:opacity-100 motion-reduce:transition-none",
 				"focus-visible:scale-[1.1] focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-current focus-visible:outline-solid focus-visible:-outline-offset-2",
 				// SCALE TOWARD THE ACTIVE CARD
 				direction === "previous" ? "origin-left" : "origin-right",
@@ -111,8 +111,7 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 			className="no-print"
 			data-proof-work-carousel
 			data-counter-template={content.videoCounterTemplate}
-			data-video-label={content.video}
-			data-videos={JSON.stringify(videos)}
+			data-videos={JSON.stringify(videos.map((video, index) => ({ ...video, title: content.videos[index] })))}
 			labelledBy="proof-work-title"
 		>
 			<div
@@ -174,7 +173,7 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 							</div>
 
 							<video
-								aria-label={`${content.video} 1`}
+								aria-labelledby="proof-work-clip"
 								className={[
 									// NATIVE PLAYER UI
 									"scheme-dark",
@@ -205,7 +204,11 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 					/>
 				</div>
 
-				<p aria-live="polite" className="mt-3 text-center text-sm text-(--muted-color)" data-proof-work-counter>
+				<p className="mt-3 text-center text-sm text-(--muted-color)" data-proof-work-title id="proof-work-clip">
+					{content.videos[0]}
+				</p>
+
+				<p aria-live="polite" className="mt-1 text-center text-sm text-(--muted-color)" data-proof-work-counter>
 					{formatVideoCounter(content.videoCounterTemplate, 1, videos.length)}
 				</p>
 			</div>

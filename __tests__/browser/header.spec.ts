@@ -1,24 +1,31 @@
 import { expect, test } from "@playwright/test";
 
-test("keeps the mobile role stable when reduced motion is requested", async ({ page }) => {
+test("keeps the professional role static on mobile", async ({ page }) => {
 	await page.clock.install();
-	await page.emulateMedia({ reducedMotion: "reduce" });
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto("/en/");
 
-	const visibleRole = page.locator("[data-mobile-role]:not([hidden])");
-	const initialRole = await visibleRole.textContent();
+	const header = page.locator("[data-page-header]");
+	const role = header.getByText("Software Engineer", { exact: true });
 
-	if (!initialRole) throw new Error("The mobile role rotator needs a visible initial role.");
+	await expect(role).toBeVisible();
+	await page.clock.fastForward(10_000);
+	await expect(role).toBeVisible();
+	expect(await header.innerText()).not.toContain("Mountain Athlete");
+});
 
-	await page.clock.fastForward(5_100);
-	await expect(visibleRole).toHaveText(initialRole);
+test("names the identity heading once at desktop and mobile widths", async ({ page }) => {
+	for (const viewport of [{ width: 1_280, height: 800 }, { width: 390, height: 844 }]) {
+		await page.setViewportSize(viewport);
+		await page.goto("/en/");
 
-	const allRoles = page.locator("[data-mobile-role]");
-	const roleCount = await allRoles.count();
-	expect(roleCount).toBeGreaterThan(1);
+		const heading = page.getByRole("heading", { level: 1 });
 
-	for (let index = 0; index < roleCount; index += 1) await expect(allRoles.nth(index)).toBeVisible();
+		await expect(heading).toHaveCount(1);
+		await expect(heading).toBeVisible();
+		await expect(heading).toHaveAccessibleName("Max Remy");
+		await expect(page.locator("[data-page-header]").getByRole("link", { name: "Home", exact: true })).toBeVisible();
+	}
 });
 
 test("morphs the desktop identity in step with the scroll position", async ({ page }) => {
@@ -64,6 +71,32 @@ test("morphs the desktop identity in step with the scroll position", async ({ pa
 
 	await scrollToY(0);
 	await expect.poll(nameScale).toBe(1);
+});
+
+test("keeps the desktop identity unscaled when reduced motion is requested", async ({ page }) => {
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	await page.goto("/en/");
+	await page.locator("[data-header-scroll-hidden][data-ready]").waitFor();
+
+	const name = page.locator("[data-header-morph='name']");
+
+	for (const top of [140, 160, 175, 185, 200]) {
+		await page.evaluate((y) => scrollTo({ top: y, behavior: "instant" }), top);
+		await expect(name).toHaveCSS("scale", "none");
+
+		await expect.poll(() => page.evaluate(() => {
+			const frame = document.querySelector("[data-header-identity-transition]");
+			const identity = document.querySelector("[data-header-identity]");
+			const compact = document.querySelector("[data-header-compact-identity]");
+			if (!frame || !identity || !compact) throw new Error("The header identities must be rendered.");
+
+			const full = Number(getComputedStyle(identity).opacity);
+			const small = Number(getComputedStyle(compact).opacity);
+			const fitsFrame = frame.getBoundingClientRect().height >= identity.getBoundingClientRect().height - 0.5;
+
+			return (full === 1 && small === 0 && fitsFrame) || (full === 0 && small === 1);
+		}), `identity state at scrollY ${top}`).toBe(true);
+	}
 });
 
 test("persists the theme and applies desktop and mobile header states", async ({ page }) => {

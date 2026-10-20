@@ -8,7 +8,8 @@ test("uses a single standard desktop trigger for language tooltips", async ({ pa
 	const trigger = page.locator('[data-tooltip-trigger][aria-describedby="language-0-listening"]');
 	const tooltip = page.locator("#language-0-listening");
 
-	await expect(trigger).toHaveAttribute("aria-label", "More information");
+	await expect(trigger).toHaveAccessibleName("French - Native (C2), Listening");
+	await expect(page.locator('[data-tooltip-trigger][aria-describedby="footer-version"]')).toHaveAccessibleName(/^© \d{4} Max Remy Dev, Project version$/);
 	await expect(trigger).not.toHaveAttribute("aria-expanded", /.+/);
 	await expect(tooltip).toHaveAttribute("role", "tooltip");
 	await expect(tooltip.locator("a, button, input, select, textarea")).toHaveCount(0);
