@@ -115,7 +115,9 @@ test("keeps keyboard focus clear when the browser skips the focus scroll", async
 	await page.locator("[data-header-scroll-hidden][data-ready]").waitFor();
 
 	const previousVideo = page.getByRole("button", { name: "Previous video" });
+	const middle = await previousVideo.evaluate((element) => element.getBoundingClientRect().top + element.getBoundingClientRect().height / 2);
 
+	await page.setViewportSize({ width: 1_280, height: Math.round(middle) + 45 });
 	expect(await previousVideo.evaluate((element) => element.getBoundingClientRect().bottom > innerHeight - 45)).toBe(true);
 
 	const box = await previousVideo.boundingBox();
