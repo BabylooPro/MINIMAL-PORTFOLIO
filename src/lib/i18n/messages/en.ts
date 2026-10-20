@@ -38,6 +38,7 @@ export const enMessages = {
 		privacy: "Privacy",
 		legal: "Legal notice",
 		backToTop: "Back to top",
+		version: "Project version",
 	},
 	legalPages: {
 		lastUpdated: "Last updated: 30 July 2026",

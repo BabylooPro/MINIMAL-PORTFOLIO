@@ -36,6 +36,7 @@ export type Messages = {
 		privacy: string;
 		legal: string;
 		backToTop: string;
+		version: string;
 	};
 	legalPages: {
 		lastUpdated: string;
