@@ -80,6 +80,7 @@ export function initializeScrollStateController(): void {
 	addEventListener("scroll", handleScroll, { passive: true });
 	addEventListener("focusin", () => {
 		hasPendingFocusCheck = true;
+		keepFocusClear();
 		scheduleScrollStateUpdate();
 	});
 	addEventListener("resize", scheduleScrollStateUpdate);
