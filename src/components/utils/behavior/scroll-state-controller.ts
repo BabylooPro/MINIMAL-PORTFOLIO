@@ -13,17 +13,6 @@ export function initializeScrollStateController(): void {
 
 	let animationFrame: number | undefined;
 	let collapseMode: "desktop" | "mobile" | undefined;
-	let focusCheckDeadline = 0;
-	let hasPendingFocusCheck = false;
-
-	function checkFocus(): void {
-		if (hasPendingFocusCheck) {
-			hasPendingFocusCheck = false;
-			focusCheckDeadline = performance.now() + 600;
-		}
-
-		if (performance.now() < focusCheckDeadline) keepFocusClear();
-	}
 
 	function setCollapseMode(mode: "desktop" | "mobile"): boolean {
 		if (collapseMode === mode) return false;
@@ -43,7 +32,6 @@ export function initializeScrollStateController(): void {
 			if (setCollapseMode("mobile")) resetDesktopHeaderStyles();
 
 			updateMobileScrollState();
-			checkFocus();
 			return;
 		}
 
@@ -53,7 +41,6 @@ export function initializeScrollStateController(): void {
 		updateDesktopScrollState(progress, isDocumentAtBottom());
 		updateHeaderIdentity(progress);
 		updateCollapsibleElements(progress);
-		checkFocus();
 	}
 
 	function scheduleScrollStateUpdate(): void {
@@ -65,7 +52,6 @@ export function initializeScrollStateController(): void {
 		if (!desktopViewport.matches) {
 			updateBackToTopVisibility();
 			updateMobileScrollState();
-			checkFocus();
 			return;
 		}
 
@@ -78,11 +64,7 @@ export function initializeScrollStateController(): void {
 	}
 
 	addEventListener("scroll", handleScroll, { passive: true });
-	addEventListener("focusin", () => {
-		hasPendingFocusCheck = true;
-		keepFocusClear();
-		scheduleScrollStateUpdate();
-	});
+	addEventListener("focusin", () => keepFocusClear());
 	addEventListener("resize", scheduleScrollStateUpdate);
 	addEventListener("pageshow", updateScrollState);
 	addEventListener("beforeprint", resetCollapsibleElements);

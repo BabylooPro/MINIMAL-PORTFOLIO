@@ -1,3 +1,4 @@
+import { getVisibleBand, keepFocusClear } from "@/src/components/utils/behavior/header-scroll-dom";
 import { bindOverlayHover, clearOverlayTimer, collectOverlays, type Overlay } from "@/src/components/utils/behavior/overlay";
 import { isDesktopGesture, isDesktopPointer, onPointerModeChange } from "@/src/components/utils/behavior/pointer-mode";
 import { closeOpenTooltips } from "@/src/components/utils/behavior/tooltip-controller";
@@ -9,15 +10,6 @@ type PopoverItem = Overlay & {
 };
 
 let popovers: PopoverItem[] = [];
-let pageTop: HTMLElement | null = null;
-
-function getHeaderBottom(): number {
-	return pageTop?.getBoundingClientRect().bottom ?? 0;
-}
-
-function getFooterTop(): number {
-	return (document.querySelector("[data-back-to-top]:not([hidden])") ?? document.querySelector("[data-page-footer]"))?.getBoundingClientRect().top ?? innerHeight;
-}
 
 function isPopoverOpen(popover: PopoverItem): boolean {
 	return !popover.panel.hidden;
@@ -39,23 +31,26 @@ function closePopover(popover: PopoverItem, returnFocus = false): void {
 	syncOverlayBlur();
 	if (!returnFocus || !focusWasInPanel) return;
 
-	const { bottom, top } = popover.trigger.getBoundingClientRect();
 	popover.isRestoringFocus = true;
-	popover.trigger.focus({ preventScroll: top >= getHeaderBottom() && bottom <= getFooterTop() });
+	popover.trigger.focus({ preventScroll: true });
 	popover.isRestoringFocus = false;
+	keepFocusClear(true);
 }
 
 function followScroll(popover: PopoverItem): void {
-	if (!isDesktopPointer() || !isPopoverOpen(popover)) return;
+	const { panel, trigger } = popover;
+	if (!isDesktopPointer() || panel.hidden) return;
 
-	popover.panel.style.transform = "";
-	if (!popover.panel.contains(document.activeElement)) {
-		if (popover.trigger.getBoundingClientRect().bottom < getHeaderBottom()) closePopover(popover);
+	const [top] = getVisibleBand();
+	panel.style.transform = "";
+
+	if (!panel.contains(document.activeElement)) {
+		if (trigger.getBoundingClientRect().bottom < top) closePopover(popover);
 		return;
 	}
 
-	const shift = getHeaderBottom() + 8 - popover.panel.getBoundingClientRect().top;
-	if (shift > 0) popover.panel.style.transform = `translateY(${shift}px)`;
+	const shift = top + 8 - panel.getBoundingClientRect().top;
+	if (shift > 0) panel.style.transform = `translateY(${shift}px)`;
 }
 
 function openPopover(popover: PopoverItem): void {
@@ -76,7 +71,6 @@ function openPopover(popover: PopoverItem): void {
 }
 
 export function initializePopoverController(): void {
-	pageTop = document.querySelector<HTMLElement>("[data-page-top]");
 	popovers = collectOverlays("popover").flatMap((overlay) => {
 		const backdrop = overlay.root.querySelector<HTMLElement>("[data-popover-backdrop]");
 		const closeButton = overlay.root.querySelector<HTMLButtonElement>("[data-popover-close]");

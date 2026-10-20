@@ -58,18 +58,18 @@ export function updateBackToTopVisibility(): void {
 	backToTop?.toggleAttribute("hidden", scrollY === 0);
 }
 
-export function keepFocusClear(): void {
+export function getVisibleBand(): [number, number] {
+	return [(pageTop as HTMLElement).getBoundingClientRect().bottom, (footer as HTMLElement).getBoundingClientRect().top - 44];
+}
+
+export function keepFocusClear(force?: boolean): void {
 	const element = document.activeElement;
-	if (!(element instanceof HTMLElement) || !pageTop || !footer || !element.matches(":focus-visible")) return;
-	if (pageTop.contains(element) || footer.contains(element) || getComputedStyle(element).position === "fixed") return;
+	if (!element?.closest("main") || !(force || element.matches(":focus-visible"))) return;
 
 	const box = element.getBoundingClientRect();
-	const top = pageTop.getBoundingClientRect().bottom;
-	const bottom = (backToTop && !backToTop.hidden ? backToTop : footer).getBoundingClientRect().top;
-	if (box.height + 32 > bottom - top || box.bottom <= 0 || box.top >= innerHeight) return;
-
-	if (box.top < top) scrollBy({ top: box.top - top - 16, behavior: "instant" });
-	else if (box.bottom > bottom) scrollBy({ top: box.bottom - bottom + 16, behavior: "instant" });
+	const [top, bottom] = getVisibleBand();
+	const offset = box.top < top ? box.top - top - 16 : Math.max(0, box.bottom - bottom + 16);
+	if (offset && box.height * 2 < innerHeight) scrollBy({ top: offset, behavior: "instant" });
 }
 
 export function measureHeaderElements(): void {
@@ -104,7 +104,7 @@ export function updateCollapsibleElements(progress: number): void {
 export function updateHeaderIdentity(progress: number): void {
 	if (!identity || !compactIdentity || !identityTransition || !identityHeight || !compactIdentityHeight) return;
 
-	const identityProgress = reducedMotion.matches ? Number(progress >= 0.9) : progress;
+	const identityProgress = reducedMotion.matches ? +(progress >= 0.9) : progress;
 	const morphProgress = smoothstep(progressBetween(identityProgress, 0.65, 0.9));
 
 	identityTransition.style.height = `${interpolate(identityHeight, compactIdentityHeight, morphProgress)}px`;
