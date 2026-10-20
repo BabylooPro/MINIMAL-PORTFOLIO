@@ -204,7 +204,7 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 					/>
 				</div>
 
-				<p className="mt-3 text-center text-sm font-medium text-(--foreground-color)" data-proof-work-title id="proof-work-clip">
+				<p className="mt-3 text-center text-sm text-(--muted-color)" data-proof-work-title id="proof-work-clip">
 					{content.videos[0]}
 				</p>
 
