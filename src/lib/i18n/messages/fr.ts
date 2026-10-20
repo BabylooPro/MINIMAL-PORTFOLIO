@@ -18,10 +18,8 @@ export const frMessages = {
 		proofWork: "Démonstration de savoir-faire",
 		experience: "Expérience professionnelle",
 		sideProjects: "Projets personnels publics",
-		contact: "Contact",
 	},
 	labels: {
-		contactPrompt: "Un projet, une mission ou une question ? Écrivez-moi.",
 		downloadCv: "Voir le CV · PDF (anglais)",
 		home: "Accueil",
 		languageSwitcher: "Langue",

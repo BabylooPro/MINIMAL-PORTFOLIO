@@ -16,10 +16,8 @@ export type Messages = {
 		proofWork: string;
 		experience: string;
 		sideProjects: string;
-		contact: string;
 	};
 	labels: {
-		contactPrompt: string;
 		downloadCv: string;
 		home: string;
 		languageSwitcher: string;

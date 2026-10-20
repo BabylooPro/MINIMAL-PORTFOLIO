@@ -18,10 +18,8 @@ export const deMessages = {
 		proofWork: "Arbeitsproben",
 		experience: "Berufliche Erfahrung",
 		sideProjects: "Öffentliche Nebenprojekte",
-		contact: "Kontakt",
 	},
 	labels: {
-		contactPrompt: "Ein Projekt, ein Auftrag oder eine Frage? Schreiben Sie mir.",
 		downloadCv: "Lebenslauf ansehen · PDF (Englisch)",
 		home: "Startseite",
 		languageSwitcher: "Sprache",

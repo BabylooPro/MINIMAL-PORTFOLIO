@@ -18,10 +18,8 @@ export const enMessages = {
 		proofWork: "Proof of Work",
 		experience: "Professional Experience",
 		sideProjects: "Public Side Projects",
-		contact: "Contact",
 	},
 	labels: {
-		contactPrompt: "A project, an assignment or a question? Write to me.",
 		downloadCv: "View CV · PDF",
 		home: "Home",
 		languageSwitcher: "Language",
