@@ -9,20 +9,20 @@ const experienceContent = {
 		role: "Softwareentwickler",
 		employmentType: "Freiberuflich",
 		location: "Remote, vor Ort",
-		description: "Atemtrainings-App für iOS und watchOS. Entwicklung der App und ihrer Integrationen mit Apple Watch, Garmin und HealthKit, inklusive HR/HRV-Biofeedback in Echtzeit. Stack: Swift, SwiftUI.",
+		description: "Entwicklung einer Atemtrainings-App in Swift/SwiftUI für iOS und watchOS mit Apple Watch, Garmin, HealthKit sowie HR/HRV-Biofeedback in Echtzeit.",
 	},
 	"confidential-client-software-engineer": {
 		company: "Vertraulicher Kunde",
 		role: "Softwareentwickler",
 		employmentType: "Freiberuflich",
 		location: "Vollständig remote",
-		description: "Verteilte Plattform für Kryptowährungsarbitrage, von mir konzipiert und entwickelt. Stack: C#, ASP.NET Core, MAUI, Docker, Grafana, Prometheus.",
+		description: "Konzeption und Entwicklung einer verteilten Plattform für Kryptowährungsarbitrage mit C#, ASP.NET Core, MAUI, Docker, Grafana und Prometheus.",
 	},
 	"new-tells-studio-frontend-developer": {
 		role: "Frontend-Entwickler",
 		employmentType: "Freiberuflich",
 		location: "Vollständig remote",
-		description: "Portfolio für ein Motion-Design-Unternehmen. Responsive Umsetzung nach den Figma-Entwürfen, mit Rive-Animationen. Stack: Next.js, Rive.",
+		description: "Entwicklung eines responsiven Next.js-Portfolios nach Figma mit Rive-Animationen für ein Motion-Design-Unternehmen.",
 	},
 	"max-remy-dev-founder": {
 		role: "Gründer",
@@ -37,9 +37,15 @@ const experienceContent = {
 	},
 	"self-taught-junior-developer": {
 		company: "Eigene Projekte",
-		role: "Autodidaktischer Werdegang",
+		role: "Junior-Entwickler",
 		location: "Schweiz",
-		description: "Einstieg in die Informatik mit 8 Jahren, danach autodidaktisches Lernen: Modding und Entwicklung von Spielen, Funktionsweise von PCs und Software, erste Software und Beiträge zu Projekten.",
+		description: "Autodidaktischer Einstieg in die Informatik: Modding bestehender Spiele und Entwicklung eigener Spiele, Verstehen von PCs und Software, Entwicklung von Software und Beiträge zu Projekten.",
+	},
+	"self-taught-computing-beginnings": {
+		company: "Eigenes Lernen",
+		role: "Erste Schritte in der Informatik",
+		location: "Schweiz",
+		description: "Einstieg in die Informatik ab dem Alter von 8 Jahren: Erkundung von Windows, Hardware, Software und Spielen sowie erste technische Experimente, noch vor dem Programmieren.",
 	},
 } satisfies LocalizedExperienceContent;
 

@@ -9,20 +9,20 @@ const experienceContent = {
 		role: "Ingénieur logiciel",
 		employmentType: "Freelance",
 		location: "À distance, sur site",
-		description: "Application de respiration pour iOS et watchOS. Développement de l’app et de ses intégrations Apple Watch, Garmin et HealthKit, avec un biofeedback HR/HRV en temps réel. Stack : Swift, SwiftUI.",
+		description: "Développement d’une application de respiration en Swift/SwiftUI pour iOS et watchOS, intégrant Apple Watch, Garmin, HealthKit et le biofeedback HR/HRV en temps réel.",
 	},
 	"confidential-client-software-engineer": {
 		company: "Client confidentiel",
 		role: "Ingénieur logiciel",
 		employmentType: "Freelance",
 		location: "Télétravail intégral",
-		description: "Plateforme distribuée d’arbitrage de cryptomonnaies, conçue et développée par mes soins. Stack : C#, ASP.NET Core, MAUI, Docker, Grafana, Prometheus.",
+		description: "Conception et développement d’une plateforme distribuée d’arbitrage de cryptomonnaies avec C#, ASP.NET Core, MAUI, Docker, Grafana et Prometheus.",
 	},
 	"new-tells-studio-frontend-developer": {
 		role: "Développeur frontend",
 		employmentType: "Freelance",
 		location: "Télétravail intégral",
-		description: "Portfolio d’une entreprise de motion design. Intégration responsive à partir des maquettes Figma, avec des animations Rive. Stack : Next.js, Rive.",
+		description: "Création d’un portfolio Next.js responsive à partir de Figma, avec des animations Rive, pour une entreprise de motion design.",
 	},
 	"max-remy-dev-founder": {
 		role: "Fondateur",
@@ -37,9 +37,15 @@ const experienceContent = {
 	},
 	"self-taught-junior-developer": {
 		company: "Projets personnels",
-		role: "Parcours autodidacte",
+		role: "Développeur junior",
 		location: "Suisse",
-		description: "Découverte de l’informatique dès 8 ans, puis apprentissage autodidacte : modding et création de jeux, fonctionnement des PC et des logiciels, premiers logiciels et contributions à des projets.",
+		description: "Apprentissage autodidacte de l’informatique : modding de jeux existants et création de jeux, compréhension du fonctionnement des PC et des logiciels, développement de logiciels et contributions à des projets.",
+	},
+	"self-taught-computing-beginnings": {
+		company: "Apprentissage personnel",
+		role: "Débuts en informatique",
+		location: "Suisse",
+		description: "Découverte de l’informatique dès l’âge de 8 ans : exploration de Windows, du matériel, des logiciels et des jeux, premières manipulations techniques avant d’apprendre à coder.",
 	},
 } satisfies LocalizedExperienceContent;
 
