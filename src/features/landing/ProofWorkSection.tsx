@@ -126,6 +126,7 @@ export function ProofWorkSection({ content, links, locale, title }: Readonly<Pro
 
 				<Popover id="proof-work" label={content.tooltipLabel} locale={locale} trigger={<InfoIcon />}>
 					<p className="whitespace-pre-line">{renderTextWithPortfolioLinks(content.description, links)}</p>
+					<p className="mt-2 text-(--muted-color) italic">{content.postscript}</p>
 				</Popover>
 			</div>
 

@@ -98,8 +98,9 @@ export const enMessages = {
 		},
 	},
 	proofWork: {
-		description: "Real development sessions where I write the code myself, condensed into timelapses. Slower versions are available on my YouTube channel.\n\nOutside these videos, I use agentic AI to move faster, but I stay in charge of the architecture, the code and the technical decisions.",
+		description: "Real development sessions where I write the code myself, condensed into ultra-fast timelapses. I use little to no AI in them, just to relive the good old days :)\n\nSlower versions are available on my YouTube channel.",
 		summary: "Timelapses of real development sessions.",
+		postscript: "P.S. Outside these videos, I do use agentic AI to move faster, but never to “vibe code”. I stay in charge of the thinking, architecture, code, and technical decisions.",
 		tooltipLabel: "About Proof of Work",
 		previousVideo: "Previous video",
 		nextVideo: "Next video",

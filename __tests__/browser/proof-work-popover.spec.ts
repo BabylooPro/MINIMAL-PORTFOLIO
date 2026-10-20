@@ -2,7 +2,7 @@ import { expect, type Locator, type Page, test } from "@playwright/test";
 import { expectOverlayStack, revealBelowStickyHeader } from "./helpers";
 
 test("keeps the mobile Proof Work popover above the sticky header and restores focus", async ({ page }) => {
-	await page.setViewportSize({ width: 390, height: 260 });
+	await page.setViewportSize({ width: 390, height: 350 });
 	await page.goto("/en/");
 
 	const trigger = page.locator("[data-popover-trigger]");
