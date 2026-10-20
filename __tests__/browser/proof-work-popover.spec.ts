@@ -190,54 +190,6 @@ test("keeps the touch Proof Work popover inside the content column", async ({ br
 	await context.close();
 });
 
-test("opens the Proof Work popover by tap on a device that reports desktop pointer capabilities", async ({ browser }) => {
-	const context = await browser.newContext({ viewport: { width: 1_280, height: 800 }, hasTouch: true });
-	await context.addInitScript(() => {
-		const native = window.matchMedia.bind(window);
-		window.matchMedia = (query) => {
-			const real = native(query);
-			if (!query.includes("hover: hover")) return real;
-
-			return {
-				media: query,
-				matches: true,
-				onchange: null,
-				addEventListener: (...args: Parameters<MediaQueryList["addEventListener"]>) => real.addEventListener(...args),
-				removeEventListener: (...args: Parameters<MediaQueryList["removeEventListener"]>) => real.removeEventListener(...args),
-				addListener: (...args: Parameters<MediaQueryList["addListener"]>) => real.addListener(...args),
-				removeListener: (...args: Parameters<MediaQueryList["removeListener"]>) => real.removeListener(...args),
-				dispatchEvent: (...args: Parameters<MediaQueryList["dispatchEvent"]>) => real.dispatchEvent(...args),
-			} as MediaQueryList;
-		};
-	});
-
-	const page = await context.newPage();
-	await page.goto("/en/");
-
-	await page.locator("[data-header-scroll-hidden][data-ready]").waitFor();
-
-	expect(await page.evaluate(() => matchMedia("(min-width: 40rem) and (hover: hover) and (pointer: fine)").matches)).toBe(true);
-
-	async function tap(locator: ReturnType<typeof page.locator>): Promise<void> {
-		await revealBelowStickyHeader(locator);
-
-		const box = await locator.boundingBox();
-		if (!box) throw new Error("The tap target must be laid out.");
-
-		await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
-	}
-
-	const popoverPanel = page.locator("[data-popover-panel]").first();
-
-	await tap(page.locator("[data-popover-trigger]").first());
-	await expect(popoverPanel).toBeVisible();
-
-	await page.keyboard.press("Escape");
-	await expect(popoverPanel).toBeHidden();
-
-	await context.close();
-});
-
 async function openDesktopProofWork(page: Page): Promise<{ popover: Locator; trigger: Locator }> {
 	await page.setViewportSize({ width: 1_280, height: 800 });
 	await page.goto("/en/");
