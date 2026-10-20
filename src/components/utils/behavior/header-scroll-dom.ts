@@ -66,7 +66,7 @@ export function keepFocusClear(): void {
 	const box = element.getBoundingClientRect();
 	const top = pageTop.getBoundingClientRect().bottom;
 	const bottom = (backToTop && !backToTop.hidden ? backToTop : footer).getBoundingClientRect().top;
-	if (box.height + 32 > bottom - top) return;
+	if (box.height + 32 > bottom - top || box.bottom <= 0 || box.top >= innerHeight) return;
 
 	if (box.top < top) scrollBy({ top: box.top - top - 16, behavior: "instant" });
 	else if (box.bottom > bottom) scrollBy({ top: box.bottom - bottom + 16, behavior: "instant" });
