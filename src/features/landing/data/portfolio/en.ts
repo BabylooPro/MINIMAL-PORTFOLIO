@@ -58,7 +58,7 @@ export const portfolioEn = {
 	...sharedPortfolioDetails,
 	role: "Software Engineer | Full-Stack Developer | Mountain Athlete",
 	location: "Moudon, Vaud, Switzerland",
-	summary: "I design and build C#/.NET backends, Apple apps in Swift/SwiftUI and React/Next.js web interfaces, with Docker and CI/CD.\nA Swiss Army knife developer with over ten years of hands-on development, independent since 2017.\nSelf-taught, learned by doing.",
+	summary: "A Swiss Army knife developer with over ten years of hands-on development.\nEntirely self-taught, with no formal degree.",
 	languages: [
 		{
 			label: "French - Native (C2)",
