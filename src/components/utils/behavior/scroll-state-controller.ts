@@ -14,8 +14,14 @@ export function initializeScrollStateController(): void {
 	let animationFrame: number | undefined;
 	let collapseMode: "desktop" | "mobile" | undefined;
 	let focusCheckDeadline = 0;
+	let hasPendingFocusCheck = false;
 
 	function checkFocus(): void {
+		if (hasPendingFocusCheck) {
+			hasPendingFocusCheck = false;
+			focusCheckDeadline = performance.now() + 600;
+		}
+
 		if (performance.now() < focusCheckDeadline) keepFocusClear();
 	}
 
@@ -73,7 +79,7 @@ export function initializeScrollStateController(): void {
 
 	addEventListener("scroll", handleScroll, { passive: true });
 	addEventListener("focusin", () => {
-		focusCheckDeadline = performance.now() + 600;
+		hasPendingFocusCheck = true;
 		scheduleScrollStateUpdate();
 	});
 	addEventListener("resize", scheduleScrollStateUpdate);
